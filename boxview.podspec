@@ -11,5 +11,5 @@ BoxView is the container UIView for laying out a stack of subviews
     s.author = { 'Vladimir Dudkin' => 'vlad.dudkin@gmail.com' }
     s.source = { :git => 'https://github.com/vladimir-d/BoxView.git', :tag => s.version.to_s }
     s.ios.deployment_target = '10.0'
-    s.source_files = 'BoxView/BoxViewLayout/*.{swift}'
+    s.source_files = 'BoxViewLayout/*.{swift}'
 end
