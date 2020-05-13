@@ -1,0 +1,8 @@
+Source/build/
+DerivedData/
+
+xcuserdata/
+.idea
+.DS_Store
+~$*.doc
+build_log.txt
