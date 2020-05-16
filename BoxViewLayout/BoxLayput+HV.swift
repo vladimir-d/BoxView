@@ -10,63 +10,69 @@ import UIKit
 
 extension BoxLayout {
     
-    struct H {
+    public struct H {
         
         var left: Pin?
         
         var right: Pin?
         
-        var center: CGFloat?
+        var center: Pin?
         
         var semanticDirection: SemanticDirection = .system
 
-        static let zero = H(left: .zero, right: .zero, center: nil)
+        public static let zero = H(left: .zero, right: .zero, center: nil)
         
-        static func align(offset: CGFloat = 0.0, padding: CGFloat? = nil) -> H {
+        public static func align(offset: CGFloat = 0.0, padding: CGFloat? = nil) -> H {
             if let padding = padding {
                 let pin = >=padding
-                return H(left: pin, right: pin, center: offset)
+                return H(left: pin, right: pin, center: ==offset)
             }
             else {
-                return H(left: nil, right: nil, center: offset)
+                return H(left: nil, right: nil, center: ==offset)
             }
             
         }
         
-        static func leftRight(_ left: CGFloat?, _ right: CGFloat?) -> H {
+        public static func leftRight(_ left: CGFloat?, _ right: CGFloat?) -> H {
             return H(left: Pin.eq(left), right: Pin.eq(right), center: nil)
         }
         
-        static let lr = leftRight
+        public static let lr = leftRight
         
-        static func pins(_ left: Pin?, _ right: Pin?) -> H {
+        public static func pins(_ left: Pin?, _ right: Pin?) -> H {
             return H(left: left, right: right, center: nil)
         }
-        
-        static let sideMargins = H(left: Pin.eq(16.0), right: Pin.eq(16.0), center: nil)
+
     }
     
-    struct V {
+    public struct V {
         
         var top: Pin?
         
         var bottom: Pin?
         
-        var center: CGFloat?
+        var center: Pin?
         
-        static let zero = V(top: .zero, bottom: .zero, center: nil)
+        public static let zero = V(top: .zero, bottom: .zero, center: nil)
         
-        static func align(offset: CGFloat = 0.0) -> V {
-            return V(top: nil, bottom: nil, center: offset)
+        public static func align(offset: CGFloat = 0.0, padding: CGFloat? = nil) -> V {
+            if let padding = padding {
+                let pin = >=padding
+                return V(top: pin, bottom: pin, center: ==offset)
+            }
+            else {
+                return V(top: nil, bottom: nil, center: ==offset)
+            }
+            
         }
         
-        static func topBottom(_ top: CGFloat?, _ bottom: CGFloat?) -> V {
+        public static func topBottom(_ top: CGFloat?, _ bottom: CGFloat?) -> V {
             return V(top: Pin.eq(top), bottom: Pin.eq(bottom), center: nil)
         }
         
-        static let tb = topBottom
+        public static let tb = topBottom
         
-        static func pins(_ top: Pin?, _ bottom: Pin?) -> V {
+        public static func pins(_ top: Pin?, _ bottom: Pin?) -> V {
             return V(top: top, bottom: bottom, center: nil)
         }
     }

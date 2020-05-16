@@ -8,9 +8,9 @@
 
 import UIKit
 
-struct BoxLayout {
+public struct BoxLayout {
     
-    static var systemDirectionFactor: CGFloat {
+    public static var systemDirectionFactor: CGFloat {
         switch UIApplication.shared.userInterfaceLayoutDirection {
             case .leftToRight: return 1.0
             case .rightToLeft: return -1.0
@@ -19,21 +19,21 @@ struct BoxLayout {
         }
     }
 
-    static var padding = CGSize(width: 16.0, height: 16.0)
+    public static var padding = CGSize(width: 16.0, height: 16.0)
     
     var h: H
     
     var v: V
     
-    typealias EdgePins =  [BoxLayout.Edge: Pin?]
+    public typealias EdgePins =  [BoxEdge: Pin?]
     
-    static let zero = BoxLayout(h: .zero, v: .zero)
+    public static let zero = BoxLayout(h: .zero, v: .zero)
     
-    static func hv(_ h: H, _ v: V) -> BoxLayout {
+    public static func hv(_ h: H, _ v: V) -> BoxLayout {
         return BoxLayout(h: h, v: v)
     }
     
-    mutating func setPin(_ pin: Pin?, for edge: BoxLayout.Edge) {
+    mutating func setPin(_ pin: Pin?, for edge: BoxEdge) {
         switch edge {
             case .left: h.left = pin
             case .right: h.right = pin
@@ -50,9 +50,8 @@ struct BoxLayout {
         }
         return layout
     }
-
     
-    func with(_ edge: BoxLayout.Edge, _ pin: Pin?) -> BoxLayout {
+    func with(_ edge: BoxEdge, _ pin: Pin?) -> BoxLayout {
         var newLayout = self
         switch edge {
             case .top: newLayout.v.top = pin
@@ -63,7 +62,6 @@ struct BoxLayout {
         }
         return newLayout
     }
-
     
     init(h: H, v: V) {
         self.h = h
@@ -83,72 +81,64 @@ struct BoxLayout {
         return (axis == .vertical) ? v.bottom : h.right
     }
     
-    func beginAttributeForAxis(_ axis: Axis) -> NSLayoutConstraint.Attribute {
-        if axis == .vertical {
-            return .top
-        }
-        else {
-            switch h.semanticDirection {
-                case .system: return .leading
-                case .fixedLTR: return .left
-                case .fixedRTL: return .right
-            }
-        }
+    func center(_ axis: Axis) -> Pin? {
+        return (axis == .vertical) ? v.center : h.center
     }
     
-    func endAttributeForAxis(_ axis: Axis) -> NSLayoutConstraint.Attribute {
-        if axis == .vertical {
-            return .bottom
-        }
-        else {
-            switch h.semanticDirection {
-                case .system: return .trailing
-                case .fixedLTR: return .right
-                case .fixedRTL: return .left
-            }
+    func pinForAxis(_ axis: Axis, position: BoxEdge.Position) -> Pin? {
+        switch position {
+            case .begin: return (axis == .vertical) ? v.top : h.left
+            case .center: return (axis == .vertical) ? v.center : h.center
+            case .end: return (axis == .vertical) ? v.bottom : h.right
         }
     }
-    
-    func centerOffsetFactorForAxis(_ axis: Axis) -> CGFloat {
-        if axis == .vertical {
-            return 1.0
-        }
-        else {
-            switch h.semanticDirection {
-                case .system: return BoxLayout.systemDirectionFactor
-                case .fixedLTR: return 1.0
-                case .fixedRTL: return 1.0
-            }
-        }
-    }
+
 }
 
 
-struct BoxItem {
+public struct BoxItem {
     var view: UIView
     var layout: BoxLayout
     
-    init(view: UIView, layout: BoxLayout = .zero) {
+    public init(view: UIView, layout: BoxLayout = .zero) {
         self.view = view
         self.layout = layout
     }
 }
 
+extension UIEdgeInsets {
+    func begin(_ axis: BoxLayout.Axis) -> CGFloat {
+        return (axis == .vertical) ? self.top : self.left
+    }
+    
+    func end(_ axis: BoxLayout.Axis)  -> CGFloat {
+        return (axis == .vertical) ? self.bottom : self.right
+    }
+    
+    func insetForAxis(_ axis: BoxLayout.Axis, position: BoxEdge.Position)  -> CGFloat {
+        switch position {
+            case .begin: return (axis == .vertical) ? self.top : self.left
+            case .center: return 0.0
+            case .end: return (axis == .vertical) ? self.bottom : self.right
+        }
+    }
+}
+
 extension UIView {
     
-    func hv(_ h: BoxLayout.H, _ v: BoxLayout.V) -> BoxItem {
+    public func hv(_ h: BoxLayout.H, _ v: BoxLayout.V) -> BoxItem {
         return BoxItem(view: self, layout: .hv(h, v))
     }
     
-    func withLayout(_ layout: BoxLayout) -> BoxItem {
+    public func withLayout(_ layout: BoxLayout) -> BoxItem {
         return BoxItem(view: self, layout: layout)
     }
     
-    func withPins(_ pins: BoxLayout.EdgePins) -> BoxItem {
+    public func withPins(_ pins: BoxLayout.EdgePins) -> BoxItem {
         return BoxItem(view: self, layout: .pins(pins))
     }
 
-    var zeroLayout: BoxItem {
+    public var zeroLayout: BoxItem {
         return BoxItem(view: self, layout: .zero)
     }
 }

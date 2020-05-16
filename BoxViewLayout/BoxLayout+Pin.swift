@@ -9,7 +9,8 @@
 import UIKit
 
 extension BoxLayout {
-    struct Pin: ExpressibleByFloatLiteral {
+    
+    public struct Pin: ExpressibleByFloatLiteral {
         
         var value: CGFloat = 0.0
         
@@ -78,11 +79,11 @@ func + (pin1: BoxLayout.Pin?, pin2: BoxLayout.Pin?) -> BoxLayout.Pin? {
 }
 
 prefix operator >=
-prefix func >=(v: CGFloat?) -> BoxLayout.Pin? {
+public prefix func >=(v: CGFloat?) -> BoxLayout.Pin? {
     return .gteq(v)
 }
 
-prefix func >=(v: Double?) -> BoxLayout.Pin? {
+public prefix func >=(v: Double?) -> BoxLayout.Pin? {
     if let v = v {
         return .gteq(CGFloat(v))
     }
@@ -90,11 +91,11 @@ prefix func >=(v: Double?) -> BoxLayout.Pin? {
 }
 
 prefix operator <=
-prefix func <=(v: CGFloat?) -> BoxLayout.Pin? {
+public prefix func <=(v: CGFloat?) -> BoxLayout.Pin? {
     return .lteq(v)
 }
 
-prefix func <=(v: Double?) -> BoxLayout.Pin? {
+public prefix func <=(v: Double?) -> BoxLayout.Pin? {
     if let v = v {
         return .lteq(CGFloat(v))
     }
@@ -102,11 +103,11 @@ prefix func <=(v: Double?) -> BoxLayout.Pin? {
 }
 
 prefix operator ==
-prefix func ==(v: CGFloat?) -> BoxLayout.Pin? {
+public prefix func ==(v: CGFloat?) -> BoxLayout.Pin? {
     return .eq(v)
 }
 
-prefix func ==(v: Double?) -> BoxLayout.Pin? {
+public prefix func ==(v: Double?) -> BoxLayout.Pin? {
     if let v = v {
         return .eq(CGFloat(v))
     }

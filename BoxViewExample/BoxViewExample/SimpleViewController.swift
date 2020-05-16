@@ -30,6 +30,13 @@ class SimpleViewController: BaseViewController {
     }
     
     @objc func onClickButton(sender: UIButton) {
+        for (i, edgeConstraints) in boxView.itemsEdgeConstraints.enumerated() {
+            print("--- view[\(i)]: \(boxView.items[i].view)")
+            for (edge, constr) in edgeConstraints {
+                print("\(edge): \(constr)")
+            }
+        
+        }
         self.navigationController?.pushViewController(MixLayoutViewController(), animated: true)
     }
     

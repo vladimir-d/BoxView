@@ -8,63 +8,69 @@
 
 import UIKit
 
-class BoxView: UIView {
+public class BoxView: UIView {
     
-    init(axis: BoxLayout.Axis = .vertical) {
+    public init(axis: BoxLayout.Axis = .vertical) {
         self.axis = axis
         super.init(frame: .zero)
+        self.translatesAutoresizingMaskIntoConstraints = false
     }
     
     required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        super.init(coder: aDecoder)
     }
     
-    var items:[BoxItem] = [] {
+    public var items:[BoxItem] = [] {
         didSet {
             updateItems()
         }
     }
     
-    var axis: BoxLayout.Axis = .vertical {
+    public var axis: BoxLayout.Axis = .vertical {
         didSet {
             setNeedsUpdateConstraints()
         }
     }
     
-    var insets = UIEdgeInsets.zero {
+    public var insets = UIEdgeInsets.zero {
         didSet {
             setNeedsUpdateConstraints()
         }
     }
     
-    var spacing: CGFloat = 0.0 {
+    public var spacing: CGFloat = 0.0 {
         didSet {
             setNeedsUpdateConstraints()
         }
     }
     
-    func setViews(_ views: [UIView], layout: BoxLayout = .zero) {
+    public private(set) var managedConstraints = [NSLayoutConstraint]()
+    public private(set) var itemsEdgeConstraints = [BoxEdge.Constraints]()
+    
+    public func setViews(_ views: [UIView], layout: BoxLayout = .zero) {
         items = [BoxItem]()
         for view in views {
             items.append(view.withLayout(layout))
         }
     }
     
-    func setLayout(_ layout: BoxLayout, for view: UIView?) {
+    public func setLayout(_ layout: BoxLayout, for view: UIView?) {
         if let index = items.firstIndex(where: { $0.view == view}) {
             items[index].layout = layout
             setNeedsUpdateConstraints()
         }
     }
     
-    func animateChangesWithDurations(_ duration: TimeInterval) {
+    public func animateChangesWithDurations(_ duration: TimeInterval) {
         UIView.animate(withDuration: duration) {
             self.superview?.layoutIfNeeded()
         }
     }
 
-    override func updateConstraints() {
-        removeSubviewsConstraints()
+    override public func updateConstraints() {
+        self.removeConstraints(managedConstraints)
+        managedConstraints = []
+        itemsEdgeConstraints = []
         addItemsConstraints()
         super.updateConstraints()
     }
@@ -96,12 +102,14 @@ class BoxView: UIView {
         guard items.count > 0 else { return }
         var beginAttr: NSLayoutConstraint.Attribute!
         var endAttr: NSLayoutConstraint.Attribute!
+        var edgeConstraints: BoxEdge.Constraints = [:]
         for item in items {
             let view = item.view
             let layout = item.layout
+            
             if beginAttr == nil {
-                beginAttr = layout.beginAttributeForAxis(axis)
-                endAttr = layout.endAttributeForAxis(axis)
+                beginAttr = attributeForEdge(axis.beginEdge)
+                endAttr = attributeForEdge(axis.endEdge)
             }
             if let prevItem = prevItem {
                 guard let itemBegin = layout.begin(axis), let itemEnd = prevItem.layout.end(axis) else {
@@ -110,21 +118,30 @@ class BoxView: UIView {
                 guard let sumPin = itemBegin + itemEnd else {
                     sumPinWarning(); return
                 }
-                view.alPin(beginAttr, to: endAttr, of: prevItem.view, constant: sumPin.value + spacing, relation: sumPin.relation)
+                let toPrev = view.alPin(beginAttr, to: endAttr, of: prevItem.view, constant: sumPin.value + spacing, relation: sumPin.relation)
+                managedConstraints.append(toPrev)
+                edgeConstraints[endAttr.edge!] = toPrev
+                itemsEdgeConstraints.append(edgeConstraints)
+                edgeConstraints = [beginAttr.edge!: toPrev]
             }
             else{
                 guard let itemBegin = layout.begin(axis) else {
                     axisWarning(); return
                 }
-                view.alPin(beginAttr, to: beginAttr, of: self, constant: itemBegin.value + begin, relation: itemBegin.relation)
+                let toBegin = view.alPin(beginAttr, to: beginAttr, of: self, constant: itemBegin.value + begin, relation: itemBegin.relation)
+                managedConstraints.append(toBegin)
+                edgeConstraints = [beginAttr.edge!: toBegin]
             }
-            pinAccross(view: view, layout: layout)
+            pinAccross(view: view, layout: layout, edgeConstraints: &edgeConstraints)
             prevItem = item
         }
         guard let itemEnd = prevItem?.layout.end(axis) else {
             axisWarning(); return
         }
-        self.alPin(endAttr, to: endAttr, of: prevItem!.view, constant: itemEnd.value + end, relation: itemEnd.relation)
+        let toEnd = self.alPin(endAttr, to: endAttr, of: prevItem!.view, constant: itemEnd.value + end, relation: itemEnd.relation)
+        managedConstraints.append(toEnd)
+        edgeConstraints[endAttr.edge!] = toEnd
+        itemsEdgeConstraints.append(edgeConstraints)
     }
 
     
@@ -148,32 +165,85 @@ class BoxView: UIView {
         assertionFailure("Joining constraints relations must be either same or one of them must be NSLayoutConstraint.Relation.equal")
     }
     
-    private func pinAccross(view: UIView, layout: BoxLayout) {
-        if (axis == .vertical) {
-            let beginAttr = layout.beginAttributeForAxis(.horizontal)
-            let endAttr = layout.endAttributeForAxis(.horizontal)
-            if let left = layout.h.left {
-                view.alPin(beginAttr, to: beginAttr, of: self, constant: left.value + insets.left, relation: left.relation)
-            }
-            if let right = layout.h.right {
-                self.alPin(endAttr, to: endAttr, of: view, constant: right.value + insets.right, relation: right.relation)
-            }
-            if let center = layout.h.center {
-                view.alPin(.centerX, to: .centerX, of: self, constant: center, relation: .equal)
-            }
-        }
-        else {
-            if let top = layout.v.top {
-                view.alPin(.top, to: .top, of: self, constant: top.value + insets.top, relation: top.relation)
-            }
-            if let bottom = layout.v.bottom {
-                view.alPin(.bottom, to: .bottom, of: self, constant: -(bottom.value + insets.bottom), relation: bottom.relation)
-            }
-            if let center = layout.v.center {
-                view.alPin(.centerY, to: .centerY, of: self, constant: center, relation: .equal)
+    private func pinAccross(view: UIView, layout: BoxLayout, edgeConstraints: inout BoxEdge.Constraints) {
+        let otherAxis = axis.other
+        for pos: BoxEdge.Position in [.begin, .center, .end] {
+            if let pin = layout.pinForAxis(otherAxis, position: pos) {
+                let edge = otherAxis.edgeForPosition(pos)
+                let attr = attributeForEdge(edge)
+                let constr: NSLayoutConstraint
+                if (pos == .end) {
+                    constr = self.alPin(attr, to: attr, of: view, constant: pin.value + insets.insetForAxis(otherAxis, position: pos), relation: pin.relation)
+                }
+                else {
+                    constr = view.alPin(attr, to: attr, of: self, constant: pin.value + insets.insetForAxis(otherAxis, position: pos), relation: pin.relation)
+                }
+                managedConstraints.append(constr)
+                edgeConstraints[edge] = constr
             }
         }
     }
+    func attributeForEdge(_ edge: BoxEdge) -> NSLayoutConstraint.Attribute {
+            switch edge {
+//                case .left: {
+//                        return .left
+////                    switch h.semanticDirection {
+//    //                case .system: return .leading
+//    //                case .fixedLTR: return .left
+//    //                case .fixedRTL: return .right
+//    //            }
+//                }
+                case .left: return .left
+                case .right: return .right
+                case .top: return .top
+                case .bottom: return .bottom
+                case .centerX: return .centerX
+                case .centerY: return .centerY
+            }
+        }
+    
+//    func beginEdgeForAxis(_ axis: Axis) -> NSLayoutConstraint.Attribute {
+//        if axis == .vertical {
+//            return .top
+//        }
+//        else {
+//            switch h.semanticDirection {
+//                case .system: return .leading
+//                case .fixedLTR: return .left
+//                case .fixedRTL: return .right
+//            }
+//        }
+//    }
+//
+//    func endAttributeForAxis(_ axis: Axis) -> NSLayoutConstraint.Attribute {
+//        if axis == .vertical {
+//            return .bottom
+//        }
+//        else {
+//            switch h.semanticDirection {
+//                case .system: return .trailing
+//                case .fixedLTR: return .right
+//                case .fixedRTL: return .left
+//            }
+//        }
+//    }
+//
+//    func centerAttributeForAxis(_ axis: Axis) -> NSLayoutConstraint.Attribute {
+//        return (axis == .vertical) ? .centerY : .centerX
+//    }
+    
+//    func centerOffsetFactorForAxis(_ axis: Axis) -> CGFloat {
+//        if axis == .vertical {
+//            return 1.0
+//        }
+//        else {
+//            switch h.semanticDirection {
+//                case .system: return BoxLayout.systemDirectionFactor
+//                case .fixedLTR: return 1.0
+//                case .fixedRTL: return 1.0
+//            }
+//        }
+//    }
 }
 
 

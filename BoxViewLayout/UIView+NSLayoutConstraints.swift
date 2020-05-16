@@ -8,13 +8,13 @@
 
 import UIKit
 
-typealias  LayoutAttributeValues = [NSLayoutConstraint.Attribute: CGFloat]
-typealias  LayoutAttributeConstraints = [NSLayoutConstraint.Attribute: NSLayoutConstraint]
+public typealias  LayoutAttributeValues = [NSLayoutConstraint.Attribute: CGFloat]
+public typealias  LayoutAttributeConstraints = [NSLayoutConstraint.Attribute: NSLayoutConstraint]
 
 extension UIView {
     
     @discardableResult
-    func alPin(_ attribute: NSLayoutConstraint.Attribute, to toAttribute: NSLayoutConstraint.Attribute, of view: UIView, constant: CGFloat = 0.0, relation: NSLayoutConstraint.Relation = .equal) -> NSLayoutConstraint {
+    public func alPin(_ attribute: NSLayoutConstraint.Attribute, to toAttribute: NSLayoutConstraint.Attribute, of view: UIView, constant: CGFloat = 0.0, relation: NSLayoutConstraint.Relation = .equal) -> NSLayoutConstraint {
         self.translatesAutoresizingMaskIntoConstraints = false
         let constraint = NSLayoutConstraint(
             item: self,
@@ -29,7 +29,7 @@ extension UIView {
     }
     
     @discardableResult
-    func alPinToSuperview(_ attribute: NSLayoutConstraint.Attribute, constant: CGFloat = 0.0, relation: NSLayoutConstraint.Relation = .equal) -> NSLayoutConstraint? {
+    public func alPinToSuperview(_ attribute: NSLayoutConstraint.Attribute, constant: CGFloat = 0.0, relation: NSLayoutConstraint.Relation = .equal) -> NSLayoutConstraint? {
         self.translatesAutoresizingMaskIntoConstraints = false
         guard let sv = superview else {
             return nil
@@ -58,7 +58,7 @@ extension UIView {
     }
     
     @discardableResult
-    func alToSuperviewWithEdgeValues(_ dict: LayoutAttributeValues) -> LayoutAttributeConstraints {
+    public func alToSuperviewWithEdgeValues(_ dict: LayoutAttributeValues) -> LayoutAttributeConstraints {
         var constraints = LayoutAttributeConstraints()
         if let sv = superview {
             for (attr, value) in dict {
@@ -87,9 +87,9 @@ extension UIView {
 
 extension LayoutAttributeValues {
 
-    static let zero = all(0.0)
+    public static let zero = all(0.0)
 
-    static func all(_ value: CGFloat = 0.0, excluding edge: NSLayoutConstraint.Attribute? = nil) -> LayoutAttributeValues {
+    public static func all(_ value: CGFloat = 0.0, excluding edge: NSLayoutConstraint.Attribute? = nil) -> LayoutAttributeValues {
         var dict: LayoutAttributeValues = [.top: value, .bottom: value, .left: value, .right: value]
         if let edge = edge {
             dict[edge] = nil
