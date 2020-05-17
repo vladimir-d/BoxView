@@ -13,9 +13,14 @@ public typealias  LayoutAttributeConstraints = [NSLayoutConstraint.Attribute: NS
 
 extension UIView {
     
+    public class func newAL() -> Self {
+        let v = Self.init()
+        v.translatesAutoresizingMaskIntoConstraints = false
+        return v
+    }
+    
     @discardableResult
     public func alPin(_ attribute: NSLayoutConstraint.Attribute, to toAttribute: NSLayoutConstraint.Attribute, of view: UIView, constant: CGFloat = 0.0, relation: NSLayoutConstraint.Relation = .equal) -> NSLayoutConstraint {
-        self.translatesAutoresizingMaskIntoConstraints = false
         let constraint = NSLayoutConstraint(
             item: self,
             attribute: attribute,
@@ -24,7 +29,7 @@ extension UIView {
             attribute: toAttribute,
             multiplier: 1.0,
             constant: constant)
-        commonSuperviewWith(view)?.addConstraint(constraint)
+        NSLayoutConstraint.activate([constraint])
         return constraint
     }
     
@@ -46,42 +51,30 @@ extension UIView {
         return constraint
     }
     
-    func commonSuperviewWith(_ view: UIView) -> UIView? {
-        var tryView: UIView? = self
-        repeat {
-            if view.isDescendant(of: tryView!) {
-                return tryView
-            }
-            tryView = tryView?.superview
-        } while tryView != nil
-        return nil
-    }
-    
     @discardableResult
     public func alToSuperviewWithEdgeValues(_ dict: LayoutAttributeValues) -> LayoutAttributeConstraints {
         var constraints = LayoutAttributeConstraints()
         if let sv = superview {
             for (attr, value) in dict {
-                if (attr == .right) || (attr == .bottom) {
-                    constraints[attr] = sv.alPin(attr, to: attr, of: self, constant: value, relation: .equal)
+                var const = value
+                if (attr == .right) || (attr == .bottom) || (attr == .trailing) {
+                    const = -value
                 }
-                else {
-                    constraints[attr] = alPin(attr, to: attr, of: sv, constant: value, relation: .equal)
-                }
+                let constraint = NSLayoutConstraint(
+                    item: self,
+                    attribute: attr,
+                    relatedBy: .equal,
+                    toItem: sv,
+                    attribute: attr,
+                    multiplier: 1.0,
+                    constant: const)
+                constraints[attr] = constraint
             }
         }
+        NSLayoutConstraint.activate(Array(constraints.values))
         return constraints
     }
-    
-    func removeSubviewsConstraints() {
-        var svConstraints = [NSLayoutConstraint]()
-        for cnstr in constraints {
-            if cnstr.firstItem != nil && cnstr.secondItem != nil {
-                svConstraints.append(cnstr)
-            }
-        }
-        removeConstraints(svConstraints)
-    }
+
 }
 
 

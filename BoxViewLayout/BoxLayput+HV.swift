@@ -12,13 +12,11 @@ extension BoxLayout {
     
     public struct H {
         
-        var left: Pin?
+        public var left: Pin?
         
-        var right: Pin?
+        public var right: Pin?
         
-        var center: Pin?
-        
-        var semanticDirection: SemanticDirection = .system
+        public var center: Pin?
 
         public static let zero = H(left: .zero, right: .zero, center: nil)
         
@@ -34,24 +32,26 @@ extension BoxLayout {
         }
         
         public static func leftRight(_ left: CGFloat?, _ right: CGFloat?) -> H {
-            return H(left: Pin.eq(left), right: Pin.eq(right), center: nil)
+            return H(left: ==left, right: ==right, center: nil)
         }
         
         public static let lr = leftRight
         
-        public static func pins(_ left: Pin?, _ right: Pin?) -> H {
+        public static func leftRightPins(_ left: Pin?, _ right: Pin?) -> H {
             return H(left: left, right: right, center: nil)
         }
+        
+        public static let pins = leftRightPins
 
     }
     
     public struct V {
         
-        var top: Pin?
+        public var top: Pin?
         
-        var bottom: Pin?
+        public var bottom: Pin?
         
-        var center: Pin?
+        public var center: Pin?
         
         public static let zero = V(top: .zero, bottom: .zero, center: nil)
         
@@ -67,13 +67,15 @@ extension BoxLayout {
         }
         
         public static func topBottom(_ top: CGFloat?, _ bottom: CGFloat?) -> V {
-            return V(top: Pin.eq(top), bottom: Pin.eq(bottom), center: nil)
+            return V(top: ==top, bottom: ==bottom, center: nil)
+        }
+        
+        public static func topBottomPins(_ top: Pin?, _ bottom: Pin?) -> V {
+            return V(top: top, bottom: bottom, center: nil)
         }
         
         public static let tb = topBottom
         
-        public static func pins(_ top: Pin?, _ bottom: Pin?) -> V {
-            return V(top: top, bottom: bottom, center: nil)
-        }
+        public static let pins = topBottomPins
     }
 }

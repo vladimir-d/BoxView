@@ -8,7 +8,7 @@
 
 import UIKit
 
-public class BoxView: UIView {
+open class BoxView: UIView {
     
     public init(axis: BoxLayout.Axis = .vertical) {
         self.axis = axis
@@ -16,9 +16,15 @@ public class BoxView: UIView {
         self.translatesAutoresizingMaskIntoConstraints = false
     }
     
-    required init?(coder aDecoder: NSCoder) {
+    public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
+    
+    // MARK: - Public
+    
+    public private(set) var managedConstraints = [NSLayoutConstraint]()
+    
+    public private(set) var itemsEdgeConstraints = [BoxEdge.Constraints]()
     
     public var items:[BoxItem] = [] {
         didSet {
@@ -43,9 +49,6 @@ public class BoxView: UIView {
             setNeedsUpdateConstraints()
         }
     }
-    
-    public private(set) var managedConstraints = [NSLayoutConstraint]()
-    public private(set) var itemsEdgeConstraints = [BoxEdge.Constraints]()
     
     public func setViews(_ views: [UIView], layout: BoxLayout = .zero) {
         items = [BoxItem]()
@@ -100,17 +103,14 @@ public class BoxView: UIView {
     func addItemsConstraints() {
         var prevItem: BoxItem? = nil
         guard items.count > 0 else { return }
-        var beginAttr: NSLayoutConstraint.Attribute!
-        var endAttr: NSLayoutConstraint.Attribute!
+        let beginEdge = axis.edgeForPosition(.begin)
+        let endEdge = axis.edgeForPosition(.end)
+        let beginAttr = attributeForEdge(beginEdge)
+        let endAttr = attributeForEdge(endEdge)
         var edgeConstraints: BoxEdge.Constraints = [:]
         for item in items {
             let view = item.view
             let layout = item.layout
-            
-            if beginAttr == nil {
-                beginAttr = attributeForEdge(axis.beginEdge)
-                endAttr = attributeForEdge(axis.endEdge)
-            }
             if let prevItem = prevItem {
                 guard let itemBegin = layout.begin(axis), let itemEnd = prevItem.layout.end(axis) else {
                     axisWarning(); return
@@ -120,9 +120,9 @@ public class BoxView: UIView {
                 }
                 let toPrev = view.alPin(beginAttr, to: endAttr, of: prevItem.view, constant: sumPin.value + spacing, relation: sumPin.relation)
                 managedConstraints.append(toPrev)
-                edgeConstraints[endAttr.edge!] = toPrev
+                edgeConstraints[endEdge] = toPrev
                 itemsEdgeConstraints.append(edgeConstraints)
-                edgeConstraints = [beginAttr.edge!: toPrev]
+                edgeConstraints = [beginEdge: toPrev]
             }
             else{
                 guard let itemBegin = layout.begin(axis) else {
@@ -130,7 +130,7 @@ public class BoxView: UIView {
                 }
                 let toBegin = view.alPin(beginAttr, to: beginAttr, of: self, constant: itemBegin.value + begin, relation: itemBegin.relation)
                 managedConstraints.append(toBegin)
-                edgeConstraints = [beginAttr.edge!: toBegin]
+                edgeConstraints = [beginEdge: toBegin]
             }
             pinAccross(view: view, layout: layout, edgeConstraints: &edgeConstraints)
             prevItem = item
@@ -140,7 +140,7 @@ public class BoxView: UIView {
         }
         let toEnd = self.alPin(endAttr, to: endAttr, of: prevItem!.view, constant: itemEnd.value + end, relation: itemEnd.relation)
         managedConstraints.append(toEnd)
-        edgeConstraints[endAttr.edge!] = toEnd
+        edgeConstraints[endEdge] = toEnd
         itemsEdgeConstraints.append(edgeConstraints)
     }
 
@@ -183,67 +183,44 @@ public class BoxView: UIView {
             }
         }
     }
-    func attributeForEdge(_ edge: BoxEdge) -> NSLayoutConstraint.Attribute {
+    
+    private func attributeForEdge(_ edge: BoxEdge) -> NSLayoutConstraint.Attribute {
             switch edge {
-//                case .left: {
-//                        return .left
-////                    switch h.semanticDirection {
-//    //                case .system: return .leading
-//    //                case .fixedLTR: return .left
-//    //                case .fixedRTL: return .right
-//    //            }
-//                }
-                case .left: return .left
-                case .right: return .right
+                case .left:
+                    switch semanticContentAttribute {
+                        case .unspecified: return .leading
+                        case .forceRightToLeft: return .right
+                        default: return .left
+                    }
+                case .right:
+                    switch semanticContentAttribute {
+                        case .unspecified: return .trailing
+                        case .forceRightToLeft: return .left
+                        default: return .right
+                    }
                 case .top: return .top
                 case .bottom: return .bottom
                 case .centerX: return .centerX
                 case .centerY: return .centerY
             }
         }
+
     
-//    func beginEdgeForAxis(_ axis: Axis) -> NSLayoutConstraint.Attribute {
-//        if axis == .vertical {
-//            return .top
-//        }
-//        else {
-//            switch h.semanticDirection {
-//                case .system: return .leading
-//                case .fixedLTR: return .left
-//                case .fixedRTL: return .right
-//            }
-//        }
-//    }
-//
-//    func endAttributeForAxis(_ axis: Axis) -> NSLayoutConstraint.Attribute {
-//        if axis == .vertical {
-//            return .bottom
-//        }
-//        else {
-//            switch h.semanticDirection {
-//                case .system: return .trailing
-//                case .fixedLTR: return .right
-//                case .fixedRTL: return .left
-//            }
-//        }
-//    }
-//
-//    func centerAttributeForAxis(_ axis: Axis) -> NSLayoutConstraint.Attribute {
-//        return (axis == .vertical) ? .centerY : .centerX
-//    }
+    func centerOffsetFactorForAxis(_ axis: BoxLayout.Axis) -> CGFloat {
+        if axis == .vertical {
+            return 1.0
+        }
+        else {
+            let dir = UIView.userInterfaceLayoutDirection(for: semanticContentAttribute)
+            switch dir {
+                case .leftToRight: return 1.0
+                case .rightToLeft: return -1.0
+                @unknown default:
+                return 1.0
+            }
+        }
+    }
     
-//    func centerOffsetFactorForAxis(_ axis: Axis) -> CGFloat {
-//        if axis == .vertical {
-//            return 1.0
-//        }
-//        else {
-//            switch h.semanticDirection {
-//                case .system: return BoxLayout.systemDirectionFactor
-//                case .fixedLTR: return 1.0
-//                case .fixedRTL: return 1.0
-//            }
-//        }
-//    }
 }
 
 

@@ -20,8 +20,8 @@ extension UIView {
 
 extension UILabel {
     
-    class func withText(_ text: String?, color: UIColor = .clear, numberOfLines: Int = 0) -> UILabel {
-        let label = UILabel()
+    class func alWithText(_ text: String?, color: UIColor = .clear, numberOfLines: Int = 0) -> UILabel {
+        let label = UILabel.newAL()
         label.text = text
         label.backgroundColor = color
         label.numberOfLines = numberOfLines
@@ -32,8 +32,8 @@ extension UILabel {
 
 extension UIButton {
     
-    class func withText(_ text: String?, color: UIColor = .clear) -> UIButton {
-        let button = UIButton()
+    class func alWithText(_ text: String?, color: UIColor = .clear) -> UIButton {
+        let button = UIButton.newAL()
         button.setTitle(text, for: .normal)
         button.backgroundColor = color
         return button

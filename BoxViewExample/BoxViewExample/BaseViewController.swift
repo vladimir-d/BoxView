@@ -10,7 +10,7 @@ import UIKit
 
 class BaseViewController: UIViewController {
     
-    let scrollView = UIScrollView()
+    let scrollView = UIScrollView.newAL()
     let boxView = BoxView()
     
     override func viewDidLoad() {

@@ -12,9 +12,9 @@ extension BoxLayout {
     
     public struct Pin: ExpressibleByFloatLiteral {
         
-        var value: CGFloat = 0.0
+        public var value: CGFloat = 0.0
         
-        var relation: NSLayoutConstraint.Relation = .equal
+        public var relation: NSLayoutConstraint.Relation = .equal
         
         public init(value: CGFloat = 0.0, relation: NSLayoutConstraint.Relation = .equal) {
             self.value = value
@@ -29,9 +29,9 @@ extension BoxLayout {
             self = Pin(value: CGFloat(value), relation: .equal)
         }
         
-        static let zero = Pin(value: 0.0, relation: .equal)
+        public static let zero = Pin(value: 0.0, relation: .equal)
         
-        static func eq(_ value: CGFloat?) -> Pin? {
+        public static func equal(_ value: CGFloat?) -> Pin? {
             if let value = value {
                 return Pin(value: value, relation: .equal)
             }
@@ -40,7 +40,7 @@ extension BoxLayout {
             }
         }
         
-        static func gteq(_ value: CGFloat? = 0.0) -> Pin? {
+        public static func greaterThanOrEqual(_ value: CGFloat? = 0.0) -> Pin? {
             if let value = value {
                 return Pin(value: value, relation: .greaterThanOrEqual)
             }
@@ -49,7 +49,7 @@ extension BoxLayout {
             }
         }
         
-        static func lteq(_ value: CGFloat?) -> Pin? {
+        public static func lessThanOrEqual(_ value: CGFloat?) -> Pin? {
             if let value = value {
                 return Pin(value: value, relation: .lessThanOrEqual)
             }
@@ -80,36 +80,36 @@ func + (pin1: BoxLayout.Pin?, pin2: BoxLayout.Pin?) -> BoxLayout.Pin? {
 
 prefix operator >=
 public prefix func >=(v: CGFloat?) -> BoxLayout.Pin? {
-    return .gteq(v)
+    return .greaterThanOrEqual(v)
 }
 
 public prefix func >=(v: Double?) -> BoxLayout.Pin? {
     if let v = v {
-        return .gteq(CGFloat(v))
+        return .greaterThanOrEqual(CGFloat(v))
     }
     return nil
 }
 
 prefix operator <=
 public prefix func <=(v: CGFloat?) -> BoxLayout.Pin? {
-    return .lteq(v)
+    return .lessThanOrEqual(v)
 }
 
 public prefix func <=(v: Double?) -> BoxLayout.Pin? {
     if let v = v {
-        return .lteq(CGFloat(v))
+        return .lessThanOrEqual(CGFloat(v))
     }
     return nil
 }
 
 prefix operator ==
 public prefix func ==(v: CGFloat?) -> BoxLayout.Pin? {
-    return .eq(v)
+    return .equal(v)
 }
 
 public prefix func ==(v: Double?) -> BoxLayout.Pin? {
     if let v = v {
-        return .eq(CGFloat(v))
+        return .equal(CGFloat(v))
     }
     return nil
 }

@@ -18,23 +18,13 @@ public enum BoxEdge  {
 
     public typealias Constraints = [BoxEdge: NSLayoutConstraint]
     
-//    var attr: NSLayoutConstraint.Attribute {
-//        switch self {
-//            case .left: return .left
-//            case .right: return .right
-//            case .top: return .top
-//            case .bottom: return .bottom
-//            case .centerX: return .centerX
-//            case .centerY: return .centerY
-//        }
-//    }
-    
     public enum Position {
         case begin, center, end
     }
 }
 
 extension NSLayoutConstraint.Attribute {
+    
     var edge: BoxEdge? {
         switch self {
             case .left: return .left
@@ -49,40 +39,13 @@ extension NSLayoutConstraint.Attribute {
 }
 
 extension BoxLayout {
-    
-
-//    public enum Edge  {
-//        case top, left, right, bottom, centerX, centerY
-//        
-//        public typealias Values = [Edge: CGFloat]
-//        
-//        public typealias Constraints = [Edge: NSLayoutConstraint]
-//    }
-    
-    public enum SemanticDirection {
-        case system, fixedLTR, fixedRTL
-    }
         
     public enum Axis {
         
-        case horizontal
+        case horizontal, vertical
         
-        case vertical
-        
-        var other: Axis {
+        public var other: Axis {
             return (self == .vertical) ? .horizontal : .vertical
-        }
-        
-        var beginEdge: BoxEdge {
-            return (self == .vertical) ? .top : .left
-        }
-        
-        var endEdge: BoxEdge {
-            return (self == .vertical) ? .bottom : .right
-        }
-        
-        var centerEdge: BoxEdge {
-            return (self == .vertical) ? .centerY : .centerX
         }
         
         func edgeForPosition(_ position: BoxEdge.Position) -> BoxEdge {
@@ -95,4 +58,23 @@ extension BoxLayout {
         
     }
         
+}
+
+extension UIEdgeInsets {
+    
+    func begin(_ axis: BoxLayout.Axis) -> CGFloat {
+        return (axis == .vertical) ? self.top : self.left
+    }
+    
+    func end(_ axis: BoxLayout.Axis)  -> CGFloat {
+        return (axis == .vertical) ? self.bottom : self.right
+    }
+    
+    func insetForAxis(_ axis: BoxLayout.Axis, position: BoxEdge.Position)  -> CGFloat {
+        switch position {
+            case .begin: return (axis == .vertical) ? self.top : self.left
+            case .center: return 0.0
+            case .end: return (axis == .vertical) ? self.bottom : self.right
+        }
+    }
 }

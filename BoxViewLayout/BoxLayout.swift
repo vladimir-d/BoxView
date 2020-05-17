@@ -10,30 +10,31 @@ import UIKit
 
 public struct BoxLayout {
     
-    public static var systemDirectionFactor: CGFloat {
-        switch UIApplication.shared.userInterfaceLayoutDirection {
-            case .leftToRight: return 1.0
-            case .rightToLeft: return -1.0
-            @unknown default:
-            return 1.0
-        }
-    }
+    public typealias EdgePins =  [BoxEdge: Pin?]
 
     public static var padding = CGSize(width: 16.0, height: 16.0)
     
-    var h: H
+    public var h: H
     
-    var v: V
+    public var v: V
     
-    public typealias EdgePins =  [BoxEdge: Pin?]
+    public init(h: H, v: V) {
+        self.h = h
+        self.v = v
+    }
     
+    public init(top: CGFloat?, left: CGFloat?, bottom: CGFloat?, right: CGFloat?) {
+        self.h = H(left: ==left, right: ==right, center: nil)
+        self.v = V(top: ==top, bottom: ==bottom, center: nil)
+    }
+
     public static let zero = BoxLayout(h: .zero, v: .zero)
     
     public static func hv(_ h: H, _ v: V) -> BoxLayout {
         return BoxLayout(h: h, v: v)
     }
     
-    mutating func setPin(_ pin: Pin?, for edge: BoxEdge) {
+    public mutating func setPin(_ pin: Pin?, for edge: BoxEdge) {
         switch edge {
             case .left: h.left = pin
             case .right: h.right = pin
@@ -43,7 +44,7 @@ public struct BoxLayout {
         }
     }
     
-    static func pins(_ pins: EdgePins) -> BoxLayout {
+    public static func withEdgePins(_ pins: EdgePins) -> BoxLayout {
         var layout = BoxLayout.zero
         for (edge, pin) in pins {
             layout.setPin(pin, for: edge)
@@ -51,7 +52,7 @@ public struct BoxLayout {
         return layout
     }
     
-    func with(_ edge: BoxEdge, _ pin: Pin?) -> BoxLayout {
+    public func with(_ edge: BoxEdge, _ pin: Pin?) -> BoxLayout {
         var newLayout = self
         switch edge {
             case .top: newLayout.v.top = pin
@@ -61,16 +62,6 @@ public struct BoxLayout {
             default: ()
         }
         return newLayout
-    }
-    
-    init(h: H, v: V) {
-        self.h = h
-        self.v = v
-    }
-    
-    init(top: CGFloat?, left: CGFloat?, bottom: CGFloat?, right: CGFloat?) {
-        self.h = H(left: Pin.eq(left), right: Pin.eq(right), center: nil)
-        self.v = V(top: Pin.eq(top), bottom: Pin.eq(bottom), center: nil)
     }
     
     func begin(_ axis: Axis) -> Pin? {
@@ -96,49 +87,4 @@ public struct BoxLayout {
 }
 
 
-public struct BoxItem {
-    var view: UIView
-    var layout: BoxLayout
-    
-    public init(view: UIView, layout: BoxLayout = .zero) {
-        self.view = view
-        self.layout = layout
-    }
-}
 
-extension UIEdgeInsets {
-    func begin(_ axis: BoxLayout.Axis) -> CGFloat {
-        return (axis == .vertical) ? self.top : self.left
-    }
-    
-    func end(_ axis: BoxLayout.Axis)  -> CGFloat {
-        return (axis == .vertical) ? self.bottom : self.right
-    }
-    
-    func insetForAxis(_ axis: BoxLayout.Axis, position: BoxEdge.Position)  -> CGFloat {
-        switch position {
-            case .begin: return (axis == .vertical) ? self.top : self.left
-            case .center: return 0.0
-            case .end: return (axis == .vertical) ? self.bottom : self.right
-        }
-    }
-}
-
-extension UIView {
-    
-    public func hv(_ h: BoxLayout.H, _ v: BoxLayout.V) -> BoxItem {
-        return BoxItem(view: self, layout: .hv(h, v))
-    }
-    
-    public func withLayout(_ layout: BoxLayout) -> BoxItem {
-        return BoxItem(view: self, layout: layout)
-    }
-    
-    public func withPins(_ pins: BoxLayout.EdgePins) -> BoxItem {
-        return BoxItem(view: self, layout: .pins(pins))
-    }
-
-    public var zeroLayout: BoxItem {
-        return BoxItem(view: self, layout: .zero)
-    }
-}
