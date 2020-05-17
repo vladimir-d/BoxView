@@ -94,6 +94,7 @@ open class BoxView: UIView {
         }
         for view in itemViews {
             if !subviews.contains(view) {
+                view.translatesAutoresizingMaskIntoConstraints = false
                 addSubview(view)
             }
         }
