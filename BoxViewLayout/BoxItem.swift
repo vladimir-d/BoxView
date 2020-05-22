@@ -62,15 +62,31 @@ extension UIView {
     }
     
     public func pinLeft(_ leftPin: BoxLayout.Pin?) -> BoxItem {
-        return BoxItem(view: self, layout: .hv(.pins(leftPin, nil), .pins(nil, nil)))
+        return BoxItem(view: self, layout: .hv(.pins(leftPin, 0.0), .zero))
     }
     
     public func pinLeftRight(_ leftPin: BoxLayout.Pin?, _ rightPin: BoxLayout.Pin?) -> BoxItem {
-        return BoxItem(view: self, layout: .hv(.pins(leftPin, rightPin), .pins(nil, nil)))
+        return BoxItem(view: self, layout: .hv(.pins(leftPin, rightPin), .zero))
     }
 
     public func withInsets(_ insets: UIEdgeInsets?) -> BoxItem {
         return BoxItem(view: self, layout: .hv(.lr(insets?.left, insets?.right), .tb(insets?.top, insets?.bottom)))
     }
 
+}
+
+extension Array where Element: UIView {
+    
+    public func hv(_ h: BoxLayout.H, _ v: BoxLayout.V) -> [BoxItem] {
+        let layuot = BoxLayout.hv(h, v)
+        return self.map{BoxItem(view: $0, layout: layuot)}
+    }
+    
+    public func withLayout(_ layout: BoxLayout) -> [BoxItem] {
+        return self.map{BoxItem(view: $0, layout: layout)}
+    }
+    
+    public var withZeroLayout: [BoxItem] {
+        return self.map{BoxItem(view: $0, layout: .zero)}
+    }
 }
