@@ -54,23 +54,26 @@ extension UIView {
     @discardableResult
     public func alToSuperviewWithEdgeValues(_ dict: LayoutAttributeValues) -> LayoutAttributeConstraints {
         var constraints = LayoutAttributeConstraints()
-        if let sv = superview {
-            for (attr, value) in dict {
-                var const = value
-                if (attr == .right) || (attr == .bottom) || (attr == .trailing) {
-                    const = -value
-                }
-                let constraint = NSLayoutConstraint(
-                    item: self,
-                    attribute: attr,
-                    relatedBy: .equal,
-                    toItem: sv,
-                    attribute: attr,
-                    multiplier: 1.0,
-                    constant: const)
-                constraints[attr] = constraint
-            }
+        guard let sv = superview else {
+            assertionFailure("Can't add constraints as superview is nil for \(self)")
+            return constraints
         }
+        for (attr, value) in dict {
+            var const = value
+            if (attr == .right) || (attr == .bottom) || (attr == .trailing) {
+                const = -value
+            }
+            let constraint = NSLayoutConstraint(
+                item: self,
+                attribute: attr,
+                relatedBy: .equal,
+                toItem: sv,
+                attribute: attr,
+                multiplier: 1.0,
+                constant: const)
+            constraints[attr] = constraint
+        }
+        
         NSLayoutConstraint.activate(Array(constraints.values))
         return constraints
     }
