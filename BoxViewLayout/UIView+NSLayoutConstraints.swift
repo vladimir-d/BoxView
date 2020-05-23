@@ -77,6 +77,68 @@ extension UIView {
         NSLayoutConstraint.activate(Array(constraints.values))
         return constraints
     }
+    
+    @discardableResult
+    func alSetHeight(_ height: CGFloat, relation: NSLayoutConstraint.Relation = .equal) -> NSLayoutConstraint {
+        let constr: NSLayoutConstraint
+        switch relation {
+            case .greaterThanOrEqual: constr = self.heightAnchor.constraint(greaterThanOrEqualToConstant: height)
+            case .lessThanOrEqual: constr = self.heightAnchor.constraint(lessThanOrEqualToConstant: height)
+            case .equal: fallthrough
+            @unknown default: constr = self.heightAnchor.constraint(equalToConstant: height)
+        }
+        constr.isActive = true
+        return constr
+    }
+    
+    @discardableResult
+    func alHeightPin(_ pin: BoxLayout.Pin, to view: UIView? = nil) -> NSLayoutConstraint {
+        let constr: NSLayoutConstraint
+        if let view = view {
+            switch pin.relation {
+                case .greaterThanOrEqual: constr = self.heightAnchor.constraint(greaterThanOrEqualTo: view.heightAnchor, constant: pin.value)
+                case .lessThanOrEqual: constr = self.heightAnchor.constraint(lessThanOrEqualTo: view.heightAnchor, constant: pin.value)
+                case .equal: fallthrough
+                @unknown default: constr = self.heightAnchor.constraint(greaterThanOrEqualTo: view.heightAnchor, constant: pin.value)
+            }
+            constr.isActive = true
+            return constr
+        }
+        else {
+            return alSetHeight(pin.value, relation: pin.relation)
+        }
+    }
+    
+    @discardableResult
+    func alSetWidth(_ width: CGFloat, relation: NSLayoutConstraint.Relation = .equal) -> NSLayoutConstraint {
+        let constr: NSLayoutConstraint
+        switch relation {
+            case .equal: constr = self.widthAnchor.constraint(equalToConstant: width)
+            case .greaterThanOrEqual: constr = self.widthAnchor.constraint(greaterThanOrEqualToConstant: width)
+            case .lessThanOrEqual: constr = self.widthAnchor.constraint(lessThanOrEqualToConstant: width)
+            @unknown default: constr = self.heightAnchor.constraint(equalToConstant: width)
+        }
+        constr.isActive = true
+        return constr
+    }
+    
+    @discardableResult
+    func alWidthPin(_ pin: BoxLayout.Pin, to view: UIView? = nil) -> NSLayoutConstraint {
+        let constr: NSLayoutConstraint
+        if let view = view {
+            switch pin.relation {
+                case .greaterThanOrEqual: constr = self.widthAnchor.constraint(greaterThanOrEqualTo: view.widthAnchor, constant: pin.value)
+                case .lessThanOrEqual: constr = self.widthAnchor.constraint(lessThanOrEqualTo: view.widthAnchor, constant: pin.value)
+                case .equal: fallthrough
+                @unknown default: constr = self.widthAnchor.constraint(equalTo: view.widthAnchor, constant: pin.value)
+            }
+            constr.isActive = true
+            return constr
+        }
+        else {
+            return alSetWidth(pin.value, relation: pin.relation)
+        }
+    }
 
 }
 

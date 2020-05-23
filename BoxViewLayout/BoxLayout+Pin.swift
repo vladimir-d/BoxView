@@ -79,6 +79,14 @@ func + (pin1: BoxLayout.Pin?, pin2: BoxLayout.Pin?) -> BoxLayout.Pin? {
 }
 
 prefix operator >=
+
+public prefix func >=(v: CGFloat) -> BoxLayout.Pin {
+    return .greaterThanOrEqual(v)!
+}
+
+public prefix func >=(v: Double) -> BoxLayout.Pin {
+    return .greaterThanOrEqual(CGFloat(v))!
+}
 public prefix func >=(v: CGFloat?) -> BoxLayout.Pin? {
     return .greaterThanOrEqual(v)
 }
@@ -91,6 +99,15 @@ public prefix func >=(v: Double?) -> BoxLayout.Pin? {
 }
 
 prefix operator <=
+
+public prefix func <=(v: CGFloat) -> BoxLayout.Pin {
+    return .lessThanOrEqual(v)!
+}
+
+public prefix func <=(v: Double) -> BoxLayout.Pin {
+    return .lessThanOrEqual(CGFloat(v))!
+}
+
 public prefix func <=(v: CGFloat?) -> BoxLayout.Pin? {
     return .lessThanOrEqual(v)
 }
@@ -103,6 +120,15 @@ public prefix func <=(v: Double?) -> BoxLayout.Pin? {
 }
 
 prefix operator ==
+
+public prefix func ==(v: CGFloat) -> BoxLayout.Pin {
+    return .equal(v)!
+}
+
+public prefix func ==(v: Double) -> BoxLayout.Pin {
+    return .equal(CGFloat(v))!
+}
+
 public prefix func ==(v: CGFloat?) -> BoxLayout.Pin? {
     return .equal(v)
 }
