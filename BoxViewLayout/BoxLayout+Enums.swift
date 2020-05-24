@@ -42,17 +42,17 @@ extension BoxLayout {
         
     public enum Axis {
         
-        case horizontal, vertical
+        case x, y
         
         public var other: Axis {
-            return (self == .vertical) ? .horizontal : .vertical
+            return (self == .y) ? .x : .y
         }
         
         func edgeForPosition(_ position: BoxEdge.Position) -> BoxEdge {
             switch position {
-                case .begin: return (self == .vertical) ? .top : .left
-                case .center: return (self == .vertical) ? .centerY : .centerX
-                case .end: return (self == .vertical) ? .bottom : .right
+                case .begin: return (self == .y) ? .top : .left
+                case .center: return (self == .y) ? .centerY : .centerX
+                case .end: return (self == .y) ? .bottom : .right
             }
         }
         
@@ -63,18 +63,18 @@ extension BoxLayout {
 extension UIEdgeInsets {
     
     func begin(_ axis: BoxLayout.Axis) -> CGFloat {
-        return (axis == .vertical) ? self.top : self.left
+        return (axis == .y) ? self.top : self.left
     }
     
     func end(_ axis: BoxLayout.Axis)  -> CGFloat {
-        return (axis == .vertical) ? self.bottom : self.right
+        return (axis == .y) ? self.bottom : self.right
     }
     
     func insetForAxis(_ axis: BoxLayout.Axis, position: BoxEdge.Position)  -> CGFloat {
         switch position {
-            case .begin: return (axis == .vertical) ? self.top : self.left
+            case .begin: return (axis == .y) ? self.top : self.left
             case .center: return 0.0
-            case .end: return (axis == .vertical) ? self.bottom : self.right
+            case .end: return (axis == .y) ? self.bottom : self.right
         }
     }
 }

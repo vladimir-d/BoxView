@@ -40,3 +40,20 @@ extension UIButton {
     }
     
 }
+
+extension UITextField {
+    
+    class func alWithText(_ text: String?, hint: String?) -> UITextField {
+        let tf = UITextField.newAL()
+        tf.text = text
+        tf.placeholder = hint
+        tf.borderStyle = .roundedRect
+        return tf
+    }
+    
+}
+
+
+extension UIColor {
+    static let darkGreen = UIColor(red: 0.0, green: 0.7, blue: 0.0, alpha: 1.0)
+}

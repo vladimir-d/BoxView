@@ -10,20 +10,19 @@ import UIKit
 
 class MixLayoutViewController: BaseViewController {
     
-    let btnBoxView = BoxView(axis: .horizontal)
-    let button1 = UIButton.alWithText(" < Back ", color: .green)
-    let titleLabel = UILabel.alWithText("Mixed Layout", color: .red)
-    let textLabel1 = UILabel.alWithText("This is an example of vertical box where child views  have additional layouting:\nTitle is placed in center with minimum padding from both sides.\nBoth text label has differnt padding from both sides.", color: .lightGray)
-    let textLabel2 = UILabel.alWithText("Last stack item is another boxView with horizontal layout containing two buttons.\nAny of these views can be skiped in boxView.items, without affecting other views.", color: .lightGray)
+    let btnBoxView = BoxView(axis: .x)
+    let button1 = UIButton.alWithText(" < Back ", color: .darkGreen)
+    let button2 = UIButton.alWithText(" Next > ", color: .darkGreen)
+    let titleLabel = UILabel.alWithText("Mixed Layout", color: UIColor.orange.withAlphaComponent(0.3))
+    let textLabel1 = UILabel.alWithText("This is an example of vertical box where child views  have additional layouting:\nTitle is placed in center with minimum padding from both sides.\nBoth text label has differnt padding from both sides.", color: UIColor.yellow.withAlphaComponent(0.3))
+    let textLabel2 = UILabel.alWithText("Last stack item is another boxView with horizontal layout containing two buttons.\nAny of these views can be skiped in boxView.items, without affecting other views.", color: UIColor.yellow.withAlphaComponent(0.3))
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        
         button1.addTarget(self, action:#selector(onClickButton1), for: .touchUpInside)
-        let button2 = UIButton.alWithText(" Next > ", color: .green)
         button2.addTarget(self, action:#selector(onClickButton2), for: .touchUpInside)
-        boxView.backgroundColor = .yellow
+        boxView.backgroundColor = UIColor.lightGray.withAlphaComponent(0.2)
         btnBoxView.layer.borderColor = UIColor.black.cgColor
         btnBoxView.layer.borderWidth = 1.0
         
@@ -34,10 +33,10 @@ class MixLayoutViewController: BaseViewController {
             button2.hv(.pins(10.0, 10.0), .pins(10.0, 10.0)),
         ]
         boxView.items = [
-            titleLabel.hv(.align(padding: 16.0), .zero),
-            textLabel1.hv(.pins(0.0, 50.0), .pins(5.0, 0.0)),
-            textLabel2.hv(.pins(50.0, 0.0), .pins(5.0, 0.0)),
-            btnBoxView.hv(.pins(50.0, 50.0), .pins(10.0, >=10.0)),
+            titleLabel.xAligned(padding: 16.0),
+            textLabel1.pinRight(50.0).pinTop(10.0),
+            textLabel2.pinLeft(50.0),
+            btnBoxView.pinLeftRight(50.0, 50.0).pinTopBottom(10.0, >=10.0),
         ]
     }
     

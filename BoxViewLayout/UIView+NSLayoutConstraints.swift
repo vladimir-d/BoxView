@@ -99,7 +99,7 @@ extension UIView {
                 case .greaterThanOrEqual: constr = self.heightAnchor.constraint(greaterThanOrEqualTo: view.heightAnchor, constant: pin.value)
                 case .lessThanOrEqual: constr = self.heightAnchor.constraint(lessThanOrEqualTo: view.heightAnchor, constant: pin.value)
                 case .equal: fallthrough
-                @unknown default: constr = self.heightAnchor.constraint(greaterThanOrEqualTo: view.heightAnchor, constant: pin.value)
+                @unknown default: constr = self.heightAnchor.constraint(equalTo: view.heightAnchor, constant: pin.value)
             }
             constr.isActive = true
             return constr
@@ -113,9 +113,9 @@ extension UIView {
     public func alSetWidth(_ width: CGFloat, relation: NSLayoutConstraint.Relation = .equal) -> NSLayoutConstraint {
         let constr: NSLayoutConstraint
         switch relation {
-            case .equal: constr = self.widthAnchor.constraint(equalToConstant: width)
             case .greaterThanOrEqual: constr = self.widthAnchor.constraint(greaterThanOrEqualToConstant: width)
             case .lessThanOrEqual: constr = self.widthAnchor.constraint(lessThanOrEqualToConstant: width)
+            case .equal: fallthrough
             @unknown default: constr = self.heightAnchor.constraint(equalToConstant: width)
         }
         constr.isActive = true
@@ -138,6 +138,11 @@ extension UIView {
         else {
             return alSetWidth(pin.value, relation: pin.relation)
         }
+    }
+    
+    @discardableResult
+    public func alSetSize(_ size: CGSize) -> [NSLayoutConstraint] {
+        return [alSetWidth(size.width), alSetHeight(size.height)]
     }
 
 }

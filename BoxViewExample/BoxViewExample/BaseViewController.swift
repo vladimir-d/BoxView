@@ -32,7 +32,7 @@ class BaseViewController: UIViewController {
         } else {
             scrollView.alToSuperviewWithEdgeValues(.all(20.0))
         }
-        boxView.widthAnchor.constraint(equalTo: scrollView.widthAnchor, constant: -boxPadding * 2.0).isActive = true
+        boxView.alWidthPin(==(-boxPadding * 2.0), to: scrollView)
     }
 
 }

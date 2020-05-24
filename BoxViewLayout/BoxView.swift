@@ -10,8 +10,10 @@ import UIKit
 
 open class BoxView: UIView {
     
-    public init(axis: BoxLayout.Axis = .vertical) {
+    public init(axis: BoxLayout.Axis = .y, spacing: CGFloat = 0.0, insets: UIEdgeInsets = .zero) {
         self.axis = axis
+        self.spacing = spacing
+        self.insets = insets
         super.init(frame: .zero)
         self.translatesAutoresizingMaskIntoConstraints = false
     }
@@ -32,7 +34,7 @@ open class BoxView: UIView {
         }
     }
     
-    public var axis: BoxLayout.Axis = .vertical {
+    public var axis: BoxLayout.Axis = .y {
         didSet {
             setNeedsUpdateConstraints()
         }
@@ -147,15 +149,15 @@ open class BoxView: UIView {
 
     
     private var begin: CGFloat {
-        return (axis == .vertical) ? insets.top : insets.left
+        return (axis == .y) ? insets.top : insets.left
     }
     
     private var end: CGFloat {
-        return (axis == .vertical) ? insets.bottom : insets.right
+        return (axis == .y) ? insets.bottom : insets.right
     }
     
     private func axisWarning() {
-        if axis == .vertical {
+        if axis == .y {
             assertionFailure("CPBoxView items for verical direction must have top and bottom insets")
         }
         else {
@@ -208,7 +210,7 @@ open class BoxView: UIView {
 
     
     func centerOffsetFactorForAxis(_ axis: BoxLayout.Axis) -> CGFloat {
-        if axis == .vertical {
+        if axis == .y {
             return 1.0
         }
         else {

@@ -65,22 +65,22 @@ public struct BoxLayout {
     }
     
     func begin(_ axis: Axis) -> Pin? {
-        return (axis == .vertical) ? v.top : h.left
+        return (axis == .y) ? v.top : h.left
     }
     
     func end(_ axis: Axis) -> Pin? {
-        return (axis == .vertical) ? v.bottom : h.right
+        return (axis == .y) ? v.bottom : h.right
     }
     
     func center(_ axis: Axis) -> Pin? {
-        return (axis == .vertical) ? v.center : h.center
+        return (axis == .y) ? v.center : h.center
     }
     
     func pinForAxis(_ axis: Axis, position: BoxEdge.Position) -> Pin? {
         switch position {
-            case .begin: return (axis == .vertical) ? v.top : h.left
-            case .center: return (axis == .vertical) ? v.center : h.center
-            case .end: return (axis == .vertical) ? v.bottom : h.right
+            case .begin: return (axis == .y) ? v.top : h.left
+            case .center: return (axis == .y) ? v.center : h.center
+            case .end: return (axis == .y) ? v.bottom : h.right
         }
     }
 

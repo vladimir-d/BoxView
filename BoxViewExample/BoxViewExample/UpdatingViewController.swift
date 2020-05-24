@@ -10,15 +10,15 @@ import UIKit
 
 class UpdatingViewController: BaseViewController {
 
-    let btnBoxView = BoxView(axis: .vertical)
-    let titleLabel = UILabel.alWithText("Updating Layout", color: .red)
-    let textLabel1 = UILabel.alWithText("Any layouting paranmeter can be updated dynamically and animated.", color: .lightGray)
-    let textLabel2 = UILabel.alWithText("BoxView axis and any item in boxView.items also can be changed with animation.", color: .lightGray)
+    let btnBoxView = BoxView(axis: .y)
+    let titleLabel = UILabel.alWithText("Updating Layout", color: UIColor.orange.withAlphaComponent(0.3))
+    let textLabel1 = UILabel.alWithText("Any layouting parameter can be updated dynamically and animated.", color: UIColor.yellow.withAlphaComponent(0.3))
+    let textLabel2 = UILabel.alWithText("BoxView axis and any item in boxView.items also can be changed with animation.", color: UIColor.yellow.withAlphaComponent(0.3))
     var fourButtons = [UIButton]()
 
-    let spacingButton = UIButton.alWithText(" Change spacing ", color: .green)
-    let axisButton = UIButton.alWithText(" Change axis ", color: .green)
-    let backButton = UIButton.alWithText(" < Back ", color: .green)
+    let spacingButton = UIButton.alWithText(" Change spacing ", color: .darkGreen)
+    let axisButton = UIButton.alWithText(" Change axis ", color: .darkGreen)
+    let backButton = UIButton.alWithText(" < Back ", color: .darkGreen)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -28,12 +28,12 @@ class UpdatingViewController: BaseViewController {
         backButton.addTarget(self, action:#selector(onClickBackButton), for: .touchUpInside)
         axisButton.addTarget(self, action:#selector(onClickAxisButton), for: .touchUpInside)
         fourButtons = (0..<4).map {
-            let btn = UIButton.alWithText("\($0 + 1)", color: .green)
+            let btn = UIButton.alWithText("\($0 + 1)", color: .darkGreen)
             btn.addTarget(self, action:#selector(onClickFourButton), for: .touchUpInside)
             btn.contentHorizontalAlignment = .center
             return btn
         }
-        boxView.backgroundColor = .yellow
+        boxView.backgroundColor = UIColor.lightGray.withAlphaComponent(0.2)
         btnBoxView.layer.borderColor = UIColor.black.cgColor
         btnBoxView.layer.borderWidth = 2.0
         
@@ -44,12 +44,12 @@ class UpdatingViewController: BaseViewController {
         btnBoxView.spacing = 10.0
         btnBoxView.setViews(fourButtons)
         boxView.items = [
-            titleLabel.hv(.align(padding: 16.0), .zero),
-            textLabel1.hv(.leftRight(0.0, 50.0), .topBottom(5.0, 0.0)),
+            titleLabel.xAligned(padding: 16.0),
+            textLabel1.pinLeftRight(0.0, 50.0).pinTopBottom(5.0, 0.0),
             spacingButton.withZeroLayout,
-            textLabel2.hv(.leftRight(50.0, 0.0), .zero),
-            axisButton.hv(.align(padding: 50.0), .zero),
-            btnBoxView.hv(.align(padding: 50.0), .pins(10.0, 10.0)),
+            textLabel2.pinLeftRight(50.0, 0.0),
+            axisButton.xAligned(padding: 50.0),
+            btnBoxView.xAligned(padding: 50.0).pinTopBottom(5.0, 0.0),
             backButton.withZeroLayout
         ]
     }
