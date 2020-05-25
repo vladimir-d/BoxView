@@ -28,6 +28,8 @@ open class BoxView: UIView {
     
     public private(set) var itemsEdgeConstraints = [BoxEdge.Constraints]()
     
+    public private(set) var managedViews = [UIView]()
+    
     public var items:[BoxItem] = [] {
         didSet {
             updateItems()
@@ -40,12 +42,15 @@ open class BoxView: UIView {
         }
     }
     
+    // Additional isets from boxView edges. They are added to corresponding view constraints.
     public var insets = UIEdgeInsets.zero {
         didSet {
             setNeedsUpdateConstraints()
         }
     }
     
+    // Default spacing between item views. Actual spacing between every two is:
+    // end pin of first view + spacing + begin pin of second view
     public var spacing: CGFloat = 0.0 {
         didSet {
             setNeedsUpdateConstraints()
@@ -55,7 +60,7 @@ open class BoxView: UIView {
     public func setViews(_ views: [UIView], layout: BoxLayout = .zero) {
         items = [BoxItem]()
         for view in views {
-            items.append(view.withLayout(layout))
+            items.append(view.boxLayout(layout))
         }
     }
     
@@ -72,6 +77,10 @@ open class BoxView: UIView {
         }
     }
 
+    // When items are set or parameares affecting layout are changed,
+    // constraints are not changed immediatly. Only setNeedsUpdateConstraints() called.
+    // Then updateConstraints() method is called automatically when boxView layout subviews.
+    //
     override public func updateConstraints() {
         self.removeConstraints(managedConstraints)
         managedConstraints = []
@@ -79,27 +88,46 @@ open class BoxView: UIView {
         addItemsConstraints()
         super.updateConstraints()
     }
+    
+    override public func willRemoveSubview(_ subview: UIView) {
+        superview?.willRemoveSubview(subview)
+        if !isUpdatingItems {
+            if managedViews.contains(subview) {
+                if let index = items.firstIndex(where: { $0.view == subview}) {
+                    items.remove(at: index)
+                }
+            }
+        }
+    }
 
     
     // MARK: - Private
     
     private func updateItems() {
+        isUpdatingItems = true
         let itemViews = items.map { $0.view }
-        var toRemove = [UIView]()
-        for subView in subviews {
-            if !itemViews.contains(subView) {
-                toRemove.append(subView)
+        var toRemove = [Int]()
+        for (index, managedView) in managedViews.enumerated() {
+            if !itemViews.contains(managedView) {
+                toRemove.append(index)
+                managedView.removeFromSuperview()
             }
         }
-        for subView in toRemove {
-            subView.removeFromSuperview()
+        for index in toRemove.reversed() {
+            managedViews.remove(at: index)
         }
         for view in itemViews {
-            if !subviews.contains(view) {
+            if !managedViews.contains(view) {
                 view.translatesAutoresizingMaskIntoConstraints = false
+                managedViews.append(view)
                 addSubview(view)
             }
+            else {
+                bringSubviewToFront(view)
+            }
         }
+        isUpdatingItems = false
+        
         setNeedsUpdateConstraints()
     }
     
@@ -146,7 +174,8 @@ open class BoxView: UIView {
         edgeConstraints[endEdge] = toEnd
         itemsEdgeConstraints.append(edgeConstraints)
     }
-
+    
+    private var isUpdatingItems: Bool  = false
     
     private var begin: CGFloat {
         return (axis == .y) ? insets.top : insets.left

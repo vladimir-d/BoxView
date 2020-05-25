@@ -42,15 +42,15 @@ class UpdatingViewController: BaseViewController {
         boxView.spacing = 2.0
         btnBoxView.insets = UIEdgeInsets(top: 10.0, left: 10.0, bottom: 10.0, right: 10.0)
         btnBoxView.spacing = 10.0
-        btnBoxView.setViews(fourButtons)
+        btnBoxView.items = fourButtons.boxZero
         boxView.items = [
             titleLabel.xAligned(padding: 16.0),
-            textLabel1.pinLeftRight(0.0, 50.0).pinTopBottom(5.0, 0.0),
-            spacingButton.withZeroLayout,
-            textLabel2.pinLeftRight(50.0, 0.0),
+            textLabel1.boxLeftRight(0.0, 50.0).boxTopBottom(5.0, 0.0),
+            spacingButton.boxZero,
+            textLabel2.boxLeftRight(50.0, 0.0),
             axisButton.xAligned(padding: 50.0),
-            btnBoxView.xAligned(padding: 50.0).pinTopBottom(5.0, 0.0),
-            backButton.withZeroLayout
+            btnBoxView.xAligned(padding: 50.0).boxTopBottom(5.0, 0.0),
+            backButton.boxZero
         ]
     }
 
@@ -70,7 +70,7 @@ class UpdatingViewController: BaseViewController {
             }else {
                 fourButtons.insert(element, at: 0)
             }
-            btnBoxView.setViews(fourButtons)
+            btnBoxView.items = fourButtons.boxZero
             boxView.animateChangesWithDurations(0.5)
         }
     }

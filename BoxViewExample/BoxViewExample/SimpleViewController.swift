@@ -23,9 +23,9 @@ class SimpleViewController: BaseViewController {
         boxView.insets = UIEdgeInsets(top: 40.0, left: 20.0, bottom: 10.0, right: 20.0)
         boxView.spacing = 10.0
         boxView.items = [
-            titleLabel.withZeroLayout,
-            textLabel.withZeroLayout,
-            button.withZeroLayout,
+            titleLabel.boxZero,
+            textLabel.boxZero,
+            button.boxZero,
         ]
     }
     

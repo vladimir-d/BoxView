@@ -34,7 +34,7 @@ extension UIView {
     }
     
     @discardableResult
-    public func alPinToSuperview(_ attribute: NSLayoutConstraint.Attribute, constant: CGFloat = 0.0, relation: NSLayoutConstraint.Relation = .equal) -> NSLayoutConstraint? {
+    public func alPinToSuperview(_ attribute: NSLayoutConstraint.Attribute, _ constant: CGFloat = 0.0, relation: NSLayoutConstraint.Relation = .equal) -> NSLayoutConstraint? {
         self.translatesAutoresizingMaskIntoConstraints = false
         guard let sv = superview else {
             return nil
@@ -115,8 +115,7 @@ extension UIView {
         switch relation {
             case .greaterThanOrEqual: constr = self.widthAnchor.constraint(greaterThanOrEqualToConstant: width)
             case .lessThanOrEqual: constr = self.widthAnchor.constraint(lessThanOrEqualToConstant: width)
-            case .equal: fallthrough
-            @unknown default: constr = self.heightAnchor.constraint(equalToConstant: width)
+            default: constr = self.widthAnchor.constraint(equalToConstant: width)
         }
         constr.isActive = true
         return constr
@@ -129,8 +128,7 @@ extension UIView {
             switch pin.relation {
                 case .greaterThanOrEqual: constr = self.widthAnchor.constraint(greaterThanOrEqualTo: view.widthAnchor, constant: pin.value)
                 case .lessThanOrEqual: constr = self.widthAnchor.constraint(lessThanOrEqualTo: view.widthAnchor, constant: pin.value)
-                case .equal: fallthrough
-                @unknown default: constr = self.widthAnchor.constraint(equalTo: view.widthAnchor, constant: pin.value)
+                default: constr = self.widthAnchor.constraint(equalTo: view.widthAnchor, constant: pin.value)
             }
             constr.isActive = true
             return constr
