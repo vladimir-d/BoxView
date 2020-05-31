@@ -34,9 +34,12 @@ And **BoxView** managed subviews have no additional padding in this case.
 Each **BoxView** item is of type **BoxItem**, it contains corresponding view and layout information.
 The ltem with zero padding layout is created with **view.boxZero**
 
+
+
 ####  Example 2: Add padding to item.
 
 ![login1 image](https://github.com/vladimir-d/BoxView/blob/master/Docs/Images/login2.png?raw=true)
+
 For example we need to increase the spacing between the password field and the button to 50 pixels.
 We already have spacing 20 pixels between all views , so we need additional padding of 30 pixels.
 Method **boxTop(30.0)** creates item with specified padding from top
@@ -50,8 +53,10 @@ boxView.items = [
 ]
 ```
 
+
 ####  Example 3: Add more paddings to item.
 ![login1 image](https://github.com/vladimir-d/BoxView/blob/master/Docs/Images/login3.png?raw=true)`
+
 Now let's add padding 50 pixels from left and right sides.
 We can do it by adding **boxLeft(50.0)** and **BoxRight(50.0)**:
 ```
@@ -67,6 +72,7 @@ boxView.items = [
     loginButton.boxTop(30.0).boxLeftRight(50.0, 50.0)
 ]
 ```
+
 
 ####  Example 4: Add layout with relation.
 
@@ -101,10 +107,10 @@ boxView.items = [
     loginButton.boxTop(30.0).boxLeftRight(50.0, 50.0)
 ]
 ```
-Perhaps we need to make the forgotButton optional, depending on some bool flag
-let useForgotButton: Bool
+Perhaps we need to make the forgotButton optional, depending on some bool flag e.g.
 
-```
+```swift
+let useForgotButton: Bool
 boxView.items = [
     nameField.boxZero,
     passwordField.boxZero,
@@ -112,10 +118,12 @@ boxView.items = [
     loginButton.boxTop(30.0).boxLeftRight(50.0, 50.0)
 ].compactMap{$0}
 ```
+another option is to add items one by one:
 
-```
+```swift
 boxView.insets = UIEdgeInsets(top: 16.0, left: 16.0, bottom: 16.0, right: 16.0)
 boxView.spacing = 20.0
+boxView.items = []
 boxView.items.append(nameField.boxZero)
 boxView.items.append(passwordField.boxZero)
 if (useForgotButton) {
@@ -127,20 +135,25 @@ boxView.items.append(loginButton.boxTop(30.0).boxLeftRight(50.0, 50.0))
 
 ####  Example 5: Add layout with alignment.
 ![login1 image](https://github.com/vladimir-d/BoxView/blob/master/Docs/Images/login5.png?raw=true)`
+
+Now let's add title label aligned to center.  Method **xAligned()** creates item layouted centrally along X-axis.
 ```
-boxView.insets = UIEdgeInsets(top: 16.0, left: 16.0, bottom: 16.0, right: 16.0)
-boxView.spacing = 20.0
-boxView.items.append(titleLabel.xAligned())
-boxView.items.append(nameField.boxZero)
-boxView.items.append(passwordField.boxZero)
-if (useForgotButton) {
-    boxView.items.append(forgotButton.boxLeftRight(>=0.0, 0.0))
-}
-boxView.items.append(loginButton.boxTop(30.0).boxLeftRight(50.0, 50.0))
+boxView.items = [
+    titleLabel.xAligned(),
+    nameField.boxZero,
+    passwordField.boxZero,
+    useForgotButton ? forgotButton.boxLeftRight(>=0.0, 0.0) : nil,
+    loginButton.boxTop(30.0).boxLeftRight(50.0, 50.0)
+].compactMap{$0}
 ```
+
 
 ####  Example 6: Add child boxViews with horizontal box axis.
 ![login1 image](https://github.com/vladimir-d/BoxView/blob/master/Docs/Images/login6.png?raw=true)`
+
+All items in previous examples were stacked along Y-axis. What if need also add some items placed along X-axis?
+We can do it by adding nested boxViews with x axes. For example let's add icons on the left of name and password text fields. 
+
 ```
 let nameBoxView = BoxView(axis: .x, spacing: 10.0)
 nameBoxView.items = [nameImageView.yAligned(), nameField.boxZero]
