@@ -84,8 +84,7 @@ extension UIView {
         switch relation {
             case .greaterThanOrEqual: constr = self.heightAnchor.constraint(greaterThanOrEqualToConstant: height)
             case .lessThanOrEqual: constr = self.heightAnchor.constraint(lessThanOrEqualToConstant: height)
-            case .equal: fallthrough
-            @unknown default: constr = self.heightAnchor.constraint(equalToConstant: height)
+            default: constr = self.heightAnchor.constraint(equalToConstant: height)
         }
         constr.isActive = true
         return constr
@@ -98,8 +97,7 @@ extension UIView {
             switch pin.relation {
                 case .greaterThanOrEqual: constr = self.heightAnchor.constraint(greaterThanOrEqualTo: view.heightAnchor, constant: pin.value)
                 case .lessThanOrEqual: constr = self.heightAnchor.constraint(lessThanOrEqualTo: view.heightAnchor, constant: pin.value)
-                case .equal: fallthrough
-                @unknown default: constr = self.heightAnchor.constraint(equalTo: view.heightAnchor, constant: pin.value)
+                default: constr = self.heightAnchor.constraint(equalTo: view.heightAnchor, constant: pin.value)
             }
             constr.isActive = true
             return constr
@@ -141,6 +139,13 @@ extension UIView {
     @discardableResult
     public func alSetSize(_ size: CGSize) -> [NSLayoutConstraint] {
         return [alSetWidth(size.width), alSetHeight(size.height)]
+    }
+    
+    public func alRemoveConstraintsForAttribute(_ attr: NSLayoutConstraint.Attribute) {
+        let existing = constraints.filter { constraint in
+            return constraint.firstAttribute == attr
+        }
+        existing.forEach{ self.removeConstraint($0)}
     }
 
 }
