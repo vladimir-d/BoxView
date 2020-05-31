@@ -41,6 +41,18 @@ extension UIButton {
     
 }
 
+extension UIImageView {
+    
+    class func alWithImageName(_ imageName: String, size: CGSize? = nil) -> UIImageView {
+        let img = UIImage(named: imageName)
+        let imgSize = size ?? img?.size ?? .zero
+        let imgView = UIImageView(image: img)
+        imgView.alSetSize(imgSize)
+        return imgView
+    }
+    
+}
+
 extension UITextField {
     
     class func alWithText(_ text: String?, hint: String?) -> UITextField {
