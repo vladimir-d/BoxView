@@ -8,8 +8,9 @@
 
 import UIKit
 
-//public typealias BoxEdge = NSLayoutConstraint.Attribute
 
+// MARK: - Public
+// BoxEdge duplicates subset of NSLayoutConstraint Attributes
 public enum BoxEdge  {
     
     case top, left, right, bottom, centerX, centerY
@@ -22,6 +23,9 @@ public enum BoxEdge  {
         case begin, center, end
     }
 }
+
+
+// MARK: - Internal
 
 extension NSLayoutConstraint.Attribute {
     

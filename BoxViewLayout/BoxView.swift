@@ -8,7 +8,10 @@
 
 import UIKit
 
+@IBDesignable
 open class BoxView: UIView {
+    
+    // MARK: - Public
     
     public init(axis: BoxLayout.Axis = .y, spacing: CGFloat = 0.0, insets: UIEdgeInsets = .zero) {
         self.axis = axis
@@ -16,18 +19,29 @@ open class BoxView: UIView {
         self.insets = insets
         super.init(frame: .zero)
         self.translatesAutoresizingMaskIntoConstraints = false
+        self.setup()
+    }
+    
+    public required override init(frame: CGRect) {
+        super.init(frame: frame)
     }
     
     public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
     
-    // MARK: - Public
+    public func setup() {
+        // to override in subclasses
+    }
     
+    // array of all automatically created by BoxView constraints
     public private(set) var managedConstraints = [NSLayoutConstraint]()
     
+    // array of automatically created by BoxView constraints groupped in dictionary for each item
     public private(set) var itemsEdgeConstraints = [BoxEdge.Constraints]()
     
+    // array of views of all items.
+    // it is a subset of boxView.subviews
     public private(set) var managedViews = [UIView]()
     
     public var items:[BoxItem] = [] {
@@ -36,6 +50,8 @@ open class BoxView: UIView {
         }
     }
     
+    // main axis along which item views are stacked.
+    // X is horizontal and Y is vertical.
     public var axis: BoxLayout.Axis = .y {
         didSet {
             setNeedsUpdateConstraints()
@@ -43,20 +59,23 @@ open class BoxView: UIView {
     }
     
     // Additional isets from boxView edges. They are added to corresponding view constraints.
+    @IBInspectable
     public var insets = UIEdgeInsets.zero {
         didSet {
             setNeedsUpdateConstraints()
         }
     }
     
-    // Default spacing between item views. Actual spacing between every two is:
+    // Default spacing between item views. Actual spacing between every two items is:
     // end pin of first view + spacing + begin pin of second view
+    @IBInspectable
     public var spacing: CGFloat = 0.0 {
         didSet {
             setNeedsUpdateConstraints()
         }
     }
     
+    // setting items from array of views using same layout
     public func setViews(_ views: [UIView], layout: BoxLayout = .zero) {
         items = [BoxItem]()
         for view in views {
@@ -64,6 +83,22 @@ open class BoxView: UIView {
         }
     }
     
+    // appending item
+    public func addItem(_ item: BoxItem) {
+        items.append(item)
+    }
+    
+    // inserting item after item with given view, if view is nil, then item inserted at index 0
+    public func insertItem(_ item: BoxItem, after view: UIView?) {
+        if view == nil {
+            items.insert(item, at: 0)
+        }
+        else if let index = items.firstIndex(where: {$0.view == view}) {
+            items.insert(item, at: index + 1)
+        }
+    }
+    
+    // changing layout of existing item with specified view
     public func setLayout(_ layout: BoxLayout, for view: UIView?) {
         if let index = items.firstIndex(where: { $0.view == view}) {
             items[index].layout = layout
@@ -77,10 +112,10 @@ open class BoxView: UIView {
         }
     }
 
-    // When items are set or parameares affecting layout are changed,
+    // When items are assigned or parameters affecting layout are changed,
     // constraints are not changed immediatly. Only setNeedsUpdateConstraints() called.
-    // Then updateConstraints() method is called automatically when boxView layout subviews.
-    //
+    // Then updateConstraints() method is called automatically when boxView laying out own subviews.
+    // You can call this method to force create constraints immediatly.
     override public func updateConstraints() {
         self.removeConstraints(managedConstraints)
         managedConstraints = []
@@ -99,7 +134,7 @@ open class BoxView: UIView {
             }
         }
     }
-
+    
     
     // MARK: - Private
     
@@ -136,42 +171,44 @@ open class BoxView: UIView {
         guard items.count > 0 else { return }
         let beginEdge = axis.edgeForPosition(.begin)
         let endEdge = axis.edgeForPosition(.end)
+        let centerEdge = axis.edgeForPosition(.center)
         let beginAttr = attributeForEdge(beginEdge)
         let endAttr = attributeForEdge(endEdge)
+        let centerAttr = attributeForEdge(centerEdge)
         var edgeConstraints: BoxEdge.Constraints = [:]
         for item in items {
             let view = item.view
             let layout = item.layout
-            if let prevItem = prevItem {
-                guard let itemBegin = layout.begin(axis), let itemEnd = prevItem.layout.end(axis) else {
-                    axisWarning(); return
+            if let itemBegin = layout.begin(axis) {
+                if let prevItem = prevItem {
+                    if let prevEnd = prevItem.layout.end(axis) {
+                        guard let sumPin = itemBegin + prevEnd else {
+                            sumPinWarning(); return
+                        }
+                        let toPrev = view.alPin(beginAttr, to: endAttr, of: prevItem.view, constant: sumPin.value + spacing, relation: sumPin.relation)
+                        managedConstraints.append(toPrev)
+                        edgeConstraints[endEdge] = toPrev
+                        itemsEdgeConstraints.append(edgeConstraints)
+                        edgeConstraints = [beginEdge: toPrev]
+                    }
                 }
-                guard let sumPin = itemBegin + itemEnd else {
-                    sumPinWarning(); return
+                else{
+                    let toBegin = view.alPin(beginAttr, to: beginAttr, of: self, constant: itemBegin.value + begin, relation: itemBegin.relation)
+                    managedConstraints.append(toBegin)
+                    edgeConstraints = [beginEdge: toBegin]
                 }
-                let toPrev = view.alPin(beginAttr, to: endAttr, of: prevItem.view, constant: sumPin.value + spacing, relation: sumPin.relation)
-                managedConstraints.append(toPrev)
-                edgeConstraints[endEdge] = toPrev
-                itemsEdgeConstraints.append(edgeConstraints)
-                edgeConstraints = [beginEdge: toPrev]
             }
-            else{
-                guard let itemBegin = layout.begin(axis) else {
-                    axisWarning(); return
-                }
-                let toBegin = view.alPin(beginAttr, to: beginAttr, of: self, constant: itemBegin.value + begin, relation: itemBegin.relation)
-                managedConstraints.append(toBegin)
-                edgeConstraints = [beginEdge: toBegin]
+            if let itemCenter = layout.center(axis) {
+                view.alPin(centerAttr, to: centerAttr, of: self, constant: itemCenter.value, relation: itemCenter.relation)
             }
             pinAccross(view: view, layout: layout, edgeConstraints: &edgeConstraints)
             prevItem = item
         }
-        guard let itemEnd = prevItem?.layout.end(axis) else {
-            axisWarning(); return
+        if let itemEnd = prevItem?.layout.end(axis) {
+            let toEnd = self.alPin(endAttr, to: endAttr, of: prevItem!.view, constant: itemEnd.value + end, relation: itemEnd.relation)
+            managedConstraints.append(toEnd)
+            edgeConstraints[endEdge] = toEnd
         }
-        let toEnd = self.alPin(endAttr, to: endAttr, of: prevItem!.view, constant: itemEnd.value + end, relation: itemEnd.relation)
-        managedConstraints.append(toEnd)
-        edgeConstraints[endEdge] = toEnd
         itemsEdgeConstraints.append(edgeConstraints)
     }
     
@@ -185,14 +222,6 @@ open class BoxView: UIView {
         return (axis == .y) ? insets.bottom : insets.right
     }
     
-    private func axisWarning() {
-        if axis == .y {
-            assertionFailure("CPBoxView items for verical direction must have top and bottom insets")
-        }
-        else {
-            assertionFailure("CPBoxView items for horizontal direction must have left and right insets")
-        }
-    }
     private func sumPinWarning() {
         assertionFailure("Joining constraints relations must be either same or one of them must be NSLayoutConstraint.Relation.equal")
     }
@@ -254,12 +283,3 @@ open class BoxView: UIView {
     }
     
 }
-
-
-
-
-
-
-
-
-

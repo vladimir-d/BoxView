@@ -8,39 +8,52 @@
 
 import UIKit
 
+// MARK: - Public
+
+// BoxLayout contains information about constraint parameters (constant and relation)
+// for 6 NSLayoutConstraint Attributes: top, left, bottom, right, centerX and centerY
 public struct BoxLayout {
-    
+
     public typealias EdgePins =  [BoxEdge: Pin?]
+    
+    public var left: Pin?
 
-    public static var padding = CGSize(width: 16.0, height: 16.0)
+    public var right: Pin?
+
+    public var centerX: Pin?
     
-    public var x: X
+    public var top: Pin?
+
+    public var bottom: Pin?
+
+    public var centerY: Pin?
     
-    public var y: Y
-    
-    public init(x: X, y: Y) {
-        self.x = x
-        self.y = y
+    public init() {
     }
     
-    public init(top: CGFloat?, left: CGFloat?, bottom: CGFloat?, right: CGFloat?) {
-        self.x = X(left: ==left, right: ==right, center: nil)
-        self.y = Y(top: ==top, bottom: ==bottom, center: nil)
+    public static func withPins(top: Pin? = .zero, left: Pin? = .zero, bottom: Pin? = .zero, right: Pin? = .zero) -> BoxLayout {
+        var layout = BoxLayout()
+        layout.top = top
+        layout.bottom = bottom
+        layout.left = left
+        layout.right = right
+        return layout
     }
 
-    public static let zero = BoxLayout(x: .zero, y: .zero)
+    public static let zero = withPins()
     
-    public static func boxXY(_ x: X, _ y: Y) -> BoxLayout {
-        return BoxLayout(x: x, y: y)
+    public static func pairs(x: BoxLayout.Pin.Pair, y: BoxLayout.Pin.Pair) -> BoxLayout {
+        return withPins(top: y.begin, left: x.begin, bottom: y.end, right: x.end)
     }
     
     public mutating func setPin(_ pin: Pin?, for edge: BoxEdge) {
         switch edge {
-            case .left: x.left = pin
-            case .right: x.right = pin
-            case .top: y.top = pin
-            case .bottom: y.bottom = pin
-            default: ()
+            case .left: self.left = pin
+            case .right: self.right = pin
+            case .top: self.top = pin
+            case .bottom: self.bottom = pin
+            case .centerX: self.centerX = pin
+            case .centerY: self.centerY = pin
         }
     }
     
@@ -52,35 +65,53 @@ public struct BoxLayout {
         return layout
     }
     
+    public static func xAligned(offset: CGFloat = 0.0, padding: CGFloat? = 0.0) -> BoxLayout {
+        var layout = BoxLayout()
+        layout.centerX = ==offset
+        if let padding = padding {
+            layout.left = >=padding
+            layout.right = >=padding
+        }
+        layout.top = .zero
+        layout.bottom = .zero
+        return layout
+    }
+    
+    public static func yAligned(offset: CGFloat = 0.0, padding: CGFloat? = 0.0) -> BoxLayout {
+        var layout = BoxLayout()
+        layout.centerY = ==offset
+        layout.left = .zero
+        layout.right = .zero
+        if let padding = padding {
+            layout.top = >=padding
+            layout.bottom = >=padding
+        }
+        return layout
+    }
+    
     public func with(_ edge: BoxEdge, _ pin: Pin?) -> BoxLayout {
         var newLayout = self
-        switch edge {
-            case .top: newLayout.y.top = pin
-            case .left: newLayout.x.left = pin
-            case .bottom: newLayout.y.bottom = pin
-            case .right: newLayout.x.right = pin
-            default: ()
-        }
+        newLayout.setPin(pin, for: edge)
         return newLayout
     }
     
     func begin(_ axis: Axis) -> Pin? {
-        return (axis == .y) ? y.top : x.left
+        return (axis == .y) ? self.top : self.left
     }
     
     func end(_ axis: Axis) -> Pin? {
-        return (axis == .y) ? y.bottom : x.right
+        return (axis == .y) ? self.bottom : self.right
     }
     
     func center(_ axis: Axis) -> Pin? {
-        return (axis == .y) ? y.center : x.center
+        return (axis == .y) ? self.centerY : self.centerX
     }
     
     func pinForAxis(_ axis: Axis, position: BoxEdge.Position) -> Pin? {
         switch position {
-            case .begin: return (axis == .y) ? y.top : x.left
-            case .center: return (axis == .y) ? y.center : x.center
-            case .end: return (axis == .y) ? y.bottom : x.right
+            case .begin: return (axis == .y) ? self.top : self.left
+            case .center: return (axis == .y) ? self.centerY : self.centerX
+            case .end: return (axis == .y) ? self.bottom : self.right
         }
     }
 

@@ -8,6 +8,10 @@
 
 import UIKit
 
+// MARK: - Public
+
+public typealias BoxEdgePins = [BoxEdge: BoxLayout.Pin]
+
 extension BoxLayout {
     
     public struct Pin: ExpressibleByFloatLiteral {
@@ -69,6 +73,20 @@ extension BoxLayout {
                 return nil
             }
         }
+    }
+}
+
+extension BoxLayout.Pin {
+    public struct Pair {
+        var begin: BoxLayout.Pin?
+        var end: BoxLayout.Pin?
+        
+        public static let zero = Pair(begin: .zero, end: .zero)
+        
+        public static func pins(_ begin: BoxLayout.Pin?, _ end: BoxLayout.Pin?) -> Pair {
+            return Pair(begin: begin, end: end)
+        }
+        
     }
 }
 
