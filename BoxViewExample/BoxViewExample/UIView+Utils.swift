@@ -20,10 +20,11 @@ extension UIView {
 
 extension UILabel {
     
-    class func alWithText(_ text: String?, color: UIColor = .clear, numberOfLines: Int = 0) -> UILabel {
+    class func alWithText(_ text: String?, color: UIColor = .clear, textColor: UIColor = .black, numberOfLines: Int = 0) -> UILabel {
         let label = UILabel.newAL()
         label.text = text
         label.backgroundColor = color
+        label.textColor = textColor
         label.numberOfLines = numberOfLines
         return label
     }
@@ -51,6 +52,14 @@ extension UIImageView {
         return imgView
     }
     
+    class func alAspectFitWithImageName(_ imageName: String) -> UIImageView {
+        let img = UIImage(named: imageName)
+        let imgView = UIImageView(image: img)
+        imgView.contentMode = .scaleAspectFit
+        imgView.alSetSetAspectFromSize(img?.size ?? .zero)
+        return imgView
+    }
+    
 }
 
 extension UITextField {
@@ -68,4 +77,15 @@ extension UITextField {
 
 extension UIColor {
     static let darkGreen = UIColor(red: 0.0, green: 0.7, blue: 0.0, alpha: 1.0)
+    
+    static func grayScale(_ white: CGFloat) -> UIColor {
+        return UIColor(white: white, alpha: 1.0)
+    }
+}
+
+extension UIEdgeInsets {
+    
+    static func all(_ value: CGFloat) -> UIEdgeInsets {
+        return UIEdgeInsets(top: value, left: value, bottom: value, right: value)
+    }
 }

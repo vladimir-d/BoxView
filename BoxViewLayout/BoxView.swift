@@ -24,6 +24,7 @@ open class BoxView: UIView {
     
     public required override init(frame: CGRect) {
         super.init(frame: frame)
+        self.setup()
     }
     
     public required init?(coder aDecoder: NSCoder) {

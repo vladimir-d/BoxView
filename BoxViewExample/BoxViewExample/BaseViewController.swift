@@ -19,7 +19,8 @@ class BaseViewController: UIViewController {
         view.addSubview(scrollView)
         scrollView.addSubview(boxView)
         let boxPadding: CGFloat = 16.0
-        boxView.alToSuperviewWithEdgeValues(.all(16.0))
+        boxView.alToSuperviewWithEdgeValues(.all(boxPadding))
+        boxView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         if #available(iOS 11, *) {
             let guide = view.safeAreaLayoutGuide

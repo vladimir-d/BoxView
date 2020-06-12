@@ -141,6 +141,19 @@ extension UIView {
         return [alSetWidth(size.width), alSetHeight(size.height)]
     }
     
+    @discardableResult
+    public func alSetSetAspectFromSize(_ size: CGSize) -> NSLayoutConstraint? {
+        var aspectConstraint: NSLayoutConstraint?
+        if size.width != 0.0 {
+            let aspect = size.height / size.width
+            aspectConstraint = self.heightAnchor.constraint(equalTo: self.widthAnchor, multiplier: aspect)
+            aspectConstraint?.isActive = true
+        }
+        return aspectConstraint
+    }
+    
+
+    
     public func alRemoveConstraintsForAttribute(_ attr: NSLayoutConstraint.Attribute) {
         let existing = constraints.filter { constraint in
             return constraint.firstAttribute == attr

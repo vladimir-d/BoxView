@@ -25,8 +25,12 @@ class LoginViewController: BaseViewController {
     let nameImageView = UIImageView.alWithImageName("un.png", size: imgSize)
     
     let passwordImageView = UIImageView.alWithImageName("key.png", size: imgSize)
+        
+    let errorLabel = UILabel.alWithText(" Field can not be empty!", textColor: .red)
     
-    let useForgotButton = true
+    let nameBoxView = BoxView(axis: .x, spacing: 10.0)
+    
+    let passwordBoxView = BoxView(axis: .x, spacing: 10.0)
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,6 +43,8 @@ class LoginViewController: BaseViewController {
         loginButton.layer.cornerRadius = 5.0
         loginButton.contentEdgeInsets = UIEdgeInsets(top: 5.0, left: 16.0, bottom: 5.0, right: 16.0)
         loginButton.addTarget(self, action:#selector(onClickButton), for: .touchUpInside)
+        loginButton.showsTouchWhenHighlighted = true
+
         forgotButton.setTitleColor(.blue, for: .normal)
         
         let btnTitle = NSAttributedString(string: "Forgot password?", attributes:
@@ -46,98 +52,53 @@ class LoginViewController: BaseViewController {
              NSAttributedString.Key.foregroundColor: UIColor.blue])
         forgotButton.setAttributedTitle(btnTitle, for: .normal)
         
-        boxView.insets = UIEdgeInsets(top: 16.0, left: 16.0, bottom: 16.0, right: 16.0)
-        boxView.spacing = 20.0
+        nameField.addTarget(self, action:#selector(onChangeTextField), for: .editingChanged)
+        passwordField.addTarget(self, action:#selector(onChangeTextField), for: .editingChanged)
+        passwordField.isSecureTextEntry = true
         
         
-        //layout 1
-//        boxView.items = [
-//            nameField.boxZero,
-//            passwordField.boxZero,
-//            loginButton.boxZero
-//        ]
-        
-//        //layout 2
-//        boxView.items = [
-//            nameField.boxZero,
-//            passwordField.boxZero,
-//            loginButton.boxTop(30.0)
-//        ]
-        
-//        //layout 3
-//        boxView.items = [
-//            nameField.boxZero,
-//            passwordField.boxZero,
-//            loginButton.boxTop(30.0).boxLeftRight(50.0, 50.0)
-//        ]
-        
-//        //layout 4
-//        boxView.items = [
-//            nameField.boxZero,
-//            passwordField.boxZero,
-//            useForgotButton ? forgotButton.boxLeftRight(>=0.0, 0.0) : nil,
-//            loginButton.boxTop(30.0).boxLeftRight(50.0, 50.0)
-//        ].compactMap{$0}
-        
-//        //layout 5
-//        boxView.items = [
-//            titleLabel.xAligned(),
-//            nameField.boxZero,
-//            passwordField.boxZero,
-//            useForgotButton ? forgotButton.boxLeftRight(>=0.0, 0.0) : nil,
-//            loginButton.boxTop(30.0).boxLeftRight(50.0, 50.0)
-//        ].compactMap{$0}
-        
-        
-        let nameBoxView = BoxView(axis: .x, spacing: 10.0)
+        // all layout code is here:
         nameBoxView.items = [nameImageView.yAligned(), nameField.boxZero]
-        let passwordBoxView = BoxView(axis: .x, spacing: 10.0)
         passwordBoxView.items = [passwordImageView.yAligned(), passwordField.boxZero]
-
+        boxView.insets = .all(16.0)
+        boxView.spacing = 20.0
         boxView.items = [
             titleLabel.xAligned(),
             nameBoxView.boxZero,
             passwordBoxView.boxZero,
-            useForgotButton ? forgotButton.boxLeftRight(>=0.0, 0.0) : nil,
+            forgotButton.boxLeftRight(>=0.0, 0.0),
             loginButton.boxTop(30.0).boxLeftRight(50.0, 50.0)
-        ].compactMap{$0}
+        ]
         
-//        boxView.insets = UIEdgeInsets(top: 16.0, left: 16.0, bottom: 16.0, right: 16.0)
-//        boxView.spacing = 20.0
-//        boxView.items.append(titleLabel.xAligned())
-//        boxView.items.append(nameField.boxZero)
-//        boxView.items.append(passwordField.boxZero)
-//        if (useForgotButton) {
-//            boxView.items.append(forgotButton.boxLeftRight(>=0.0, 0.0))
-//        }
-//        boxView.items.append(loginButton.boxTop(30.0).boxLeftRight(50.0, 50.0))
-        
-        
-        //forgotButton.boxLeftRight(>=0.0, 0.0),
-
-//        let haveForgotButton = true
-//
-//        let nameBoxView = BoxView(axis: .x, spacing: 10.0)
-//        nameBoxView.items = [nameImageView.yAligned(), nameField.boxZero]
-//        let passwordBoxView = BoxView(axis: .x, spacing: 10.0)
-//        passwordBoxView.items = [passwordImageView.yAligned(), passwordField.boxZero]
-//        
-//        boxView.items.append(titleLabel.xAligned())
-//        boxView.items.append(nameBoxView.boxZero)
-//        boxView.items.append(passwordBoxView.boxZero)
-////        boxView.items.append(nameField.boxZero)
-////        boxView.items.append(passwordField.boxZero)
-//    
-//        if (haveForgotButton) {
-//            boxView.items.append(forgotButton.boxLeftRight(>=0.0, 0.0))
-//        }
-//        boxView.items.append(button.boxTop(30.0).boxLeftRight(50.0, 50.0))
-//        forgotButton.removeFromSuperview()
-
+    }
+    
+    func validateField(_ field: UITextField) -> Bool {
+        if field.text?.isEmpty ?? true {
+            var frame = field.convert(field.bounds, to: boxView)
+            let offset = CGPoint(x: -boxView.spacing, y: frame.minX - boxView.insets.left)
+            errorLabel.removeFromSuperview()
+            boxView.insertItem(errorLabel.boxTop(==offset.x).boxLeft(==offset.y), after: field.superview)
+            frame.origin.y += frame.size.height
+            frame.size.height = 0.0
+            errorLabel.frame = frame
+            boxView.animateChangesWithDurations(0.27)
+            return true
+        }
+        return false
     }
     
     @objc func onClickButton(sender: UIButton) {
-//        self.navigationController?.pushViewController(MixLayoutViewController(), animated: true)
+        for field in [nameField, passwordField] {
+            if validateField(field) {
+                break
+            }
+        }
+        self.navigationController?.pushViewController(PuppiesViewController(), animated: true)
+    }
+    
+    @objc func onChangeTextField(sender: UITextField) {
+        errorLabel.removeFromSuperview()
+        boxView.animateChangesWithDurations(0.35)
     }
     
 }

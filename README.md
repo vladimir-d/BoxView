@@ -1,16 +1,23 @@
+
+## Let me create autolayout constraints for you!
+
 # BoxView
-BoxView is a container view which can layout own subviews.
-
+BoxView is a container view that can layout own subviews.
+It is similar to UIStackView, but works differently
 ## Features
-
+- Pure swift code
 - Effective autolayout with minimum code
-- Easy layout changes, adding, removing or reordering views.
-- Not conflicting with view hierarchy managment or any other autolayout code
+- Easy layout changes, adding, removing and reordering views.
+- Not conflicting with view hierarchy managment 
+- 100% compatibility with any other autolayout code
 - Supports animation
 
 ## Usage
 
 ### Basics
+BoxView allows create complex dynamic layout in code with minimum efforts.
+It takes all constraints boilerplate on oneself, so your code became much shorter and readible.
+It doesn't change views or existing constraints, it only creates specified group of constraints
 
 Let's take typical login view as an example.
 
@@ -61,7 +68,7 @@ Now let's add padding 50 pixels from left and right sides.
 We can do it by adding **boxLeft(50.0)** and **BoxRight(50.0)**:
 ```
 ...
-loginButton.boxTop(30.0).boxLeft(50.0)Right(50.0, 50.0)
+loginButton.boxTop(30.0).boxLeft(50.0).Right(50.0, 50.0)
 ```
 or **boxLeftRight(50.0, 50.0)**
 
@@ -87,8 +94,8 @@ func boxLeft(_ leftPin: BoxLayout.Pin?) -> BoxItem
 ```
  its argument is of type **BoxLayout.Pin** and consist of two vars:
 **value** and **relation**
-So to create  the Pin with **greaterThenOrEqual** relation on left side of  forgotButton 
-we need to write: 
+So we can create  the Pin with **greaterThenOrEqual** relation on the left side of  the forgotButton 
+with code: 
 ```
 BoxLayout.Pin(value: 50.0, relation: .greaterThanOrEqual)
 ```
@@ -96,8 +103,8 @@ but it is too long, so operators **==, >=, <=** are implemented for more concise
 E.g. **==50.0** creates Pin with equal relation, but we can wright simply 
 **boxLeft(50.0)** instead of **boxLeft(==50.0)**  because BoxLayout.Pin conforms to 
 **ExpressibleByFloatLiteral** protocol.
-For Pin with **greaterThenOrEqual** relation we need it in full form:
-**boxLeft(>=50.0)** so finally our layouting code is:
+For the Pin with **greaterThenOrEqual** relation we have to write it in full form:
+**boxLeft(>=0.0)** so finally our layouting code is:
  
 ```
 boxView.items = [
@@ -107,10 +114,12 @@ boxView.items = [
     loginButton.boxTop(30.0).boxLeftRight(50.0, 50.0)
 ]
 ```
-Perhaps we need to make the forgotButton optional, depending on some bool flag e.g.
+Perhaps we need to make the forgotButton optional, depending on some condition.
+To do so we can add optional value to array and then filter it with compactMap method.
 
 ```swift
-let useForgotButton: Bool
+let useForgotButton = true //change it to false to remove forgotButton
+...
 boxView.items = [
     nameField.boxZero,
     passwordField.boxZero,
@@ -118,7 +127,7 @@ boxView.items = [
     loginButton.boxTop(30.0).boxLeftRight(50.0, 50.0)
 ].compactMap{$0}
 ```
-another option is to add items one by one:
+another option is simply to add items one by one:
 
 ```swift
 boxView.insets = UIEdgeInsets(top: 16.0, left: 16.0, bottom: 16.0, right: 16.0)
@@ -151,8 +160,8 @@ boxView.items = [
 ####  Example 6: Add child boxViews with horizontal box axis.
 ![login1 image](https://github.com/vladimir-d/BoxView/blob/master/Docs/Images/login6.png?raw=true)`
 
-All items in previous examples were stacked along Y-axis. What if need also add some items placed along X-axis?
-We can do it by adding nested boxViews with x axes. For example let's add icons on the left of name and password text fields. 
+All items in previous examples were stacked along Y-axis. What if we need also add some items placed along X-axis?
+We can do it by adding nested boxViews with x-axes. For example let's add icons on the left of the name and the password text fields. 
 
 ```
 let nameBoxView = BoxView(axis: .x, spacing: 10.0)
@@ -168,6 +177,17 @@ boxView.items = [
     loginButton.boxTop(30.0).boxLeftRight(50.0, 50.0)
 ].compactMap{$0}
 ```
+
+### BoxView and UIStackView
+Like UIStackView the BoxView also layouting its subviews, but there are some differences:
+1. BoxView never changes size constraints of own subviews. 
+2. BoxView creates specified layout to each subview, while UIStackView use same layout for all subviews in stack.
+3. Box is normal rendering view, it may have background color and layer properties.
+
+UIStackView is used to automatically distribute subviews.
+BoxView is used to create layout with specified insets or alignment for each view.
+Yet is some simplest cases they are interchangable.
+UIStackView can be nested in BoxView and vice verse.
 
 ## Topics
 ### Adding items to view
