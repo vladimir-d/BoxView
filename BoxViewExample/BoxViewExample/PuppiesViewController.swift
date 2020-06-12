@@ -53,7 +53,7 @@ class AlbumItemView: BoxView {
     override func setup() {
         titleLabel.font = UIFont.systemFont(ofSize: 22)
         backgroundColor = .grayScale(0.9)
-        setBorder(color: .grayScale(0.8), width: 1.0)
+        setBorder(color: .grayScale(0.8))
         layer.cornerRadius = 8.0
         addGestureRecognizer(UITapGestureRecognizer(target: self, action:#selector(onTap)))
         insets = .all(12.0)

@@ -34,6 +34,7 @@ class LoginViewController: BaseViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        navigationItem.title = "Puppies"
         view.backgroundColor = .white
         boxView.setBorder(color: .black)
         boxView.layer.cornerRadius = 10.0
@@ -82,15 +83,15 @@ class LoginViewController: BaseViewController {
             frame.size.height = 0.0
             errorLabel.frame = frame
             boxView.animateChangesWithDurations(0.27)
-            return true
+            return false
         }
-        return false
+        return true
     }
     
     @objc func onClickButton(sender: UIButton) {
         for field in [nameField, passwordField] {
-            if validateField(field) {
-                break
+            if !validateField(field) {
+                return
             }
         }
         self.navigationController?.pushViewController(PuppiesViewController(), animated: true)
