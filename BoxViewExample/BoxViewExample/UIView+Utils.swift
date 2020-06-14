@@ -20,12 +20,17 @@ extension UIView {
 
 extension UILabel {
     
-    class func alWithText(_ text: String?, color: UIColor = .clear, textColor: UIColor = .black, numberOfLines: Int = 0) -> UILabel {
+    class func alWithText(_ text: String?, color: UIColor = .clear, textColor: UIColor = .black, font: UIFont? = nil, numberOfLines: Int? = nil) -> UILabel {
         let label = UILabel.newAL()
         label.text = text
         label.backgroundColor = color
         label.textColor = textColor
-        label.numberOfLines = numberOfLines
+        if let font = font {
+            label.font = font
+        }
+        if let numberOfLines = numberOfLines {
+            label.numberOfLines = numberOfLines
+        }
         return label
     }
     
@@ -53,11 +58,16 @@ extension UIImageView {
     }
     
     class func alAspectFitWithImageName(_ imageName: String) -> UIImageView {
-        let img = UIImage(named: imageName)
-        let imgView = UIImageView(image: img)
-        imgView.contentMode = .scaleAspectFit
-        imgView.alSetSetAspectFromSize(img?.size ?? .zero)
+        let imgView = UIImageView()
+        imgView.setAspectFitImageWithName(imageName)
         return imgView
+    }
+    
+    func setAspectFitImageWithName(_ imageName: String?) {
+//        let img = UIImage(named: imageName)
+        image =  UIImage(named: imageName ?? "")
+        contentMode = .scaleAspectFit
+        alSetSetAspectFromSize(image?.size ?? .zero)
     }
     
 }
