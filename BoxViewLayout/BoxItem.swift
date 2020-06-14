@@ -72,6 +72,7 @@ public struct BoxItem {
             return alignedItem
         }
     }
+ 
 }
 
 
@@ -142,6 +143,23 @@ extension UIView {
     // Creates BoxItem with view and layout where top, left, bootom and right insets are taken from UIEdgeInsets.
     public func boxInsets(_ insets: UIEdgeInsets?) -> BoxItem {
         return BoxItem(view: self, layout: .withPins(top: ==(insets?.top), left: ==(insets?.left), bottom: ==(insets?.bottom), right: ==(insets?.right)))
+    }
+    
+    public func boxAll(_ padding: CGFloat) -> BoxItem {
+        return boxInsets(.all(padding))
+    }
+    
+    @discardableResult
+    public func addBoxItem(_ item: BoxItem, semanticDependent: Bool = true) -> [NSLayoutConstraint] {
+        var constraints = [NSLayoutConstraint]()
+        addSubview(item.view)
+        for edge in BoxEdge.allCases {
+            if let pin = item.layout.pinForEdge(edge) {
+                let attr = edge.attribute(semanticDependent: semanticDependent)
+                constraints.append(item.view.alPin(attr, to: attr, of: self, pin: pin))
+            }
+        }
+        return constraints
     }
 
 }

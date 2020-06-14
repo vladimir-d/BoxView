@@ -157,3 +157,20 @@ public prefix func ==(v: Double?) -> BoxLayout.Pin? {
     }
     return nil
 }
+
+extension UIView {
+    
+    public func alPin(_ attribute: NSLayoutConstraint.Attribute, to toAttribute: NSLayoutConstraint.Attribute, of view: UIView, pin: BoxLayout.Pin) -> NSLayoutConstraint {
+        let constraint = NSLayoutConstraint(
+            item: self,
+            attribute: attribute,
+            relatedBy: pin.relation,
+            toItem: view,
+            attribute: toAttribute,
+            multiplier: 1.0,
+            constant: pin.value)
+        NSLayoutConstraint.activate([constraint])
+        return constraint
+    }
+    
+}

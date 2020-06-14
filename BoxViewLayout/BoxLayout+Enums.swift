@@ -11,7 +11,7 @@ import UIKit
 
 // MARK: - Public
 // BoxEdge duplicates subset of NSLayoutConstraint Attributes
-public enum BoxEdge  {
+public enum BoxEdge: CaseIterable {
     
     case top, left, right, bottom, centerX, centerY
 
@@ -22,6 +22,18 @@ public enum BoxEdge  {
     public enum Position {
         case begin, center, end
     }
+    
+    func attribute(semanticDependent: Bool = true) -> NSLayoutConstraint.Attribute {
+        switch self {
+            case .left: return  (semanticDependent) ? .leading : .left
+            case .right: return (semanticDependent) ? .trailing : .right
+            case .top: return .top
+            case .bottom: return .bottom
+            case .centerX: return .centerX
+            case .centerY: return .centerY
+        }
+    }
+    
 }
 
 

@@ -16,13 +16,12 @@ class BaseViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        view.addSubview(scrollView)
-        scrollView.addSubview(boxView)
         let boxPadding: CGFloat = 16.0
-        boxView.alToSuperviewWithEdgeValues(.all(boxPadding))
+        scrollView.addBoxItem(boxView.boxAll(boxPadding))
         boxView.translatesAutoresizingMaskIntoConstraints = false
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         if #available(iOS 11, *) {
+            view.addSubview(scrollView)
             let guide = view.safeAreaLayoutGuide
             NSLayoutConstraint.activate([
                 scrollView.topAnchor.constraint(equalToSystemSpacingBelow: guide.topAnchor, multiplier: 1.0),
@@ -31,7 +30,7 @@ class BaseViewController: UIViewController {
                 guide.rightAnchor.constraint(equalToSystemSpacingAfter: scrollView.rightAnchor, multiplier: 1.0)
             ])
         } else {
-            scrollView.alToSuperviewWithEdgeValues(.all(20.0))
+            view.addBoxItem(scrollView.boxAll(20.0))
         }
         boxView.alWidthPin(==(-boxPadding * 2.0), to: scrollView)
     }

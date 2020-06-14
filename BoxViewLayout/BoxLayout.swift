@@ -57,6 +57,17 @@ public struct BoxLayout {
         }
     }
     
+    public func pinForEdge(_ edge: BoxEdge) -> Pin? {
+        switch edge {
+            case .left: return self.left
+            case .right: return self.right
+            case .top: return self.top
+            case .bottom: return self.bottom
+            case .centerX: return self.centerX
+            case .centerY: return self.centerY
+        }
+    }
+    
     public static func boxEdgePins(_ pins: EdgePins) -> BoxLayout {
         var layout = BoxLayout.zero
         for (edge, pin) in pins {
