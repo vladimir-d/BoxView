@@ -39,7 +39,6 @@ boxView.items = [
 ```
 Full example code is available in BoxViewExample project, and also there is a [step-by-step tutorial for this example](https://github.com/vladimir-d/BoxView/blob/master/Docs/login.md) in Docs folder.
 
-
 It is very easy to add/remove views, or to change any view padding without affecting other views in layout.
 And these changes optionally can be animated. For example, we can add empty fields validation and show error label below empty field.
 
