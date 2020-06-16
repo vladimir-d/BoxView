@@ -14,7 +14,7 @@ public typealias BoxEdgePins = [BoxEdge: BoxLayout.Pin]
 
 extension BoxLayout {
     
-    public struct Pin: ExpressibleByFloatLiteral {
+    public struct Pin {  //: ExpressibleByFloatLiteral
         
         public var value: CGFloat = 0.0
         
@@ -29,9 +29,9 @@ extension BoxLayout {
             self = Pin(value: CGFloat(value), relation: .equal)
         }
         
-        public init(floatLiteral value: FloatLiteralType) {
-            self = Pin(value: CGFloat(value), relation: .equal)
-        }
+//        public init(floatLiteral value: FloatLiteralType) {
+//            self = Pin(value: CGFloat(value), relation: .equal)
+//        }
         
         public static let zero = Pin(value: 0.0, relation: .equal)
         
