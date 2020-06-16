@@ -51,37 +51,32 @@ class LoginViewController: BaseViewController {
         passwordField.isSecureTextEntry = true
         
         // all layout code is here:
-        nameBoxView.items = [nameImageView.yAligned(), nameField.boxZero]
-        passwordBoxView.items = [passwordImageView.yAligned(), passwordField.boxZero]
+        nameBoxView.items = [nameImageView.boxCenterY(), nameField.boxZero]
+        passwordBoxView.items = [passwordImageView.boxCenterY(), passwordField.boxZero]
         boxView.insets = .all(16.0)
         boxView.spacing = 20.0
-        
+
         boxView.items = [
-            titleLabel.xAligned(padding: 30.0).boxBottom(20.0),
+            titleLabel.boxCenterX(padding: 30.0).boxBottom(20.0),
             nameBoxView.boxZero,
             passwordBoxView.boxZero,
-            forgotButton.boxLeftRight(>=0.0, 0.0),
+            forgotButton.boxLeft(>=0.0),
             loginButton.boxTop(30.0).boxLeftRight(50.0, 50.0)
         ]
     }
     
-    func validateField(_ field: UITextField) -> Bool {
-        if field.text?.isEmpty ?? true {
-            let frame = field.convert(field.bounds, to: boxView)
-            let offset = CGPoint(x: -boxView.spacing, y: frame.minX - boxView.insets.left)
-            errorLabel.removeFromSuperview()
-            boxView.insertItem(errorLabel.boxTop(==offset.x).boxLeft(==offset.y), after: field.superview)
-            boxView.sendSubviewToBack(errorLabel)
-            errorLabel.frame = frame
-            boxView.animateChangesWithDurations(0.3)
-            return false
-        }
-        return true
+    func showErrorForField(_ field: UITextField) {
+        errorLabel.frame = field.convert(field.bounds, to: boxView)
+        let item = errorLabel.boxTop(-boxView.spacing).boxLeft(errorLabel.frame.minX - boxView.insets.left)
+        boxView.insertItem(item, after: field.superview)
+        boxView.sendSubviewToBack(errorLabel)
+        boxView.animateChangesWithDurations(0.3)
     }
     
     @objc func onClickButton(sender: UIButton) {
         for field in [nameField, passwordField] {
-            if !validateField(field) {
+            if field.text?.isEmpty ?? true {
+                showErrorForField(field)
                 return
             }
         }

@@ -2,10 +2,10 @@
 ### *Let me create autolayout constraints for you!*
 
 # BoxView
-BoxView is a container view that can layout own subviews.
+The BoxView is a container view that can layout own subviews.
 It is similar to UIStackView, but uses different approach: it allows to set inividual layout for each subview, rather than automatically distribute them.
-BoxView allows create complex dynamic layout in code with minimum efforts.
-It takes all constraints boilerplate on oneself, so your code became much shorter and readible.
+It easy to create creating complex dynamic layout based on BoxViews in code with minimum efforts.
+BoxView takes all constraints creation boilerplate on oneself, so code became much shorter and readible.
 It doesn't change views or existing constraints, it only creates specified group of constraints, so it doesn't conflict with anything.
 
 ## Features
@@ -15,13 +15,11 @@ It doesn't change views or existing constraints, it only creates specified group
 - 100% compatibility with any other autolayout code
 - Supports animation
 
-## Usage
+## Examples
 
-### Example
+![album image](https://github.com/vladimir-d/BoxView/blob/master/Docs/Images/album.gif?raw=true)
 
-Let's take typical login view as an example.
-
-![login1 image](https://github.com/vladimir-d/BoxView/blob/master/Docs/Images/login6.png?raw=true)
+![login6 image](https://github.com/vladimir-d/BoxView/blob/master/Docs/Images/login6.png?raw=true)
 
 We need only few lines of code to create this layout with BoxView:
 ```
@@ -37,19 +35,20 @@ boxView.items = [
     loginButton.boxTop(30.0).boxLeftRight(50.0, 50.0)
 ]
 ```
-Full example code is available in BoxViewExample project, and also there is a [step-by-step tutorial for this example](https://github.com/vladimir-d/BoxView/blob/master/Docs/login.md) in Docs folder.
+Full examples code is available in BoxViewExample project, and also there is a [step-by-step tutorial for login example](https://github.com/vladimir-d/BoxView/blob/master/Docs/login.md) in Docs folder.
 
 It is very easy to add/remove views, or to change any view padding without affecting other views in layout.
-And these changes optionally can be animated. For example, we can add empty fields validation and show error label below empty field.
+And these changes optionally can be animated. For example, we can add empty fields validation and show error label below empty field, leaving existing layout code unchanged!
 
 ![login1 image](https://github.com/vladimir-d/BoxView/blob/master/Docs/Images/loginerr.gif?raw=true)
 
-###  Basic
+
+## Usage
 
 The BoxView uses **items** array to arrange its subviews. Each item is of type **BoxItem**, and it encapsulate the view together with the layout information. So to layout some views using BoxView we have to create BoxItem from each view and add these items to BoxView. 
 
 ####  Creating boxItems
-There are some methods implemented in BoxItem and in UIView extension to create BoxItems with most common layouts. For example:
+There are some methods implemented in BoxItem and in UIView extension to create BoxItems for most common layouts. For example:
 
 ```swift
 // creates a BoxItem with zero paddings from all 4 sides
@@ -61,7 +60,6 @@ view.boxLeft(20.0)
 // creates an item with 10 pt padding from top, 20 pt from bottom and zero paddings from other 2 sides.
 view.boxTopBottom(10.0, 20.0) 
 
-
 // creates an item aligned along X-axis, with padding >= 30 pt from left and right sides, top and bottom padding are zero
 view.xAligned(padding: 30.0)
 ```
@@ -70,6 +68,7 @@ Note, that actual view offsets for all paddings are calculated counting boxView.
 
 ![BoxView layout scheme image](https://github.com/vladimir-d/BoxView/blob/master/Docs/Images/boxLayout.png?raw=true)
 
+It may look complicated, but all these values are zero by default, so only explisitly set values are contributing in actual paddings.  
 
 BoxItem creation methods can be chained:
 
@@ -80,26 +79,14 @@ view.boxLeft(20.0).boxTop(30.0)
 // creates an item with 20 pt padding from left zero padding from right and aligned along Y-axis, with padding >= 0.0 from top and bottom
 view.boxLeft(20.0).yAligned()
 ```
-Each padding can be specified with relation:
+Each padding can be specified with relation using operator ">=" for greaterThanOrEqual relation and operator "<=" for lessThanOrEqual relation. Equal relation is default, so operator "==" is usually not used.
 ```swift
-// creates an item with padding greater than or equal 20 pt from left and 30 pt from top and zero paddings from other 2 sides. 
-view.boxLeft(>=20.0).boxTop(==30.0)
+// creates an item with padding greater than or equal 20 pt from left,
+// padding less than or equal  30 pt from top and zero paddings from other 2 sides. 
+view.boxLeft(>=20.0).boxTop(<=30.0)
 ```
 
-⚠️ In fact relation is obligatory and can be omited only for float literals:
-
-```swift
-let offset = 30.0
-// allowed:
-view.boxLeft(==offset)
-view.boxLeft(==30.0)
-view.boxLeft(30.0) // same as view.boxLeft(==30.0)
-
-// not allowed:
-view.boxLeft(offset)
-```
-
-####  Managing boxItems
+####  Managing BoxView items
 
 Items can be added, inserted or removed at any moment:
 ```swift
