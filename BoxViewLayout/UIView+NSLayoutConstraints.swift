@@ -20,7 +20,7 @@ extension UIView {
     }
     
     @discardableResult
-    public func alPin(_ attribute: NSLayoutConstraint.Attribute, to toAttribute: NSLayoutConstraint.Attribute, of view: UIView, constant: CGFloat = 0.0, relation: NSLayoutConstraint.Relation = .equal) -> NSLayoutConstraint {
+    public func alPin(_ attribute: NSLayoutConstraint.Attribute, to toAttribute: NSLayoutConstraint.Attribute, of view: UIView, constant: CGFloat = 0.0, relation: NSLayoutConstraint.Relation = .equal, activate: Bool = true) -> NSLayoutConstraint {
         let constraint = NSLayoutConstraint(
             item: self,
             attribute: attribute,
@@ -29,7 +29,9 @@ extension UIView {
             attribute: toAttribute,
             multiplier: 1.0,
             constant: constant)
-        NSLayoutConstraint.activate([constraint])
+        if activate {
+            NSLayoutConstraint.activate([constraint])
+        }
         return constraint
     }
     

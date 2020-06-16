@@ -91,6 +91,9 @@ open class BoxView: UIView {
     
     // inserting item after item with given view, if view is nil, then item inserted at index 0
     public func insertItem(_ item: BoxItem, after view: UIView?) {
+        if managedViews.contains(item.view) {
+            item.view.removeFromSuperview()
+        }
         if view == nil {
             items.insert(item, at: 0)
         }
@@ -186,7 +189,7 @@ open class BoxView: UIView {
                         guard let sumPin = itemBegin + prevEnd else {
                             sumPinWarning(); return
                         }
-                        let toPrev = view.alPin(beginAttr, to: endAttr, of: prevItem.view, constant: sumPin.value + spacing, relation: sumPin.relation)
+                        let toPrev = view.alPin(beginAttr, to: endAttr, of: prevItem.view, constant: sumPin.value + spacing, relation: sumPin.relation, activate: false)
                         managedConstraints.append(toPrev)
                         edgeConstraints[endEdge] = toPrev
                         itemsEdgeConstraints.append(edgeConstraints)
@@ -194,23 +197,24 @@ open class BoxView: UIView {
                     }
                 }
                 else{
-                    let toBegin = view.alPin(beginAttr, to: beginAttr, of: self, constant: itemBegin.value + begin, relation: itemBegin.relation)
+                    let toBegin = view.alPin(beginAttr, to: beginAttr, of: self, constant: itemBegin.value + begin, relation: itemBegin.relation, activate: false)
                     managedConstraints.append(toBegin)
                     edgeConstraints = [beginEdge: toBegin]
                 }
             }
             if let itemCenter = layout.center(axis) {
-                view.alPin(centerAttr, to: centerAttr, of: self, constant: itemCenter.value, relation: itemCenter.relation)
+                view.alPin(centerAttr, to: centerAttr, of: self, constant: itemCenter.value, relation: itemCenter.relation, activate: false)
             }
             pinAccross(view: view, layout: layout, edgeConstraints: &edgeConstraints)
             prevItem = item
         }
         if let itemEnd = prevItem?.layout.end(axis) {
-            let toEnd = self.alPin(endAttr, to: endAttr, of: prevItem!.view, constant: itemEnd.value + end, relation: itemEnd.relation)
+            let toEnd = self.alPin(endAttr, to: endAttr, of: prevItem!.view, constant: itemEnd.value + end, relation: itemEnd.relation, activate: false)
             managedConstraints.append(toEnd)
             edgeConstraints[endEdge] = toEnd
         }
         itemsEdgeConstraints.append(edgeConstraints)
+        NSLayoutConstraint.activate(managedConstraints)
     }
     
     private var isUpdatingItems: Bool  = false
@@ -235,10 +239,10 @@ open class BoxView: UIView {
                 let attr = attributeForEdge(edge)
                 let constr: NSLayoutConstraint
                 if (pos == .end) {
-                    constr = self.alPin(attr, to: attr, of: view, constant: pin.value + insets.insetForAxis(otherAxis, position: pos), relation: pin.relation)
+                    constr = self.alPin(attr, to: attr, of: view, constant: pin.value + insets.insetForAxis(otherAxis, position: pos), relation: pin.relation, activate: false)
                 }
                 else {
-                    constr = view.alPin(attr, to: attr, of: self, constant: pin.value + insets.insetForAxis(otherAxis, position: pos), relation: pin.relation)
+                    constr = view.alPin(attr, to: attr, of: self, constant: pin.value + insets.insetForAxis(otherAxis, position: pos), relation: pin.relation, activate: false)
                 }
                 managedConstraints.append(constr)
                 edgeConstraints[edge] = constr
@@ -282,5 +286,4 @@ open class BoxView: UIView {
             }
         }
     }
-    
 }
