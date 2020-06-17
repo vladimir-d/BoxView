@@ -30,13 +30,9 @@ class PuppiesViewController: BaseViewController {
             let itemView = AlbumView()
             itemView.titleLabel.text = album.title
             itemView.textLabel.text = album.text
-            for name in album.imageNames {
-                let photoView = PhotoView(imageName: name)
-                itemView.imagesBoxView.items.append(photoView.boxZero)
-            }
+            itemView.imagesBoxView.items = album.imageNames.map({ PhotoView(imageName: $0) }).boxZero
             boxView.addItem(itemView.boxZero)
         }
-        boxView.insets = .zero
         boxView.spacing = 4.0
     }
 }
@@ -51,9 +47,7 @@ class AlbumView: BoxView {
     
     let imagesScrollView = UIScrollView()
     
-    var imagesHeight: NSLayoutConstraint?
-    
-    var imagesWidth: NSLayoutConstraint?
+    var expandSwitch = ConstraintSwitch()
     
     override func setup() {
         backgroundColor = .grayScale(0.9)
@@ -69,33 +63,20 @@ class AlbumView: BoxView {
             textLabel.boxBottom(4.0),
             imagesScrollView.boxZero
         ]
-        imagesHeight = imagesBoxView.alHeightPin(==50.0)
-        imagesScrollView.alHeightPin(==0.0, to: imagesBoxView)
-        imagesWidth = imagesBoxView.alWidthPin(==0.0, to: imagesScrollView)
-        imagesWidth?.isActive = false
-        self.alWidthPin(==(insets.left + insets.right), to: imagesScrollView)
+        expandSwitch.offSet = [imagesBoxView.alPinHeight(50.0)]
+        imagesScrollView.alPinHeight(0.0, to: imagesBoxView)
+        expandSwitch.onSet = [imagesBoxView.alPinWidth(0.0, to: imagesScrollView)]
+        self.alPinWidth(insets.left + insets.right, to: imagesScrollView)
     }
     
-    
     @objc func onTap(sender: UITapGestureRecognizer) {
-        
         let isExpanded = (imagesBoxView.axis == .x)
         imagesBoxView.axis = imagesBoxView.axis.other
         imagesBoxView.managedViews.forEach { ($0 as? PhotoView)?.setLabelsShown(isExpanded)}
-        if isExpanded {
-            imagesHeight?.isActive = false
-            imagesWidth?.isActive = true
-            
-        }
-        else{
-            imagesWidth?.isActive = false
-            imagesHeight?.isActive = true
-            
-        }
+        expandSwitch.state = isExpanded
         textLabel.numberOfLines = isExpanded ? 0 : 2
         (self.superview as? BoxView)?.animateChangesWithDurations(0.5)
     }
-    
 }
 
 class PhotoView: BoxView {
@@ -117,18 +98,10 @@ class PhotoView: BoxView {
     }
     
     func setLabelsShown(_ shown: Bool) {
-        if (shown) {
-            self.items = [
-                imageView.boxZero,
-                titleLabel.boxTop(4.0),
-                sizeLabel.boxBottom(16.0)
-            ]
-        }
-        else {
-            self.items = [
-                imageView.boxZero,
-            ]
-        }
+        self.items = [
+            imageView.boxZero,
+            (shown) ? titleLabel.boxTop(4.0) : nil,
+            (shown) ? sizeLabel.boxBottom(16.0) : nil
+        ].compactMap({$0})
     }
 }
-

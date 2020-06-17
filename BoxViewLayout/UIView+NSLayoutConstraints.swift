@@ -81,7 +81,7 @@ extension UIView {
     }
     
     @discardableResult
-    public func alSetHeight(_ height: CGFloat, relation: NSLayoutConstraint.Relation = .equal) -> NSLayoutConstraint {
+    func alSetHeight(_ height: CGFloat, relation: NSLayoutConstraint.Relation = .equal) -> NSLayoutConstraint {
         let constr: NSLayoutConstraint
         switch relation {
             case .greaterThanOrEqual: constr = self.heightAnchor.constraint(greaterThanOrEqualToConstant: height)
@@ -93,7 +93,7 @@ extension UIView {
     }
     
     @discardableResult
-    public func alHeightPin(_ pin: BoxLayout.Pin, to view: UIView? = nil) -> NSLayoutConstraint {
+    public func alPinHeight(_ pin: BoxLayout.Pin, to view: UIView? = nil) -> NSLayoutConstraint {
         let constr: NSLayoutConstraint
         if let view = view {
             switch pin.relation {
@@ -110,7 +110,12 @@ extension UIView {
     }
     
     @discardableResult
-    public func alSetWidth(_ width: CGFloat, relation: NSLayoutConstraint.Relation = .equal) -> NSLayoutConstraint {
+    public func alPinHeight(_ height: CGFloat, to view: UIView? = nil) -> NSLayoutConstraint {
+        return alPinHeight(==height, to: view)
+    }
+    
+    @discardableResult
+    private func alSetWidth(_ width: CGFloat, relation: NSLayoutConstraint.Relation = .equal) -> NSLayoutConstraint {
         let constr: NSLayoutConstraint
         switch relation {
             case .greaterThanOrEqual: constr = self.widthAnchor.constraint(greaterThanOrEqualToConstant: width)
@@ -122,7 +127,7 @@ extension UIView {
     }
     
     @discardableResult
-    public func alWidthPin(_ pin: BoxLayout.Pin, to view: UIView? = nil) -> NSLayoutConstraint {
+    public func alPinWidth(_ pin: BoxLayout.Pin, to view: UIView? = nil) -> NSLayoutConstraint {
         let constr: NSLayoutConstraint
         if let view = view {
             switch pin.relation {
@@ -136,6 +141,11 @@ extension UIView {
         else {
             return alSetWidth(pin.value, relation: pin.relation)
         }
+    }
+    
+    @discardableResult
+    public func alPinWidth(_ width: CGFloat, to view: UIView? = nil) -> NSLayoutConstraint {
+        return alPinWidth(==width, to: view)
     }
     
     @discardableResult
@@ -153,18 +163,14 @@ extension UIView {
         }
         return aspectConstraint
     }
-    
 
-    
     public func alRemoveConstraintsForAttribute(_ attr: NSLayoutConstraint.Attribute) {
         let existing = constraints.filter { constraint in
             return constraint.firstAttribute == attr
         }
         existing.forEach{ self.removeConstraint($0)}
     }
-
 }
-
 
 extension LayoutAttributeValues {
 
@@ -178,6 +184,69 @@ extension LayoutAttributeValues {
         return dict
     }
 }
+
+open class ConstraintSwitch {
+    
+    typealias Handler = () -> Void
+    
+    var state: Bool {
+        didSet {
+            // it looks like a bug from Apple:
+            // when setting for inactive constraints isActive = true
+            // immediately is called _tryToAddConstraint:roundingAdjustment:mutuallyExclusiveConstraints
+            // but whole constraints for view are inconsistent at the moment as
+            // pairing active constraints are not deactivated yet
+            // so as workaround we have first to deactivate active constraints in switch
+            // and then activate inactive constraints
+            
+            if self.state {
+                NSLayoutConstraint.deactivate(Array(offSet))
+                NSLayoutConstraint.activate(Array(onSet))
+            }
+            else{
+                NSLayoutConstraint.deactivate(Array(onSet))
+                NSLayoutConstraint.activate(Array(offSet))
+            }
+            stateChangeHandler?()
+        }
+    }
+    
+    public var onSet = Set<NSLayoutConstraint>() {
+        didSet {
+            if self.state {
+                NSLayoutConstraint.activate(Array(onSet))
+            }
+            else{
+                NSLayoutConstraint.deactivate(Array(onSet))
+            }
+        }
+    }
+    
+    public var offSet = Set<NSLayoutConstraint>() {
+        didSet {
+            if self.state {
+                NSLayoutConstraint.deactivate(Array(offSet))
+            }
+            else{
+                NSLayoutConstraint.activate(Array(offSet))
+            }
+        }
+    }
+    
+    var stateChangeHandler: Handler?
+
+    init() {
+        state = false
+    }
+    
+    init(state:Bool = false, onSet: [NSLayoutConstraint?] = [], offSet: [NSLayoutConstraint?] = []) {
+        self.onSet = Set(onSet.compactMap { $0 })
+        self.offSet = Set(offSet.compactMap { $0 })
+        self.state = state
+    }
+}
+
+
 
 
 

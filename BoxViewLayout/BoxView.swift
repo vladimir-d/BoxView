@@ -31,7 +31,7 @@ open class BoxView: UIView {
         super.init(coder: aDecoder)
     }
     
-    public func setup() {
+    open func setup() {
         // to override in subclasses
     }
     

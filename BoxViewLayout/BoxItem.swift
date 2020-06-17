@@ -213,6 +213,7 @@ extension UIView {
     @discardableResult
     public func addBoxItem(_ item: BoxItem, semanticDependent: Bool = true) -> [NSLayoutConstraint] {
         var constraints = [NSLayoutConstraint]()
+        item.view.translatesAutoresizingMaskIntoConstraints = false
         addSubview(item.view)
         for edge in BoxEdge.allCases {
             if let pin = item.layout.pinForEdge(edge) {
