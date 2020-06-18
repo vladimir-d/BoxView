@@ -76,7 +76,7 @@ public struct BoxLayout {
         return layout
     }
     
-    public static func xAligned(offset: CGFloat = 0.0, padding: CGFloat? = 0.0) -> BoxLayout {
+    public static func xCentered(offset: CGFloat = 0.0, padding: CGFloat? = 0.0) -> BoxLayout {
         var layout = BoxLayout()
         layout.centerX = ==offset
         if let padding = padding {
@@ -88,7 +88,7 @@ public struct BoxLayout {
         return layout
     }
     
-    public static func yAligned(offset: CGFloat = 0.0, padding: CGFloat? = 0.0) -> BoxLayout {
+    public static func yCentered(offset: CGFloat = 0.0, padding: CGFloat? = 0.0) -> BoxLayout {
         var layout = BoxLayout()
         layout.centerY = ==offset
         layout.left = .zero
