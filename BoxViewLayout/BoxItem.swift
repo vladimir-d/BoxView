@@ -211,14 +211,19 @@ extension UIView {
     }
     
     @discardableResult
-    public func addBoxItem(_ item: BoxItem, semanticDependent: Bool = true) -> [NSLayoutConstraint] {
+    public func addBoxItem(_ item: BoxItem, rtlDependent: Bool = true) -> [NSLayoutConstraint] {
         var constraints = [NSLayoutConstraint]()
         item.view.translatesAutoresizingMaskIntoConstraints = false
         addSubview(item.view)
         for edge in BoxEdge.allCases {
             if let pin = item.layout.pinForEdge(edge) {
-                let attr = edge.attribute(semanticDependent: semanticDependent)
-                constraints.append(item.view.alPin(attr, to: attr, of: self, pin: pin))
+                let attr = edge.attribute(rtlDependent: rtlDependent)
+                if (edge.position == .end) {
+                    constraints.append(self.alPin(attr, to: attr, of: item.view, pin: pin))
+                }
+                else {
+                    constraints.append(item.view.alPin(attr, to: attr, of: self, pin: pin))
+                }
             }
         }
         return constraints

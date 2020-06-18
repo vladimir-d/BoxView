@@ -13,18 +13,23 @@ open class BoxView: UIView {
     
     // MARK: - Public
     
+    // MARK: -- Inits
+    
     public init(axis: BoxLayout.Axis = .y, spacing: CGFloat = 0.0, insets: UIEdgeInsets = .zero) {
         self.axis = axis
         self.spacing = spacing
-        self.insets = insets
         super.init(frame: .zero)
-        self.translatesAutoresizingMaskIntoConstraints = false
-        self.setup()
+        self.insets = insets
+        langDir = UIView.userInterfaceLayoutDirection(for: semanticContentAttribute)
+        translatesAutoresizingMaskIntoConstraints = false
+        setup()
     }
     
     public required override init(frame: CGRect) {
         super.init(frame: frame)
-        self.setup()
+        insets = .zero
+        langDir = UIView.userInterfaceLayoutDirection(for: semanticContentAttribute)
+        setup()
     }
     
     public required init?(coder aDecoder: NSCoder) {
@@ -35,21 +40,7 @@ open class BoxView: UIView {
         // to override in subclasses
     }
     
-    // array of all automatically created by BoxView constraints
-    public private(set) var managedConstraints = [NSLayoutConstraint]()
-    
-    // array of automatically created by BoxView constraints groupped in dictionary for each item
-    public private(set) var itemsEdgeConstraints = [BoxEdge.Constraints]()
-    
-    // array of views of all items.
-    // it is a subset of boxView.subviews
-    public private(set) var managedViews = [UIView]()
-    
-    public var items:[BoxItem] = [] {
-        didSet {
-            updateItems()
-        }
-    }
+    // MARK: -- vars
     
     // main axis along which item views are stacked.
     // X is horizontal and Y is vertical.
@@ -59,9 +50,24 @@ open class BoxView: UIView {
         }
     }
     
-    // Additional isets from boxView edges. They are added to corresponding view constraints.
-    @IBInspectable
-    public var insets = UIEdgeInsets.zero {
+    // sinchronized with layoutMargins
+    public var insets: UIEdgeInsets {
+        get {
+            return layoutMargins
+        }
+        set (v) {
+            layoutMargins = v
+            if #available(iOS 11.0, *) {
+                directionalLayoutMargins = NSDirectionalEdgeInsets(top: v.top,
+                                                                   leading: v.left,
+                                                                   bottom: v.bottom,
+                                                                   trailing: v.right)
+            }
+            setNeedsUpdateConstraints()
+        }
+    }
+    
+    public override var layoutMargins: UIEdgeInsets {
         didSet {
             setNeedsUpdateConstraints()
         }
@@ -74,6 +80,46 @@ open class BoxView: UIView {
         didSet {
             setNeedsUpdateConstraints()
         }
+    }
+    
+    // Define which attributes used for left/right edges:
+    // if true: leading/trailing, if false: left/right
+    @IBInspectable
+    public var isRTLDependent: Bool = true {
+        didSet {
+            setNeedsUpdateConstraints()
+        }
+    }
+    
+    override public var semanticContentAttribute: UISemanticContentAttribute {
+        didSet {
+            langDir = UIView.userInterfaceLayoutDirection(for: semanticContentAttribute)
+        }
+    }
+    
+    // MARK: -- readonly vars
+    
+    // array of all automatically created by BoxView constraints
+    public private(set) var managedConstraints = [NSLayoutConstraint]()
+    
+    // array of automatically created by BoxView constraints groupped in dictionary for each item
+    public private(set) var itemsEdgeConstraints = [BoxEdge.Constraints]()
+    
+    // array of views of all items.
+    // it is a subset of boxView.subviews
+    public private(set) var managedViews = [UIView]()
+    
+    // MARK: -- setting items and layouts
+    
+    public var items:[BoxItem] = [] {
+        didSet {
+            updateItems()
+        }
+    }
+
+    public func withItems(_ items:[BoxItem]) -> Self {
+        self.items = items
+        return self
     }
     
     // setting items from array of views using same layout
@@ -110,12 +156,16 @@ open class BoxView: UIView {
         }
     }
     
+    // MARK: -- animation
+    
     public func animateChangesWithDurations(_ duration: TimeInterval) {
         UIView.animate(withDuration: duration) {
             self.superview?.layoutIfNeeded()
         }
     }
 
+    // MARK: -- overriden UIView functions
+    
     // When items are assigned or parameters affecting layout are changed,
     // constraints are not changed immediatly. Only setNeedsUpdateConstraints() called.
     // Then updateConstraints() method is called automatically when boxView laying out own subviews.
@@ -197,7 +247,7 @@ open class BoxView: UIView {
                     }
                 }
                 else{
-                    let toBegin = view.alPin(beginAttr, to: beginAttr, of: self, constant: itemBegin.value + begin, relation: itemBegin.relation, activate: false)
+                    let toBegin = view.alPin(beginAttr, to: beginAttr, of: self, constant: itemBegin.value + beginForAxis(axis), relation: itemBegin.relation, activate: false)
                     managedConstraints.append(toBegin)
                     edgeConstraints = [beginEdge: toBegin]
                 }
@@ -209,7 +259,7 @@ open class BoxView: UIView {
             prevItem = item
         }
         if let itemEnd = prevItem?.layout.end(axis) {
-            let toEnd = self.alPin(endAttr, to: endAttr, of: prevItem!.view, constant: itemEnd.value + end, relation: itemEnd.relation, activate: false)
+            let toEnd = self.alPin(endAttr, to: endAttr, of: prevItem!.view, constant: itemEnd.value + endForAxis(axis), relation: itemEnd.relation, activate: false)
             managedConstraints.append(toEnd)
             edgeConstraints[endEdge] = toEnd
         }
@@ -219,12 +269,30 @@ open class BoxView: UIView {
     
     private var isUpdatingItems: Bool  = false
     
-    private var begin: CGFloat {
-        return (axis == .y) ? insets.top : insets.left
+    private var langDir: UIUserInterfaceLayoutDirection = .leftToRight
+    
+    private func beginForAxis(_ anAxis: BoxLayout.Axis) -> CGFloat {
+        return (anAxis == .y) ? insets.top : insets.left
     }
     
-    private var end: CGFloat {
-        return (axis == .y) ? insets.bottom : insets.right
+    private func endForAxis(_ anAxis: BoxLayout.Axis) -> CGFloat {
+        return (anAxis == .y) ? insets.bottom : insets.right
+    }
+
+    private func centerOffsetForAxis(_ anAxis: BoxLayout.Axis) -> CGFloat {
+        return 0.5 * ((anAxis == .y) ? insets.top - insets.bottom : (insets.left - insets.right) * offsetFactorForAxis(anAxis))
+    }
+    
+    private func offsetFactorForAxis(_ anAxis: BoxLayout.Axis) -> CGFloat {
+        return (anAxis == .y || langDir == .leftToRight || !isRTLDependent) ? 1.0 : -1.0
+    }
+    
+    func insetForAxis(_ anAxis: BoxLayout.Axis, position: BoxEdge.Position)  -> CGFloat {
+        switch position {
+            case .begin: return beginForAxis(anAxis)
+            case .center: return centerOffsetForAxis(anAxis)
+            case .end: return endForAxis(anAxis)
+        }
     }
     
     private func sumPinWarning() {
@@ -239,11 +307,18 @@ open class BoxView: UIView {
                 let attr = attributeForEdge(edge)
                 let constr: NSLayoutConstraint
                 if (pos == .end) {
-                    constr = self.alPin(attr, to: attr, of: view, constant: pin.value + insets.insetForAxis(otherAxis, position: pos), relation: pin.relation, activate: false)
+                    constr = self.alPin(attr, to: attr, of: view, constant: pin.value + insetForAxis(otherAxis, position: pos), relation: pin.relation, activate: false)
                 }
                 else {
-                    constr = view.alPin(attr, to: attr, of: self, constant: pin.value + insets.insetForAxis(otherAxis, position: pos), relation: pin.relation, activate: false)
+                    var factor: CGFloat = 1.0
+                    if pos == .center {
+                        factor = offsetFactorForAxis(otherAxis)
+                    }
+                    constr = view.alPin(attr, to: attr, of: self, constant: factor * pin.value + insetForAxis(otherAxis, position: pos), relation: pin.relation, activate: false)
                 }
+                print("insetForAxis(\(otherAxis), position: \(pos)): \(insetForAxis(otherAxis, position: pos))")
+                
+                
                 managedConstraints.append(constr)
                 edgeConstraints[edge] = constr
             }
@@ -252,38 +327,28 @@ open class BoxView: UIView {
     
     private func attributeForEdge(_ edge: BoxEdge) -> NSLayoutConstraint.Attribute {
             switch edge {
-                case .left:
-                    switch semanticContentAttribute {
-                        case .unspecified: return .leading
-                        case .forceRightToLeft: return .right
-                        default: return .left
-                    }
-                case .right:
-                    switch semanticContentAttribute {
-                        case .unspecified: return .trailing
-                        case .forceRightToLeft: return .left
-                        default: return .right
-                    }
+                case .left: return (isRTLDependent) ? .leading : .left
+                case .right: return (isRTLDependent) ? .trailing : .right
                 case .top: return .top
                 case .bottom: return .bottom
                 case .centerX: return .centerX
                 case .centerY: return .centerY
             }
         }
+}
 
-    
-    func centerOffsetFactorForAxis(_ axis: BoxLayout.Axis) -> CGFloat {
-        if axis == .y {
-            return 1.0
+@available(iOS 11.0, *)
+extension BoxView {
+    // BoxView doesn't use directionalLayoutMargins - insets for RTL languages are automatically handled while layouting managed views.
+    //  But they used for layouting non-managed subviews.
+    public override var directionalLayoutMargins: NSDirectionalEdgeInsets {
+        didSet {
+            layoutMargins = UIEdgeInsets(top: directionalLayoutMargins.top,
+                                         left: directionalLayoutMargins.leading,
+                                         bottom: directionalLayoutMargins.bottom,
+                                         right: directionalLayoutMargins.trailing)
+            
         }
-        else {
-            let dir = UIView.userInterfaceLayoutDirection(for: semanticContentAttribute)
-            switch dir {
-                case .leftToRight: return 1.0
-                case .rightToLeft: return -1.0
-                @unknown default:
-                return 1.0
-            }
-        }
+
     }
 }

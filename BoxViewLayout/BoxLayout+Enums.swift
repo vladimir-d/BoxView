@@ -23,10 +23,10 @@ public enum BoxEdge: CaseIterable {
         case begin, center, end
     }
     
-    func attribute(semanticDependent: Bool = true) -> NSLayoutConstraint.Attribute {
+    func attribute(rtlDependent: Bool = true) -> NSLayoutConstraint.Attribute {
         switch self {
-            case .left: return  (semanticDependent) ? .leading : .left
-            case .right: return (semanticDependent) ? .trailing : .right
+            case .left: return  (rtlDependent) ? .leading : .left
+            case .right: return (rtlDependent) ? .trailing : .right
             case .top: return .top
             case .bottom: return .bottom
             case .centerX: return .centerX
@@ -34,8 +34,18 @@ public enum BoxEdge: CaseIterable {
         }
     }
     
+    var position: Position {
+        switch self {
+            case .left: return  .begin
+            case .right: return .end
+            case .top: return .begin
+            case .bottom: return .end
+            case .centerX: return .center
+            case .centerY: return .center
+        }
+    }
+    
 }
-
 
 // MARK: - Internal
 
@@ -74,23 +84,4 @@ extension BoxLayout {
         
     }
         
-}
-
-extension UIEdgeInsets {
-    
-    func begin(_ axis: BoxLayout.Axis) -> CGFloat {
-        return (axis == .y) ? self.top : self.left
-    }
-    
-    func end(_ axis: BoxLayout.Axis)  -> CGFloat {
-        return (axis == .y) ? self.bottom : self.right
-    }
-    
-    func insetForAxis(_ axis: BoxLayout.Axis, position: BoxEdge.Position)  -> CGFloat {
-        switch position {
-            case .begin: return (axis == .y) ? self.top : self.left
-            case .center: return 0.0
-            case .end: return (axis == .y) ? self.bottom : self.right
-        }
-    }
 }

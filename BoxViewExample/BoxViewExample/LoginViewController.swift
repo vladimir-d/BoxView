@@ -36,6 +36,7 @@ class LoginViewController: BaseViewController {
         super.viewDidLoad()
         navigationItem.title = "Login"
         view.backgroundColor = .white
+        titleLabel.textAlignment = .center
         boxView.setBorder(color: .black)
         boxView.layer.cornerRadius = 10.0
         loginButton.layer.cornerRadius = 5.0
