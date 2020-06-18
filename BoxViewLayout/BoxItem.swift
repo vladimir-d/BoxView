@@ -25,7 +25,7 @@ public struct BoxItem {
     }
     
     // Creates new BoxItem from existing, by setting exact left padding.
-    public func boxLeft(_ left: CGFloat?) -> BoxItem {
+    public func boxLeft(_ left: CGFloat) -> BoxItem {
         return BoxItem(view: view, layout: layout.with(.left, ==left))
     }
     
@@ -35,7 +35,7 @@ public struct BoxItem {
     }
     
     // creates new BoxItem from existing, by setting exact right padding
-    public func boxRight(_ right: CGFloat?) -> BoxItem {
+    public func boxRight(_ right: CGFloat) -> BoxItem {
         return BoxItem(view: view, layout: layout.with(.right, ==right))
     }
     
@@ -45,7 +45,7 @@ public struct BoxItem {
     }
     
     // creates new BoxItem from existing, by setting exact left and right paddings
-    public func boxLeftRight(_ left: CGFloat?, _ right: CGFloat?) -> BoxItem {
+    public func boxLeftRight(_ left: CGFloat, _ right: CGFloat) -> BoxItem {
         return BoxItem(view: view, layout: layout.with(.left, ==left).with(.right, ==right))
     }
     
@@ -55,7 +55,7 @@ public struct BoxItem {
     }
     
     // creates new BoxItem from existing, by setting exact top padding
-    public func boxTop(_ top: CGFloat?) -> BoxItem {
+    public func boxTop(_ top: CGFloat) -> BoxItem {
         return BoxItem(view: view, layout: layout.with(.top, ==top))
     }
     
@@ -65,7 +65,7 @@ public struct BoxItem {
     }
     
     // creates new BoxItem from existing, by setting exact bottom padding
-    public func boxBottom(_ bottom: CGFloat?) -> BoxItem {
+    public func boxBottom(_ bottom: CGFloat) -> BoxItem {
         return BoxItem(view: view, layout: layout.with(.bottom, ==bottom))
     }
     
@@ -75,7 +75,7 @@ public struct BoxItem {
     }
     
     // creates new BoxItem from existing, by setting exact top and bottom paddings
-    public func boxTopBottom(_ top: CGFloat?, _ bottom: CGFloat?) -> BoxItem {
+    public func boxTopBottom(_ top: CGFloat, _ bottom: CGFloat) -> BoxItem {
         return BoxItem(view: view, layout: layout.with(.top, ==top).with(.bottom, ==bottom))
     }
     
@@ -135,7 +135,7 @@ extension UIView {
     }
     
     // Creates BoxItem with view and layout with exact left padding.
-    public func boxLeft(_ left: CGFloat?) -> BoxItem {
+    public func boxLeft(_ left: CGFloat) -> BoxItem {
         return BoxItem(view: self, layout: .withPins(left: ==left))
     }
     
@@ -145,7 +145,7 @@ extension UIView {
     }
     
     // Creates BoxItem with view and layout with exact right padding.
-    public func boxRight(_ right: CGFloat?) -> BoxItem {
+    public func boxRight(_ right: CGFloat) -> BoxItem {
         return BoxItem(view: self, layout: .withPins(right: ==right))
     }
     
@@ -155,7 +155,7 @@ extension UIView {
     }
     
     // Creates BoxItem with view and layout with exact left and right paddings.
-    public func boxLeftRight(_ left: CGFloat?, _ right: CGFloat?) -> BoxItem {
+    public func boxLeftRight(_ left: CGFloat?, _ right: CGFloat) -> BoxItem {
         return BoxItem(view: self, layout: .withPins(left: ==left, right: ==right))
     }
     
@@ -165,7 +165,7 @@ extension UIView {
     }
     
     // Creates BoxItem with view and layout with exact top padding.
-    public func boxTop(_ top: CGFloat?) -> BoxItem {
+    public func boxTop(_ top: CGFloat) -> BoxItem {
         return BoxItem(view: self, layout: .withPins(top: ==top))
     }
     
@@ -175,7 +175,7 @@ extension UIView {
     }
     
     // Creates BoxItem with view and layout with exact bottom padding.
-    public func boxBottom(_ bottom: CGFloat?) -> BoxItem {
+    public func boxBottom(_ bottom: CGFloat) -> BoxItem {
         return BoxItem(view: self, layout: .withPins(bottom: ==bottom))
     }
     
@@ -185,20 +185,20 @@ extension UIView {
     }
     
     // Creates BoxItem with view and layout with top and bottom pins.
-    public func boxTopBottom(_ top: CGFloat?, _ bottom: CGFloat?) -> BoxItem {
+    public func boxTopBottom(_ top: CGFloat?, _ bottom: CGFloat) -> BoxItem {
         return BoxItem(view: self, layout: .withPins(top: ==top, bottom: ==bottom))
     }
     
     // Creates BoxItem with view and layout is center alignment along X-Axis.
     // Offset from center and same minimal padding from both sides can be specified (default 0.0)
     public func boxCenterX(offset: CGFloat = 0.0, padding: CGFloat? = 0.0) -> BoxItem {
-        return BoxItem(view: self, layout: .xAligned(offset: offset, padding: padding))
+        return BoxItem(view: self, layout: .xCentered(offset: offset, padding: padding))
     }
     
     // Creates BoxItem with view and layout is center alignment along Y-Axis.
     // Offset from center and same minimal padding from both sides can be specified (default 0.0)
     public func boxCenterY(offset: CGFloat = 0.0, padding: CGFloat? = 0.0) -> BoxItem {
-        return BoxItem(view: self, layout: .yAligned(offset: offset, padding: padding))
+        return BoxItem(view: self, layout: .yCentered(offset: offset, padding: padding))
     }
 
     // Creates BoxItem with view and layout where top, left, bootom and right insets are taken from UIEdgeInsets.
@@ -227,6 +227,7 @@ extension UIView {
 }
 
 extension Array where Element: UIView {
+    
     
     public func boxXY(_ x: BoxLayout.Pin.Pair, _ y: BoxLayout.Pin.Pair) -> [BoxItem] {
         let layout = BoxLayout.pairs(x: x, y: y)
