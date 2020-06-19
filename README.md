@@ -3,9 +3,9 @@
 
 # BoxView
 The BoxView is a container view that can layout own subviews.
-It is similar to UIStackView, but uses different approach: it allows to set inividual layout for each subview, rather than automatically distribute them.
+It is similar to UIStackView, but uses different approach: it allows to set individual layout for each subview, rather than automatically distribute them.
 It easy to create creating complex dynamic layout based on BoxViews in code with minimum efforts.
-BoxView takes all constraints creation boilerplate on oneself, so code became much shorter and readible.
+BoxView takes all constraints creation boilerplate on oneself, so code became much shorter and readable.
 It doesn't change views or existing constraints, it only creates specified group of constraints, so it doesn't conflict with anything.
 
 ## Features
@@ -38,7 +38,7 @@ Full examples code is available in BoxViewExample project, and also there is a [
 It is very easy to add/remove views, or to change any view padding without affecting other views in layout.
 And these changes optionally can be animated. For example, we can add empty fields validation and show error label below empty field, leaving existing layout code unchanged!
 
-![login1 image](https://github.com/vladimir-d/BoxView/blob/master/Docs/Images/loginerr.gif?raw=true)
+![login1 image](https://github.com/vladimir-d/BoxView/blob/master/Docs/Images/login7.gif?raw=true)
 
 Another example with layout created only on BoxViews. It shows axis and spacing animation, and using size constraints with BoxView. 
 ![album image](https://github.com/vladimir-d/BoxView/blob/master/Docs/Images/album.gif?raw=true)
@@ -68,7 +68,7 @@ Note, that actual view offsets for all paddings are calculated counting boxView.
 
 ![BoxView layout scheme image](https://github.com/vladimir-d/BoxView/blob/master/Docs/Images/boxLayout.png?raw=true)
 
-It may look complicated, but all these values are zero by default, so only explisitly set values are contributing in actual paddings.  
+It may look complicated, but all these values are zero by default, so only explicitly set values are contributing in actual paddings.  
 
 BoxItem creation methods can be chained:
 
