@@ -17,8 +17,6 @@ It doesn't change views or existing constraints, it only creates specified group
 
 ## Examples
 
-![album image](https://github.com/vladimir-d/BoxView/blob/master/Docs/Images/album.gif?raw=true)
-
 ![login6 image](https://github.com/vladimir-d/BoxView/blob/master/Docs/Images/login6.png?raw=true)
 
 We need only few lines of code to create this layout with BoxView:
@@ -42,8 +40,10 @@ And these changes optionally can be animated. For example, we can add empty fiel
 
 ![login1 image](https://github.com/vladimir-d/BoxView/blob/master/Docs/Images/loginerr.gif?raw=true)
 
+Another example with layout created only on BoxViews. It shows axis and spacing animation, and using size constraints with BoxView. 
+![album image](https://github.com/vladimir-d/BoxView/blob/master/Docs/Images/album.gif?raw=true)
 
-## Usage
+## Basic usage
 
 The BoxView uses **items** array to arrange its subviews. Each item is of type **BoxItem**, and it encapsulate the view together with the layout information. So to layout some views using BoxView we have to create BoxItem from each view and add these items to BoxView. 
 
@@ -102,7 +102,8 @@ boxView.items.append(view3.xAligned())
 //insert view2 between view1 and view3 
 boxView.insertItem(view2.boxRight(10.0), after: view1)
 ```
-
+### Advanced usage and references
+ [More details about BoxView usage](https://github.com/vladimir-d/BoxView/blob/master/Docs/references.md) in Docs folder.
 
 ## Requirements
 

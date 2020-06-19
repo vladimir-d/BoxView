@@ -108,7 +108,6 @@ boxView.items = [
 ].compactMap{$0}
 ```
 
-
 ### Step 6: Add child boxViews with horizontal box axis.
 ![login1 image](https://github.com/vladimir-d/BoxView/blob/master/Docs/Images/login6.png?raw=true)
 
@@ -130,7 +129,7 @@ titleLabel.boxBottom(20.0).boxCenterX(padding: 30.0),
 ```
 
 ### Step 7: Changing layout: showing error message below empty fields
-![login1 image](https://github.com/vladimir-d/BoxView/blob/master/Docs/Images/login7.png?raw=true)
+![login1 image](https://github.com/vladimir-d/BoxView/blob/master/Docs/Images/login7.gif?raw=true)
 
 ```swift
 func showErrorForField(_ field: UITextField) {

@@ -66,12 +66,7 @@ open class BoxView: UIView {
             setNeedsUpdateConstraints()
         }
     }
-    
-    public override var layoutMargins: UIEdgeInsets {
-        didSet {
-            setNeedsUpdateConstraints()
-        }
-    }
+
     
     // Default spacing between item views. Actual spacing between every two items is:
     // end pin of first view + spacing + begin pin of second view
@@ -88,12 +83,6 @@ open class BoxView: UIView {
     public var isRTLDependent: Bool = true {
         didSet {
             setNeedsUpdateConstraints()
-        }
-    }
-    
-    override public var semanticContentAttribute: UISemanticContentAttribute {
-        didSet {
-            langDir = UIView.userInterfaceLayoutDirection(for: semanticContentAttribute)
         }
     }
     
@@ -164,7 +153,7 @@ open class BoxView: UIView {
         }
     }
 
-    // MARK: -- overriden UIView functions
+    // MARK: -- overriden UIView functions and vars
     
     // When items are assigned or parameters affecting layout are changed,
     // constraints are not changed immediatly. Only setNeedsUpdateConstraints() called.
@@ -186,6 +175,12 @@ open class BoxView: UIView {
                     items.remove(at: index)
                 }
             }
+        }
+    }
+    
+    override public var semanticContentAttribute: UISemanticContentAttribute {
+        didSet {
+            langDir = UIView.userInterfaceLayoutDirection(for: semanticContentAttribute)
         }
     }
     
