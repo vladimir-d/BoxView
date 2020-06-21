@@ -2,11 +2,11 @@
 ### *Let me create autolayout constraints for you!*
 
 # BoxView
-The BoxView is a container view that can layout own subviews.
-It is similar to UIStackView, but uses different approach: it allows to set individual layout for each subview, rather than automatically distribute them.
-It easy to create creating complex dynamic layout based on BoxViews in code with minimum efforts.
-BoxView takes all constraints creation boilerplate on oneself, so code became much shorter and readable.
-It doesn't change views or existing constraints, it only creates specified group of constraints, so it doesn't conflict with anything.
+The BoxView is a container UIView that can layout own subviews.
+It is similar to the UIStackView, but uses different approach: it allows to set an individual layout for each subview, rather than automatically distribute them.
+BoxView takes all constraints creation boilerplate on oneself, so the code becames much shorter and readable.
+It easy to create complex dynamic layout in code based only on BoxViews, as well as use them with other autolayout methods.
+BoxView doesn't change views or existing constraints, it only creates specified group of constraints, so it doesn't conflict with anything.
 
 ## Features
 - Pure swift 5 library
@@ -29,7 +29,7 @@ boxView.items = [
     titleLabel.xAligned(padding: 30.0).boxBottom(20.0),
     nameBoxView.boxZero,
     passwordBoxView.boxZero,
-    forgotButton.boxLeftRight(>=0.0, 0.0),
+    forgotButton.boxLeft(>=0.0),
     loginButton.boxTop(30.0).boxLeftRight(50.0, 50.0)
 ]
 ```
@@ -45,7 +45,7 @@ Another example with layout created only on BoxViews. It shows axis and spacing 
 
 ## Basic usage
 
-The BoxView uses **items** array to arrange its subviews. Each item is of type **BoxItem**, and it encapsulate the view together with the layout information. So to layout some views using BoxView we have to create BoxItem from each view and add these items to BoxView. 
+The BoxView uses **items** array to arrange its subviews. Each item is of type **BoxItem**, and it encapsulates the view together with the layout information. So to layout some views using BoxView we have to create BoxItem from each view and add these items to BoxView. 
 
 ####  Creating boxItems
 There are some methods implemented in BoxItem and in UIView extension to create BoxItems for most common layouts. For example:
