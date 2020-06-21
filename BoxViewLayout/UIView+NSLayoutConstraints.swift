@@ -93,20 +93,25 @@ extension UIView {
     }
     
     @discardableResult
-    public func alPinHeight(_ pin: BoxLayout.Pin, to view: UIView? = nil) -> NSLayoutConstraint {
+    public func alPinHeight(_ multiPin: BoxLayout.MultiPin, to view: UIView? = nil) -> NSLayoutConstraint {
         let constr: NSLayoutConstraint
         if let view = view {
-            switch pin.relation {
-                case .greaterThanOrEqual: constr = self.heightAnchor.constraint(greaterThanOrEqualTo: view.heightAnchor, constant: pin.value)
-                case .lessThanOrEqual: constr = self.heightAnchor.constraint(lessThanOrEqualTo: view.heightAnchor, constant: pin.value)
-                default: constr = self.heightAnchor.constraint(equalTo: view.heightAnchor, constant: pin.value)
+            switch multiPin.relation {
+                case .greaterThanOrEqual: constr = self.heightAnchor.constraint(greaterThanOrEqualTo: view.heightAnchor, multiplier: multiPin.multiplier, constant: multiPin.constant)
+                case .lessThanOrEqual: constr = self.heightAnchor.constraint(lessThanOrEqualTo: view.heightAnchor, multiplier: multiPin.multiplier, constant: multiPin.constant)
+                default: constr = self.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: multiPin.multiplier, constant: multiPin.constant)
             }
             constr.isActive = true
             return constr
         }
         else {
-            return alSetHeight(pin.value, relation: pin.relation)
+            return alSetHeight(multiPin.constant, relation: multiPin.relation)
         }
+    }
+
+    @discardableResult
+    public func alPinHeight(_ pin: BoxLayout.Pin, to view: UIView? = nil) -> NSLayoutConstraint {
+        return alPinHeight(BoxLayout.MultiPin(pin) , to: view)
     }
     
     @discardableResult
@@ -127,20 +132,25 @@ extension UIView {
     }
     
     @discardableResult
-    public func alPinWidth(_ pin: BoxLayout.Pin, to view: UIView? = nil) -> NSLayoutConstraint {
+    public func alPinWidth(_ multiPin: BoxLayout.MultiPin, to view: UIView? = nil) -> NSLayoutConstraint {
         let constr: NSLayoutConstraint
         if let view = view {
-            switch pin.relation {
-                case .greaterThanOrEqual: constr = self.widthAnchor.constraint(greaterThanOrEqualTo: view.widthAnchor, constant: pin.value)
-                case .lessThanOrEqual: constr = self.widthAnchor.constraint(lessThanOrEqualTo: view.widthAnchor, constant: pin.value)
-                default: constr = self.widthAnchor.constraint(equalTo: view.widthAnchor, constant: pin.value)
+            switch multiPin.relation {
+                case .greaterThanOrEqual: constr = self.widthAnchor.constraint(greaterThanOrEqualTo: view.widthAnchor, multiplier: multiPin.multiplier, constant: multiPin.constant)
+                case .lessThanOrEqual: constr = self.widthAnchor.constraint(lessThanOrEqualTo: view.widthAnchor, multiplier: multiPin.multiplier, constant: multiPin.constant)
+                default: constr = self.widthAnchor.constraint(equalTo: view.widthAnchor, multiplier: multiPin.multiplier, constant: multiPin.constant)
             }
             constr.isActive = true
             return constr
         }
         else {
-            return alSetWidth(pin.value, relation: pin.relation)
+            return alSetWidth(multiPin.constant, relation: multiPin.relation)
         }
+    }
+    
+    @discardableResult
+    public func alPinWidth(_ pin: BoxLayout.Pin, to view: UIView? = nil) -> NSLayoutConstraint {
+        return alPinWidth(BoxLayout.MultiPin(pin) , to: view)
     }
     
     @discardableResult
@@ -243,6 +253,35 @@ open class ConstraintSwitch {
         self.onSet = Set(onSet.compactMap { $0 })
         self.offSet = Set(offSet.compactMap { $0 })
         self.state = state
+    }
+}
+
+extension Array where Element: UIView {
+    
+    func alSameWidth() {
+        let firstEl = first
+        let firstAnchor = firstEl?.widthAnchor
+        let constraints: [NSLayoutConstraint] = self.compactMap{
+            var constr: NSLayoutConstraint?
+            if $0 != firstEl {
+                constr = firstAnchor?.constraint(equalTo: $0.widthAnchor)
+            }
+            return constr
+        }
+        NSLayoutConstraint.activate(constraints)
+    }
+    
+    func alSameHeight() {
+        let firstEl = first
+        let firstAnchor = firstEl?.heightAnchor
+        let constraints: [NSLayoutConstraint] = self.compactMap{
+            var constr: NSLayoutConstraint?
+            if $0 != firstEl {
+                constr = firstAnchor?.constraint(equalTo: $0.heightAnchor)
+            }
+            return constr
+        }
+        NSLayoutConstraint.activate(constraints)
     }
 }
 

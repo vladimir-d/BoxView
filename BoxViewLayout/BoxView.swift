@@ -126,8 +126,10 @@ open class BoxView: UIView {
     
     // inserting item after item with given view, if view is nil, then item inserted at index 0
     public func insertItem(_ item: BoxItem, after view: UIView?) {
-        if managedViews.contains(item.view) {
-            item.view.removeFromSuperview()
+        if let itemView = item.view {
+            if managedViews.contains(itemView) {
+                itemView.removeFromSuperview()
+            }
         }
         if view == nil {
             items.insert(item, at: 0)
@@ -186,10 +188,22 @@ open class BoxView: UIView {
     
     
     // MARK: - Private
+
+    func beginAnchor(axis: BoxLayout.Axis) -> BoxAnchorPinnable {
+        return (axis == .y) ? topAnchor : ((isRTLDependent) ? leadingAnchor : leftAnchor)
+    }
+    
+    func endAnchor(axis: BoxLayout.Axis) -> BoxAnchorPinnable {
+        return (axis == .y) ? self.bottomAnchor : ((isRTLDependent) ? trailingAnchor : rightAnchor)
+    }
+    
+    func centerAnchor(axis: BoxLayout.Axis) -> BoxAnchorPinnable {
+        return (axis == .y) ? centerYAnchor : centerXAnchor
+    }
     
     private func updateItems() {
         isUpdatingItems = true
-        let itemViews = items.map { $0.view }
+        let itemViews = items.compactMap{ $0.view }
         var toRemove = [Int]()
         for (index, managedView) in managedViews.enumerated() {
             if !itemViews.contains(managedView) {
@@ -220,21 +234,20 @@ open class BoxView: UIView {
         guard items.count > 0 else { return }
         let beginEdge = axis.edgeForPosition(.begin)
         let endEdge = axis.edgeForPosition(.end)
-        let centerEdge = axis.edgeForPosition(.center)
-        let beginAttr = attributeForEdge(beginEdge)
-        let endAttr = attributeForEdge(endEdge)
-        let centerAttr = attributeForEdge(centerEdge)
         var edgeConstraints: BoxEdge.Constraints = [:]
         for item in items {
-            let view = item.view
             let layout = item.layout
-            if let itemBegin = layout.begin(axis) {
+            if let itemBeginPin = layout.begin(axis),
+               let itemBeginAnchor = item.beginAnchor(axis: axis, isRTLDependent: isRTLDependent) {
                 if let prevItem = prevItem {
-                    if let prevEnd = prevItem.layout.end(axis) {
-                        guard let sumPin = itemBegin + prevEnd else {
+                    if let prevEndAnchor = prevItem.endAnchor(axis: axis, isRTLDependent: isRTLDependent),
+                        let prevEndPin = prevItem.layout.pinForAxis(axis, position: .end) {
+                        guard let sumPin = itemBeginPin + prevEndPin + spacing else {
                             sumPinWarning(); return
                         }
-                        let toPrev = view.alPin(beginAttr, to: endAttr, of: prevItem.view, constant: sumPin.value + spacing, relation: sumPin.relation, activate: false)
+//                        let toPrev = view.alPin(beginAttr, to: endAttr, of: prevItem.view, constant: sumPin.value + spacing, relation: sumPin.relation, activate: false)
+                        
+                        let toPrev = itemBeginAnchor.pin(sumPin, to: prevEndAnchor)
                         managedConstraints.append(toPrev)
                         edgeConstraints[endEdge] = toPrev
                         itemsEdgeConstraints.append(edgeConstraints)
@@ -242,19 +255,28 @@ open class BoxView: UIView {
                     }
                 }
                 else{
-                    let toBegin = view.alPin(beginAttr, to: beginAttr, of: self, constant: itemBegin.value + beginForAxis(axis), relation: itemBegin.relation, activate: false)
+                    let firstPin = itemBeginPin + beginForAxis(axis)
+                    let toBegin = itemBeginAnchor.pin(firstPin, to: beginAnchor(axis: axis))
                     managedConstraints.append(toBegin)
                     edgeConstraints = [beginEdge: toBegin]
                 }
             }
-            if let itemCenter = layout.center(axis) {
-                view.alPin(centerAttr, to: centerAttr, of: self, constant: itemCenter.value, relation: itemCenter.relation, activate: false)
+            if let itemCenterPin = layout.center(axis),
+                let itemCenterAnchor = item.centerAnchor(axis: axis)
+                {
+                let toCenter = itemCenterAnchor.pin(itemCenterPin, to: centerAnchor(axis: axis))
+                managedConstraints.append(toCenter)
+                edgeConstraints = [axis.edgeForPosition(.center): toCenter]
             }
-            pinAccross(view: view, layout: layout, edgeConstraints: &edgeConstraints)
+            if let view = item.view {
+                pinAccross(view: view, layout: layout, edgeConstraints: &edgeConstraints)
+            }
             prevItem = item
         }
-        if let itemEnd = prevItem?.layout.end(axis) {
-            let toEnd = self.alPin(endAttr, to: endAttr, of: prevItem!.view, constant: itemEnd.value + endForAxis(axis), relation: itemEnd.relation, activate: false)
+        if let itemEndPin = prevItem?.layout.end(axis),
+            let prevEndAnchor = prevItem?.endAnchor(axis: axis, isRTLDependent: isRTLDependent) {
+            let lastPin = itemEndPin + endForAxis(axis)
+            let toEnd = endAnchor(axis: axis).pin(lastPin, to: prevEndAnchor)
             managedConstraints.append(toEnd)
             edgeConstraints[endEdge] = toEnd
         }
@@ -302,14 +324,14 @@ open class BoxView: UIView {
                 let attr = attributeForEdge(edge)
                 let constr: NSLayoutConstraint
                 if (pos == .end) {
-                    constr = self.alPin(attr, to: attr, of: view, constant: pin.value + insetForAxis(otherAxis, position: pos), relation: pin.relation, activate: false)
+                    constr = self.alPin(attr, to: attr, of: view, constant: pin.constant + insetForAxis(otherAxis, position: pos), relation: pin.relation, activate: false)
                 }
                 else {
                     var factor: CGFloat = 1.0
                     if pos == .center {
                         factor = offsetFactorForAxis(otherAxis)
                     }
-                    constr = view.alPin(attr, to: attr, of: self, constant: factor * pin.value + insetForAxis(otherAxis, position: pos), relation: pin.relation, activate: false)
+                    constr = view.alPin(attr, to: attr, of: self, constant: factor * pin.constant + insetForAxis(otherAxis, position: pos), relation: pin.relation, activate: false)
                 }
                 print("insetForAxis(\(otherAxis), position: \(pos)): \(insetForAxis(otherAxis, position: pos))")
                 
@@ -321,15 +343,15 @@ open class BoxView: UIView {
     }
     
     private func attributeForEdge(_ edge: BoxEdge) -> NSLayoutConstraint.Attribute {
-            switch edge {
-                case .left: return (isRTLDependent) ? .leading : .left
-                case .right: return (isRTLDependent) ? .trailing : .right
-                case .top: return .top
-                case .bottom: return .bottom
-                case .centerX: return .centerX
-                case .centerY: return .centerY
-            }
+        switch edge {
+            case .left: return (isRTLDependent) ? .leading : .left
+            case .right: return (isRTLDependent) ? .trailing : .right
+            case .top: return .top
+            case .bottom: return .bottom
+            case .centerX: return .centerX
+            case .centerY: return .centerY
         }
+    }
 }
 
 @available(iOS 11.0, *)
