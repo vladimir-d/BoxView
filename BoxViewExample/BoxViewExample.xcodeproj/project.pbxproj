@@ -21,6 +21,8 @@
 		F58BFA63246C1E0E0067D262 /* UIView+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58BFA5F246C1E0E0067D262 /* UIView+Utils.swift */; };
 		F58BFA68246C1FE30067D262 /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58BFA67246C1FE30067D262 /* BaseViewController.swift */; };
 		F58BFA9B247192880067D262 /* BoxItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58BFA9A247192870067D262 /* BoxItem.swift */; };
+		F5DDC8E824A3511C003DC79E /* UIView+BoxItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5DDC8E724A3511B003DC79E /* UIView+BoxItem.swift */; };
+		F5DDC8EA24A351BE003DC79E /* BoxItem+Create.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5DDC8E924A351BE003DC79E /* BoxItem+Create.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -41,6 +43,8 @@
 		F58BFA67246C1FE30067D262 /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
 		F58BFA9A247192870067D262 /* BoxItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoxItem.swift; sourceTree = "<group>"; };
 		F5AF2B11249BD47300ECCFCB /* he */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = he; path = he.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
+		F5DDC8E724A3511B003DC79E /* UIView+BoxItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+BoxItem.swift"; sourceTree = "<group>"; };
+		F5DDC8E924A351BE003DC79E /* BoxItem+Create.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BoxItem+Create.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,6 +95,8 @@
 			children = (
 				F58BFA53246C1DF70067D262 /* BoxView.swift */,
 				F58BFA9A247192870067D262 /* BoxItem.swift */,
+				F5DDC8E924A351BE003DC79E /* BoxItem+Create.swift */,
+				F5DDC8E724A3511B003DC79E /* UIView+BoxItem.swift */,
 				F58BFA54246C1DF70067D262 /* BoxLayout+Enums.swift */,
 				F58BFA55246C1DF70067D262 /* BoxLayout+Pin.swift */,
 				F58BFA56246C1DF70067D262 /* UIView+NSLayoutConstraints.swift */,
@@ -174,10 +180,12 @@
 			files = (
 				F554EA7324940C0000446623 /* UIView+FrameUtils.swift in Sources */,
 				F52A84A524788BFD0049A83A /* LoginViewController.swift in Sources */,
+				F5DDC8EA24A351BE003DC79E /* BoxItem+Create.swift in Sources */,
 				F58BFA68246C1FE30067D262 /* BaseViewController.swift in Sources */,
 				F58BFA5D246C1DF70067D262 /* BoxLayout.swift in Sources */,
 				F58BFA3F246C1C050067D262 /* AppDelegate.swift in Sources */,
 				F58BFA9B247192880067D262 /* BoxItem.swift in Sources */,
+				F5DDC8E824A3511C003DC79E /* UIView+BoxItem.swift in Sources */,
 				F58BFA5A246C1DF70067D262 /* BoxLayout+Enums.swift in Sources */,
 				F58BFA5B246C1DF70067D262 /* BoxLayout+Pin.swift in Sources */,
 				F58BFA5C246C1DF70067D262 /* UIView+NSLayoutConstraints.swift in Sources */,

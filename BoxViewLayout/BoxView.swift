@@ -97,13 +97,18 @@ open class BoxView: UIView {
     // array of views of all items.
     // it is a subset of boxView.subviews
     public private(set) var managedViews = [UIView]()
-    
+    public private(set) var managedGuides = [UILayoutGuide]()
     // MARK: -- setting items and layouts
     
     public var items:[BoxItem] = [] {
         didSet {
             updateItems()
         }
+    }
+    
+    public var optItems:[BoxItem?] {
+        get {return []}
+        set { items = newValue.compactMap{$0} }
     }
 
     public func withItems(_ items:[BoxItem]) -> Self {
@@ -204,14 +209,14 @@ open class BoxView: UIView {
     private func updateItems() {
         isUpdatingItems = true
         let itemViews = items.compactMap{ $0.view }
-        var toRemove = [Int]()
+        var viewsToRemove = [Int]()
         for (index, managedView) in managedViews.enumerated() {
             if !itemViews.contains(managedView) {
-                toRemove.append(index)
+                viewsToRemove.append(index)
                 managedView.removeFromSuperview()
             }
         }
-        for index in toRemove.reversed() {
+        for index in viewsToRemove.reversed() {
             managedViews.remove(at: index)
         }
         for view in itemViews {
@@ -222,6 +227,23 @@ open class BoxView: UIView {
             }
             else {
                 bringSubviewToFront(view)
+            }
+        }
+        let itemGuides = items.compactMap{ $0.guide }
+        var guidesToRemove = [Int]()
+        for (index, managedGuide) in managedGuides.enumerated() {
+            if !itemGuides.contains(managedGuide) {
+                guidesToRemove.append(index)
+                removeLayoutGuide(managedGuide)
+            }
+        }
+        for index in guidesToRemove.reversed() {
+            managedGuides.remove(at: index)
+        }
+        for guide in itemGuides {
+            if !managedGuides.contains(guide) {
+                managedGuides.append(guide)
+                addLayoutGuide(guide)
             }
         }
         isUpdatingItems = false
@@ -271,6 +293,19 @@ open class BoxView: UIView {
             if let view = item.view {
                 pinAccross(view: view, layout: layout, edgeConstraints: &edgeConstraints)
             }
+//            else {
+//                let otherAxis = axis.other
+////                if let acrCenterAnchor = item.centerAnchor(axis: otherAxis) {
+////                    let acrCenter = acrCenterAnchor.pin(==0.0, to: centerAnchor(axis: otherAxis))
+//                if let acrBeginAnchor = item.beginAnchor(axis: otherAxis, isRTLDependent: isRTLDependent) {
+//                    let acrBegin = acrBeginAnchor.pin(==0.0, to: beginAnchor(axis: otherAxis))
+//                    managedConstraints.append(acrBegin)
+//                }
+//                if let acrEndAnchor = item.endAnchor(axis: otherAxis, isRTLDependent: isRTLDependent) {
+//                    let acrEnd = acrEndAnchor.pin(==0.0, to: endAnchor(axis: otherAxis))
+//                    managedConstraints.append(acrEnd)
+//                }
+//            }
             prevItem = item
         }
         if let itemEndPin = prevItem?.layout.end(axis),
@@ -282,6 +317,28 @@ open class BoxView: UIView {
         }
         itemsEdgeConstraints.append(edgeConstraints)
         NSLayoutConstraint.activate(managedConstraints)
+        
+        createFlexDimentions()
+    }
+    
+    private func createFlexDimentions() {
+        var firstFlexAnchor: NSLayoutDimension?
+        var firstFlex: CGFloat = 0.0
+        var constraints = [NSLayoutConstraint]()
+        for item in items {
+            if let flex = item.layout.flex, flex > 0.0 {
+                let itemAnchor = (axis == .y) ? item.alObj.heightAnchor : item.alObj.widthAnchor
+                if let firstAnchor = firstFlexAnchor {
+                    constraints.append(itemAnchor.constraint(equalTo: firstAnchor, multiplier: flex / firstFlex))
+                }
+                else {
+                    firstFlexAnchor = itemAnchor
+                    firstFlex = flex
+                }
+            }
+        }
+        NSLayoutConstraint.activate(constraints)
+        managedConstraints += constraints
     }
     
     private var isUpdatingItems: Bool  = false
@@ -333,7 +390,6 @@ open class BoxView: UIView {
                     }
                     constr = view.alPin(attr, to: attr, of: self, constant: factor * pin.constant + insetForAxis(otherAxis, position: pos), relation: pin.relation, activate: false)
                 }
-                print("insetForAxis(\(otherAxis), position: \(pos)): \(insetForAxis(otherAxis, position: pos))")
                 
                 
                 managedConstraints.append(constr)

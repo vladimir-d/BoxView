@@ -28,6 +28,12 @@ public struct BoxLayout {
 
     public var centerY: Pin?
     
+    public var width: MultiPin?
+    
+    public var height: MultiPin?
+    
+    public var flex: CGFloat?
+    
     public init() {
     }
     
@@ -105,6 +111,43 @@ public struct BoxLayout {
         newLayout.setPin(pin, for: edge)
         return newLayout
     }
+    
+    public func withWidth(_ widthPin: MultiPin?) -> BoxLayout {
+        var newLayout = self
+        newLayout.width = widthPin
+        return newLayout
+    }
+    
+    public func withHeight(_ heightPin: MultiPin?) -> BoxLayout {
+        var newLayout = self
+        newLayout.height = heightPin
+        return newLayout
+    }
+    
+    public static func withWidth(_ widthPin: MultiPin?) -> BoxLayout {
+        var newLayout = BoxLayout()
+        newLayout.width = widthPin
+        return newLayout
+    }
+    
+    public static func withHeight(_ heightPin: MultiPin?) -> BoxLayout {
+        var newLayout = BoxLayout()
+        newLayout.height = heightPin
+        return newLayout
+    }
+    
+    public func withFlex(_ flexValue: CGFloat?) -> BoxLayout {
+        var newLayout = self
+        newLayout.flex = flexValue
+        return newLayout
+    }
+    
+//    public static func withFlex(_ flexValue: CGFloat?) -> BoxLayout {
+//        var newLayout = BoxLayout()
+//        newLayout.flex = flexValue
+//        return newLayout
+//    }
+    
     
     func begin(_ axis: Axis) -> Pin? {
         return (axis == .y) ? self.top : self.left
