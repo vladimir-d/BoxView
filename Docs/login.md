@@ -17,11 +17,11 @@ boxView.insets = UIEdgeInsets(top: 16.0, left: 16.0, bottom: 16.0, right: 16.0)
 boxView.spacing = 20.0
 
 // adding 3 items to BoxView, each item is of type BoxItem
-// All items are created from views using 'boxZero', it produces items with zero paddings 
+// All items are created from views using 'boxed' property, it produces items with zero paddings 
 boxView.items = [
-   nameField.boxZero,
-   passwordField.boxZero,
-   loginButton.boxZero
+   nameField.boxed,
+   passwordField.boxed,
+   loginButton.boxed
 ]
 ```
 As in these example all views have no additional paddings, all distances between each view and boxView are from boxView.insets, and all distances between neighbour views are from boxView.spacing.
@@ -33,16 +33,16 @@ As in these example all views have no additional paddings, all distances between
 
 For example we need to increase the spacing between the password field and the button to 50 pt.
 We already have spacing 20 pt between all views, so we need additional padding of 30 pt.
-Method **boxTop(30.0)** creates item with specified padding from top
+Method **boxed.top(30.0)** creates item with specified padding from top
 ```
 boxView.insets = UIEdgeInsets(top: 16.0, left: 16.0, bottom: 16.0, right: 16.0)
 boxView.spacing = 20.0
 boxView.items = [
-    nameField.boxZero,
-    passwordField.boxZero,
+    nameField.boxed,
+    passwordField.boxed,
     
     // loginButton has addtional 30.0 pt padding from top
-    loginButton.boxTop(30.0)
+    loginButton.boxed.top(30.0)
 ]
 ```
 
@@ -60,11 +60,11 @@ BoxItem creation methods can be chained, so we can write:
 
 ```swift
 boxView.items = [
-    nameField.boxZero,
-    passwordField.boxZero,
+    nameField.boxed,
+    passwordField.boxed,
     
     // loginButton has addtional 30.0 pt padding from top, and 50.0 pt from left and right
-    loginButton.boxTop(30.0).boxLeftRight(50.0, 50.0)
+    loginButton.boxed.top(30.0).left(50.0).right(50.0)
 ]
 ```
 
@@ -80,10 +80,10 @@ Operators ">=" and  "<=" are used to add constrains with greaterThanOrEqual and 
  
 ```swift
 boxView.items = [
-    nameField.boxZero,
-    passwordField.boxZero,
-    forgotButton.boxLeft(>=0.0)
-    loginButton.boxTop(30.0).boxLeftRight(50.0, 50.0)
+    nameField.boxed,
+    passwordField.boxed,
+    forgotButton.boxed.left(>=0.0)
+    loginButton.boxed.top(30.0).left(50.0).right(50.0)
 ]
 ```
 ###  Step 5: Add layout with alignment.
@@ -100,11 +100,11 @@ boxView.items = [
     // creates item with bottom padding 20 pt
     // it is also centered horizontally 
     // and have padding minimum 30 pt from left and right
-    titleLabel.boxBottom(20.0).boxCenterX(padding: 30.0),
-    nameField.boxZero,
-    passwordField.boxZero,
-    forgotButton.boxLeft(>=0.0),
-    loginButton.boxTop(30.0).boxLeftRight(50.0, 50.0)
+    titleLabel.boxed.bottom(20.0).centerX(padding: 30.0),
+    nameField.boxed,
+    passwordField.boxed,
+    forgotButton.boxed.left(>=0.0),
+    loginButton.boxed.top(30.0).left(50.0).right(50.0)
 ].compactMap{$0}
 ```
 
@@ -114,17 +114,17 @@ boxView.items = [
 All items in previous examples were stacked along Y-axis. 
 Now lets add nested boxViews with Y-axes to show icons on the left of the name and the password text fields. 
 ```swift
-nameBoxView.items = [nameImageView.boxCenterY(), nameField.boxZero]
-passwordBoxView.items = [passwordImageView.boxCenterY(), passwordField.boxZero]
+nameBoxView.items = [nameImageView.boxCenterY(), nameField.boxed]
+passwordBoxView.items = [passwordImageView.boxCenterY(), passwordField.boxed]
 boxView.insets = .all(16.0)
 boxView.spacing = 20.0
 
 boxView.items = [
 titleLabel.boxBottom(20.0).boxCenterX(padding: 30.0),
-    nameBoxView.boxZero,
-    passwordBoxView.boxZero,
-    forgotButton.boxLeft(>=0.0),
-    loginButton.boxTop(30.0).boxLeftRight(50.0, 50.0)
+    nameBoxView.boxed,
+    passwordBoxView.boxed,
+    forgotButton.boxed.left(>=0.0),
+    loginButton.boxed.top(30.0).left(50.0).right(50.0)
 ]
 ```
 
@@ -137,13 +137,10 @@ func showErrorForField(_ field: UITextField) {
     errorLabel.frame = field.convert(field.bounds, to: boxView)
     
     // set layout for error label: note that we are setting negative padding to show it without spacing from textField.
-    let item = errorLabel.boxTop(-boxView.spacing).boxLeft(errorLabel.frame.minX - boxView.insets.left)
+    let item = errorLabel.boxed.top(-boxView.spacing).left(errorLabel.frame.minX - boxView.insets.left)
     
     // inserting item after textField
-    boxView.insertItem(item, after: field.superview)
-    
-    // sending error label back on Z-order, to hide it behind textField
-    boxView.sendSubviewToBack(errorLabel)
+    boxView.insertItem(item, after: field.superview, z: .back)
     
     boxView.animateChangesWithDurations(0.3)
 }

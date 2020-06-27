@@ -3,7 +3,7 @@
 
 #### Subviews, Items and Managed Constraints
 
-When **items** variable of subview is set, the BoxView adds views from items to self as subviews. All these view are accessible as:
+When **items** variable of subview is set, the BoxView adds views from items to self as subviews. All these views are accessible as:
 ```swift
 var managedViews: [UIView]
 ```
@@ -36,22 +36,53 @@ Created constraints can be accessed as:
 // array of all automatically created by BoxView constraints
 public private(set) var managedConstraints: [NSLayoutConstraint]
 
-// array of automatically created by BoxView constraints grouped in dictionaries for each item
-public private(set) var itemsEdgeConstraints: [BoxEdge: NSLayoutConstraint]
 ```
 
 #### RTL languages
-There are no leading and trailing edges in BoxLayout. RTL behavior can be changed for all managed subviews using BoxView property:
+There are no leading and trailing edges in BoxLayout. RTL behavior is defined by semanticContentAttribute for whole boxView.
 ```swift
-// if true, subviews managed by BoxView are flipped from left to right for RTL languages
-public var isRTLDependent: Bool = true
+// subviews managed by BoxView are flipped from for RTL languages
+boxView.semanticContentAttribute = .unspecified
+
+// subviews managed by BoxView are in left to right order for all languages
+boxView.semanticContentAttribute = .forceLeftToRight
 ```
 
 #### Using BoxItems with regular UIViews
-Single BoxItem can be added to any UIView with method:
+BoxItems also can be added to any UIView with method:
 ```swift
-public func addBoxItem(_ item: BoxItem, rtlDependent: Bool = true) -> [NSLayoutConstraint]
+addBoxItems(_ items: [BoxItem], axis: BoxLayout.Axis = .y, spacing: CGFloat = 0.0) -> [NSLayoutConstraint] 
 ```
-This method can be used, for example, for adding BoxView itself to some specific view, like UIViewController view, or UIScrollview, or UITableViewCell contentView.
+This method can be used, for example, for adding items to some specific view, like UIViewController view, or UIScrollview, or UITableViewCell contentView. 
 
+#### Guide items, dimension constraints and flex items
+BoxItems can be created not only with views, but also with UILayoutGuides:
+```swift
+boxView.items = [
+    // this item has no view, it is used only to take 50% of superview height
+    .guide.relativeHeight(0.5),
+    someLabel.boxed.bottom(>=0.0)
+]
+```
+in this case label has offset 50% of height from top because of previous invisible item.
+
+Both view and guide items can have absolute and relative width and height constraints:
+
+```swift
+boxView.items = [
+    // invisible item with height 40 pt or more
+    .guide.height(>=40.0),
+    // widt of label is 20 pt + 30% of boxView width or more
+    someLabel.boxed.bottom(>=0.0).relativeWidth(>=20.0*0.3)
+]
+```
+Also it is possible to use flex layouting for views and guides:
+```swift
+boxView.items = [
+    label1.boxed.flex(1.0)
+    .guide.flex(1.0),
+    label2.boxed.flex(3.0)
+    // height of label1 is same as spacing between labels and height of label2 is 3 times more.
+]
+```
 
