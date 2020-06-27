@@ -45,6 +45,17 @@ public enum BoxEdge: CaseIterable {
         }
     }
     
+    public var str: String {
+        switch self {
+            case .left: return  "left"
+            case .right: return "right"
+            case .top: return "top"
+            case .bottom: return "bottom"
+            case .centerX: return "centerX"
+            case .centerY: return "centerX"
+        }
+    }
+    
 }
 
 // MARK: - Internal
@@ -83,5 +94,11 @@ extension BoxLayout {
         }
         
     }
-        
+    
+    public enum ZPosition {
+        case back
+        case front
+        case below(_ view: UIView?)
+        case above(_ view: UIView?)
+    }
 }

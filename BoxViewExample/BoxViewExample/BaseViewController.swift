@@ -10,20 +10,20 @@ import UIKit
 
 class BaseViewController: UIViewController {
     
-    let scrollView = UIScrollView.newAL()
+    let scrollView = UIScrollView()
     let boxView = BoxView()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
         let boxPadding: CGFloat = 16.0
-        scrollView.addBoxItem(boxView.boxAll(boxPadding))
+        scrollView.addBoxItem(boxView.boxed.all(boxPadding))
         var insets = UIEdgeInsets.zero
         if #available(iOS 11, *) {
             insets = view.safeAreaInsets
         }
-        view.addBoxItem(scrollView.boxInsets(insets))
-        boxView.alPinWidth(-boxPadding * 2.0, to: scrollView)
+        view.addBoxItem(scrollView.boxed.insets(insets))
+        boxView.bxPinWidth(-boxPadding * 2.0, to: scrollView)
     }
 
 }

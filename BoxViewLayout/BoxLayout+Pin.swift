@@ -14,21 +14,23 @@ public typealias BoxEdgePins = [BoxEdge: BoxLayout.Pin]
 
 extension BoxLayout {
     
-    public struct Pin {  //: ExpressibleByFloatLiteral
+    public struct Pin: CustomStringConvertible {
         
         public var constant: CGFloat = 0.0
         public var relation: NSLayoutConstraint.Relation = .equal
+        public var priority: UILayoutPriority = .required
         
-        public init(constant: CGFloat = 0.0, relation: NSLayoutConstraint.Relation = .equal) {
+        public init(constant: CGFloat = 0.0, relation: NSLayoutConstraint.Relation = .equal, priority: UILayoutPriority = .required) {
             self.constant = constant
             self.relation = relation
+            self.priority = priority
         }
         
         public init(_ constant: Double) {
-            self = Pin(constant: CGFloat(constant), relation: .equal)
+            self = Pin(constant: CGFloat(constant))
         }
 
-        public static let zero = Pin(constant: 0.0, relation: .equal)
+        public static let zero = Pin(constant: 0.0)
         
         public static func equal(_ constant: CGFloat?) -> Pin? {
             if let constant = constant {
@@ -57,7 +59,28 @@ extension BoxLayout {
             }
         }
         
-        fileprivate static func joinRelations(_ rel1: NSLayoutConstraint.Relation, _ rel2: NSLayoutConstraint.Relation) -> NSLayoutConstraint.Relation? {
+        public func withPriority(_ pr: UILayoutPriority) -> Pin {
+            return Pin(constant: constant, relation: relation, priority: pr)
+        }
+        
+        public var description: String {
+            var str = "\(relationString)\(constant)"
+            if priority != .required {
+                str += " & \(priority)"
+            }
+            return str
+        }
+        
+        var relationString: String {
+            switch self.relation {
+                case .greaterThanOrEqual: return ">="
+                case .lessThanOrEqual: return "<="
+                default: return ""
+            }
+        }
+        
+        
+         static func joinRelations(_ rel1: NSLayoutConstraint.Relation, _ rel2: NSLayoutConstraint.Relation) -> NSLayoutConstraint.Relation? {
             if (rel1 == rel2) || (rel2 == .equal) {
                 return rel1
             }
@@ -68,18 +91,9 @@ extension BoxLayout {
                 return nil
             }
         }
-    }
-}
-
-extension BoxLayout.Pin {
-    public struct Pair {
-        var begin: BoxLayout.Pin?
-        var end: BoxLayout.Pin?
         
-        public static let zero = Pair(begin: .zero, end: .zero)
-        
-        public static func pins(_ begin: BoxLayout.Pin?, _ end: BoxLayout.Pin?) -> Pair {
-            return Pair(begin: begin, end: end)
+        static func sumPinWarning() {
+            assertionFailure("Joining constraints relations must be either same or one of them must be NSLayoutConstraint.Relation.equal")
         }
         
     }
@@ -101,6 +115,11 @@ extension BoxLayout {
             set { pin.relation = newValue }
         }
         
+        public var priority: UILayoutPriority {
+            get { return pin.priority }
+            set { pin.priority = newValue }
+        }
+        
         public init(_ pin: Pin) {
             self.pin = pin
         }
@@ -112,6 +131,12 @@ extension BoxLayout {
             else {
                 return nil
             }
+        }
+        
+        public func withPriority(_ pr: UILayoutPriority) -> MultiPin {
+            var newPin = self
+            newPin.priority = pr
+            return newPin
         }
         
         public init(multiplier: CGFloat = 1.0, pin: Pin = .zero) {
@@ -135,20 +160,27 @@ extension BoxLayout {
 func + (pin1: BoxLayout.Pin?, pin2: BoxLayout.Pin?) -> BoxLayout.Pin? {
     guard let pin1 = pin1, let pin2 = pin2 else { return nil }
     guard let rel = BoxLayout.Pin.joinRelations(pin1.relation, pin2.relation) else { return nil }
-    return BoxLayout.Pin(constant: pin1.constant + pin2.constant, relation: rel)
+    return BoxLayout.Pin(constant: pin1.constant + pin2.constant, relation: rel, priority: min(pin1.priority, pin2.priority))
 }
 
 func + (pin: BoxLayout.Pin, value: CGFloat) -> BoxLayout.Pin {
-    return BoxLayout.Pin(constant: pin.constant + value, relation: pin.relation)
+    return BoxLayout.Pin(constant: pin.constant + value, relation: pin.relation, priority: pin.priority)
 }
 
 func + (pin: BoxLayout.Pin?, value: CGFloat) -> BoxLayout.Pin? {
     if let pin = pin {
-        return BoxLayout.Pin(constant: pin.constant + value, relation: pin.relation)
+        return BoxLayout.Pin(constant: pin.constant + value, relation: pin.relation, priority: pin.priority)
     }
     return nil
 }
 
+func & (pin: BoxLayout.Pin, priority: UILayoutPriority) -> BoxLayout.Pin {
+    return BoxLayout.Pin(constant: pin.constant, relation: pin.relation, priority: priority)
+}
+
+func & (priority: UILayoutPriority, pin: BoxLayout.Pin) -> BoxLayout.Pin {
+    return BoxLayout.Pin(constant: pin.constant, relation: pin.relation, priority: priority)
+}
 
 
 func * (pin: BoxLayout.Pin?, multiplier: CGFloat) -> BoxLayout.MultiPin? {
@@ -160,6 +192,15 @@ func * (mPin: BoxLayout.MultiPin?, multiplier: CGFloat) -> BoxLayout.MultiPin? {
     guard let mPin = mPin else { return nil }
     return BoxLayout.MultiPin(multiplier: mPin.multiplier * multiplier, pin: mPin.pin)
 }
+
+func & (mPin: BoxLayout.MultiPin, priority: UILayoutPriority) -> BoxLayout.MultiPin {
+    return mPin.withPriority(priority)
+}
+
+func & (priority: UILayoutPriority, mPin: BoxLayout.MultiPin) -> BoxLayout.MultiPin {
+    return mPin.withPriority(priority)
+}
+
 
 prefix operator *
 public prefix func *(m: CGFloat) -> BoxLayout.MultiPin {

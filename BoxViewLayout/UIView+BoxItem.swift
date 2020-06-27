@@ -10,112 +10,17 @@ import UIKit
 
 extension UIView {
     
-    // Creates BoxItem with view and specified box layouts for X and Y ases.
-    public func boxXY(_ x: BoxLayout.Pin.Pair, _ y: BoxLayout.Pin.Pair) -> BoxItem {
-        return BoxItem(view: self, layout: .pairs(x: x, y: y))
-    }
-    
-    // Creates BoxItem with view and specified box layout
-    public func boxLayout(_ layout: BoxLayout) -> BoxItem {
-        return BoxItem(view: self, layout: layout)
-    }
-    
-    // deprecated, same as boxed
-    public var boxZero: BoxItem {
-        return BoxItem(view: self, layout: .zero)
-    }
-    
     // Creates BoxItem with view and zero constant constraints to all four edges.
     public var boxed: BoxItem {
         return BoxItem(view: self, layout: .zero)
     }
     
-    // Creates BoxItem with view and layout with pins for edges from dictionary.
-    public func boxEdgePins(_ pins: BoxLayout.EdgePins) -> BoxItem {
-        return BoxItem(view: self, layout: .boxEdgePins(pins))
-    }
-    
-    // Creates BoxItem with view and layout with left pin.
-    public func boxLeft(_ leftPin: BoxLayout.Pin?) -> BoxItem {
-        return BoxItem(view: self, layout: .withPins(left: leftPin))
-    }
-    
-    // Creates BoxItem with view and layout with exact left padding.
-    public func boxLeft(_ left: CGFloat) -> BoxItem {
-        return BoxItem(view: self, layout: .withPins(left: ==left))
-    }
-    
-    // Creates BoxItem with view and layout with right pin.
-    public func boxRight(_ rightPin: BoxLayout.Pin?) -> BoxItem {
-        return BoxItem(view: self, layout: .withPins(right: rightPin))
-    }
-    
-    // Creates BoxItem with view and layout with exact right padding.
-    public func boxRight(_ right: CGFloat) -> BoxItem {
-        return BoxItem(view: self, layout: .withPins(right: ==right))
-    }
-    
-    // Creates BoxItem with view and layout with left and right pins.
-    public func boxLeftRight(_ leftPin: BoxLayout.Pin?, _ rightPin: BoxLayout.Pin?) -> BoxItem {
-        return BoxItem(view: self, layout: .withPins(left: leftPin, right: rightPin))
-    }
-    
-    // Creates BoxItem with view and layout with exact left and right paddings.
-    public func boxLeftRight(_ left: CGFloat?, _ right: CGFloat) -> BoxItem {
-        return BoxItem(view: self, layout: .withPins(left: ==left, right: ==right))
-    }
-    
-    // Creates BoxItem with view and layout with top pin.
-    public func boxTop(_ topPin: BoxLayout.Pin?) -> BoxItem {
-        return BoxItem(view: self, layout: .withPins(top: topPin))
-    }
-    
-    // Creates BoxItem with view and layout with exact top padding.
-    public func boxTop(_ top: CGFloat) -> BoxItem {
-        return BoxItem(view: self, layout: .withPins(top: ==top))
-    }
-    
-    // Creates BoxItem with view and layout with bottom pin.
-    public func boxBottom(_ bottomPin: BoxLayout.Pin?) -> BoxItem {
-        return BoxItem(view: self, layout: .withPins(bottom: bottomPin))
-    }
-    
-    // Creates BoxItem with view and layout with exact bottom padding.
-    public func boxBottom(_ bottom: CGFloat) -> BoxItem {
-        return BoxItem(view: self, layout: .withPins(bottom: ==bottom))
-    }
-    
-    // Creates BoxItem with view and layout with top and bottom pins.
-    public func boxTopBottom(_ topPin: BoxLayout.Pin?, _ bottomPin: BoxLayout.Pin?) -> BoxItem {
-        return BoxItem(view: self, layout: .withPins(top: topPin, bottom: bottomPin))
-    }
-    
-    // Creates BoxItem with view and layout with top and bottom pins.
-    public func boxTopBottom(_ top: CGFloat?, _ bottom: CGFloat) -> BoxItem {
-        return BoxItem(view: self, layout: .withPins(top: ==top, bottom: ==bottom))
-    }
-    
-    // Creates BoxItem with view and layout is center alignment along X-Axis.
-    // Offset from center and same minimal padding from both sides can be specified (default 0.0)
-    public func boxCenterX(offset: CGFloat = 0.0, padding: CGFloat? = 0.0) -> BoxItem {
-        return BoxItem(view: self, layout: .xCentered(offset: offset, padding: padding))
-    }
-    
-    // Creates BoxItem with view and layout is center alignment along Y-Axis.
-    // Offset from center and same minimal padding from both sides can be specified (default 0.0)
-    public func boxCenterY(offset: CGFloat = 0.0, padding: CGFloat? = 0.0) -> BoxItem {
-        return BoxItem(view: self, layout: .yCentered(offset: offset, padding: padding))
+    // Creates BoxItem from view using specified layout
+    public func boxed(layout: BoxLayout) -> BoxItem {
+        return BoxItem(view: self, layout: layout)
     }
 
-    // Creates BoxItem with view and layout where top, left, bootom and right insets are taken from UIEdgeInsets.
-    public func boxInsets(_ insets: UIEdgeInsets?) -> BoxItem {
-        return BoxItem(view: self, layout: .withPins(top: ==(insets?.top), left: ==(insets?.left), bottom: ==(insets?.bottom), right: ==(insets?.right)))
-    }
-    
-    public func boxAll(_ padding: CGFloat) -> BoxItem {
-        return boxInsets(UIEdgeInsets(top: padding, left: padding, bottom: padding, right: padding))
-    }
-    
+    // adding item view as subview with layuot specified by item
     @discardableResult
     public func addBoxItem(_ item: BoxItem, rtlDependent: Bool = true) -> [NSLayoutConstraint] {
         var constraints = [NSLayoutConstraint]()
@@ -137,31 +42,48 @@ extension UIView {
         }
         return constraints
     }
+    
+    // adding items views as subviews with layuot specified by items
+    // it allows to add BoxItems to any view in same manner as setting boxView.items
+    // this method is used to layout subviews in some specific view (e.g UIScrollView or view of controller) which can't be BoxView.
+    // all constraints created in this method are returned as result
+    // and can be stored somewhere to manage them later.
+    @discardableResult
+    public func addBoxItems(_ items: [BoxItem], axis: BoxLayout.Axis = .y, spacing: CGFloat = 0.0) -> [NSLayoutConstraint] {
+        var constraints = [NSLayoutConstraint]()
+        items.forEach{
+            if let view = $0.view {
+                self.addSubview(view)
+                view.translatesAutoresizingMaskIntoConstraints = false
+            }
+        }
+        createChainConstraints(boxItems: items, axis: axis, spacing: spacing, constraints: &constraints)
+        createDimentions(boxItems: items, constraints: &constraints)
+        createRelativeDimensions(boxItems: items, constraints: &constraints)
+        createFlexDimentions(boxItems: items, axis: axis, constraints: &constraints)
+        NSLayoutConstraint.activate(constraints)
+        return constraints
+    }
+
 
 }
 
 extension Array where Element: UIView {
     
-    
-    public func boxXY(_ x: BoxLayout.Pin.Pair, _ y: BoxLayout.Pin.Pair) -> [BoxItem] {
-        let layout = BoxLayout.pairs(x: x, y: y)
-        return map{BoxItem(view: $0, layout: layout)}
-    }
-    
     // Creates BoxItems array from array of views using specified layout for all views.
-    public func boxLayout(_ layout: BoxLayout) -> [BoxItem] {
+    public func boxed(layout: BoxLayout) -> [BoxItem] {
         return map{BoxItem(view: $0, layout: layout)}
     }
     
     // Creates BoxItems array from array of views using same "zero" layout (zero constant constraints to all four edges) for all views.
-    public var boxZero: [BoxItem] {
+    public var boxed: [BoxItem] {
         return map{BoxItem(view: $0, layout: .zero)}
     }
     
     
     public func inBoxView(axis: BoxLayout.Axis = .y, spacing: CGFloat = 0.0, insets: UIEdgeInsets = .zero) -> BoxView {
         let boxView = BoxView(axis: axis, spacing: spacing, insets: insets)
-        boxView.items = self.boxZero
+        boxView.items = self.boxed
         return boxView
     }
     

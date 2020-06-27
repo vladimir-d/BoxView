@@ -21,7 +21,7 @@ extension UIView {
 extension UILabel {
     
     class func alWithText(_ text: String?, color: UIColor = .clear, textColor: UIColor = .black, font: UIFont? = nil, numberOfLines: Int? = nil) -> UILabel {
-        let label = UILabel.newAL()
+        let label = UILabel()
         label.text = text
         label.backgroundColor = color
         label.textColor = textColor
@@ -39,7 +39,7 @@ extension UILabel {
 extension UIButton {
     
     class func alWithText(_ text: String?, color: UIColor = .clear) -> UIButton {
-        let button = UIButton.newAL()
+        let button = UIButton()
         button.setTitle(text, for: .normal)
         button.backgroundColor = color
         return button
@@ -53,7 +53,7 @@ extension UIImageView {
         let img = UIImage(named: imageName)
         let imgSize = size ?? img?.size ?? .zero
         let imgView = UIImageView(image: img)
-        imgView.alSetSize(imgSize)
+        imgView.bxSetSize(imgSize)
         return imgView
     }
     
@@ -67,7 +67,7 @@ extension UIImageView {
 //        let img = UIImage(named: imageName)
         image =  UIImage(named: imageName ?? "")
         contentMode = .scaleAspectFit
-        alSetSetAspectFromSize(image?.size ?? .zero)
+        bxSetAspectFromSize(image?.size ?? .zero)
     }
     
 }
@@ -75,7 +75,7 @@ extension UIImageView {
 extension UITextField {
     
     class func alWithText(_ text: String?, hint: String?) -> UITextField {
-        let tf = UITextField.newAL()
+        let tf = UITextField()
         tf.text = text
         tf.placeholder = hint
         tf.borderStyle = .roundedRect

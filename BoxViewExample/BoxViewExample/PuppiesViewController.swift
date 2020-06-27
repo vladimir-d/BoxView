@@ -30,8 +30,8 @@ class PuppiesViewController: BaseViewController {
             let itemView = AlbumView()
             itemView.titleLabel.text = album.title
             itemView.textLabel.text = album.text
-            itemView.imagesBoxView.items = album.imageNames.map({ PhotoView(imageName: $0) }).boxZero
-            boxView.addItem(itemView.boxZero)
+            itemView.imagesBoxView.items = album.imageNames.map({ PhotoView(imageName: $0) }).boxed
+            boxView.addItem(itemView.boxed)
         }
         boxView.spacing = 4.0
     }
@@ -53,20 +53,20 @@ class AlbumView: BoxView {
         backgroundColor = .grayScale(0.9)
         setBorder(color: .grayScale(0.8))
         imagesScrollView.showsHorizontalScrollIndicator = false
-        imagesScrollView.addBoxItem(imagesBoxView.boxZero)
+        imagesScrollView.addBoxItem(imagesBoxView.boxed)
         layer.cornerRadius = 8.0
         addGestureRecognizer(UITapGestureRecognizer(target: self, action:#selector(onTap)))
         insets = .all(12.0)
         spacing = 8.0
         items = [
-            titleLabel.boxZero,
-            textLabel.boxBottom(4.0),
-            imagesScrollView.boxZero
+            titleLabel.boxed,
+            textLabel.boxed.bottom(4.0),
+            imagesScrollView.boxed
         ]
-        expandSwitch.offSet = [imagesBoxView.alPinHeight(50.0)]
-        imagesScrollView.alPinHeight(0.0, to: imagesBoxView)
-        expandSwitch.onSet = [imagesBoxView.alPinWidth(0.0, to: imagesScrollView)]
-        self.alPinWidth(insets.left + insets.right, to: imagesScrollView)
+        expandSwitch.offSet = [imagesBoxView.bxPinHeight(50.0)]
+        imagesScrollView.bxPinHeight(0.0, to: imagesBoxView)
+        expandSwitch.onSet = [imagesBoxView.bxPinWidth(0.0, to: imagesScrollView)]
+        self.bxPinWidth(insets.left + insets.right, to: imagesScrollView)
     }
     
     @objc func onTap(sender: UITapGestureRecognizer) {
@@ -98,10 +98,10 @@ class PhotoView: BoxView {
     }
     
     func setLabelsShown(_ shown: Bool) {
-        self.items = [
-            imageView.boxZero,
-            (shown) ? titleLabel.boxTop(4.0) : nil,
-            (shown) ? sizeLabel.boxBottom(16.0) : nil
-        ].compactMap({$0})
+        self.optItems = [
+            imageView.boxed,
+            titleLabel.boxed.top(4.0).useIf(shown),
+            sizeLabel.boxed.bottom(16.0).useIf(shown)
+        ]
     }
 }

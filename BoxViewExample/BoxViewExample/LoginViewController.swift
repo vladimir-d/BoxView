@@ -35,7 +35,6 @@ class LoginViewController: BaseViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         navigationItem.title = "Login"
-        view.backgroundColor = .white
         titleLabel.textAlignment = .center
         boxView.setBorder(color: .black)
         boxView.layer.cornerRadius = 10.0
@@ -50,27 +49,27 @@ class LoginViewController: BaseViewController {
         nameField.addTarget(self, action:#selector(onChangeTextField), for: .editingChanged)
         passwordField.addTarget(self, action:#selector(onChangeTextField), for: .editingChanged)
         passwordField.isSecureTextEntry = true
-        
+
         // all layout code is here:
-        nameBoxView.items = [nameImageView.boxCenterY(), nameField.boxZero]
-        passwordBoxView.items = [passwordImageView.boxCenterY(), passwordField.boxZero]
+        nameBoxView.items = [nameImageView.boxed.centerY(), nameField.boxed]
+        passwordBoxView.items = [passwordImageView.boxed.centerY(), passwordField.boxed]
         boxView.insets = .all(16.0)
         boxView.spacing = 20.0
-
         boxView.items = [
-            titleLabel.boxCenterX(padding: 30.0).boxBottom(20.0),
-            nameBoxView.boxZero,
-            passwordBoxView.boxZero,
-            forgotButton.boxLeft(>=0.0),
-            loginButton.boxTop(30.0).boxLeftRight(50.0, 50.0)
+            titleLabel.boxed.centerX(padding: 30.0).bottom(20.0),
+            nameBoxView.boxed,
+            passwordBoxView.boxed,
+            forgotButton.boxed.left(>=0.0),
+            loginButton.boxed.top(30.0).left(50.0).right(50.0),
         ]
     }
     
+    
     func showErrorForField(_ field: UITextField) {
         errorLabel.frame = field.convert(field.bounds, to: boxView)
-        let item = errorLabel.boxTop(-boxView.spacing).boxLeft(errorLabel.frame.minX - boxView.insets.left)
-        boxView.insertItem(item, after: field.superview)
-        boxView.sendSubviewToBack(errorLabel)
+        let item = errorLabel.boxed.top(-boxView.spacing).left(errorLabel.frame.minX - boxView.insets.left)
+        boxView.insertItem(item, after: field.superview, z: .back)
+//        boxView.sendSubviewToBack(errorLabel)
         boxView.animateChangesWithDurations(0.3)
     }
     

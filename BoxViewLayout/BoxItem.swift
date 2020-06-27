@@ -10,31 +10,7 @@ import UIKit
 
 // MARK: - Public
 
-protocol BoxAnchorPinnable {
-   func pin(_ pin: BoxLayout.Pin, to anchor: BoxAnchorPinnable) -> NSLayoutConstraint
-}
-
-extension NSLayoutXAxisAnchor: BoxAnchorPinnable {
-    func pin(_ pin: BoxLayout.Pin, to anchor: BoxAnchorPinnable) -> NSLayoutConstraint {
-        switch pin.relation {
-            case .greaterThanOrEqual: return self.constraint(greaterThanOrEqualTo: anchor as! NSLayoutXAxisAnchor, constant: pin.constant)
-            case .lessThanOrEqual: return self.constraint(lessThanOrEqualTo: anchor as! NSLayoutXAxisAnchor, constant: pin.constant)
-            default: return self.constraint(equalTo: anchor as! NSLayoutXAxisAnchor, constant: pin.constant)
-        }
-    }
-}
-
-extension NSLayoutYAxisAnchor: BoxAnchorPinnable {
-    func pin(_ pin: BoxLayout.Pin, to anchor: BoxAnchorPinnable) -> NSLayoutConstraint {
-        switch pin.relation {
-            case .greaterThanOrEqual: return self.constraint(greaterThanOrEqualTo: anchor as! NSLayoutYAxisAnchor, constant: pin.constant)
-            case .lessThanOrEqual: return self.constraint(lessThanOrEqualTo: anchor as! NSLayoutYAxisAnchor, constant: pin.constant)
-            default: return self.constraint(equalTo: anchor as! NSLayoutYAxisAnchor, constant: pin.constant)
-        }
-    }
-}
-
-protocol BoxAnchorable {
+public protocol BoxAnchorable: class {
 
     var leftAnchor: NSLayoutXAxisAnchor { get }
     var leadingAnchor: NSLayoutXAxisAnchor { get }
@@ -49,15 +25,15 @@ protocol BoxAnchorable {
 }
 
 extension UIView: BoxAnchorable {
-    
 }
 
 extension UILayoutGuide: BoxAnchorable {
-    
 }
 
-public struct BoxItem {
-    internal var alObj: BoxAnchorable
+public struct BoxItem: CustomStringConvertible {
+    
+    // MARK: - Public
+    
     public var layout: BoxLayout
     
     public var view: UIView? {
@@ -87,10 +63,27 @@ public struct BoxItem {
         self.layout = layout
     }
     
+    public var description: String {
+        var str = ""
+        if let view = view {
+            str = "view: \(view)"
+        }
+        else if let guide = guide {
+            str = "guide: \(guide)"
+        }
+        str += "\nlayout: \(layout)"
+        return str
+    }
+    
+    // MARK: - Internal
+    
     init(alObj: BoxAnchorable, layout: BoxLayout = .zero) {
         self.alObj = alObj
         self.layout = layout
     }
+    
+    internal var alObj: BoxAnchorable
+    
     var leftAnchor: NSLayoutXAxisAnchor? {
         return (layout.left != nil) ? alObj.leftAnchor : nil
     }
@@ -127,7 +120,71 @@ public struct BoxItem {
     func centerAnchor(axis: BoxLayout.Axis) -> BoxAnchorPinnable? {
         return (axis == .y) ? centerYAnchor : centerXAnchor
     }
- 
+     
+}
+
+protocol BoxAnchorPinnable {
+   func pin(_ pin: BoxLayout.Pin, to anchor: BoxAnchorPinnable) -> NSLayoutConstraint
+}
+
+extension NSLayoutXAxisAnchor: BoxAnchorPinnable {
+    func pin(_ pin: BoxLayout.Pin, to anchor: BoxAnchorPinnable) -> NSLayoutConstraint {
+        let cnstr: NSLayoutConstraint
+        switch pin.relation {
+            case .greaterThanOrEqual: cnstr = self.constraint(greaterThanOrEqualTo: anchor as! NSLayoutXAxisAnchor, constant: pin.constant)
+            case .lessThanOrEqual: cnstr = self.constraint(lessThanOrEqualTo: anchor as! NSLayoutXAxisAnchor, constant: pin.constant)
+            default: cnstr = self.constraint(equalTo: anchor as! NSLayoutXAxisAnchor, constant: pin.constant)
+        }
+        if pin.priority != .required {
+            cnstr.priority = pin.priority
+        }
+        return cnstr
+    }
+}
+
+extension NSLayoutYAxisAnchor: BoxAnchorPinnable {
+    func pin(_ pin: BoxLayout.Pin, to anchor: BoxAnchorPinnable) -> NSLayoutConstraint {
+        let cnstr: NSLayoutConstraint
+        switch pin.relation {
+            case .greaterThanOrEqual: cnstr = self.constraint(greaterThanOrEqualTo: anchor as! NSLayoutYAxisAnchor, constant: pin.constant)
+            case .lessThanOrEqual: cnstr = self.constraint(lessThanOrEqualTo: anchor as! NSLayoutYAxisAnchor, constant: pin.constant)
+            default: cnstr = self.constraint(equalTo: anchor as! NSLayoutYAxisAnchor, constant: pin.constant)
+        }
+        if pin.priority != .required {
+            cnstr.priority = pin.priority
+        }
+        return cnstr
+    }
+}
+
+extension NSLayoutDimension {
+    
+    func pin(_ pin: BoxLayout.MultiPin, to anchor: NSLayoutDimension) -> NSLayoutConstraint {
+        let cnstr: NSLayoutConstraint
+        switch pin.relation {
+            case .greaterThanOrEqual: cnstr = self.constraint(greaterThanOrEqualTo: anchor, multiplier: pin.multiplier, constant: pin.constant)
+            case .lessThanOrEqual: cnstr = self.constraint(lessThanOrEqualTo: anchor, multiplier: pin.multiplier, constant: pin.constant)
+            default: cnstr = self.constraint(equalTo: anchor, multiplier: pin.multiplier, constant: pin.constant)
+        }
+        if pin.priority != .required {
+            cnstr.priority = pin.priority
+        }
+        return cnstr
+    }
+    
+    func pin(_ pin: BoxLayout.Pin) -> NSLayoutConstraint {
+        let cnstr: NSLayoutConstraint
+        switch pin.relation {
+            case .greaterThanOrEqual: cnstr = self.constraint(greaterThanOrEqualToConstant: pin.constant)
+            case .lessThanOrEqual: cnstr = self.constraint(lessThanOrEqualToConstant: pin.constant)
+            default: cnstr = self.constraint(equalToConstant: pin.constant)
+        }
+        if pin.priority != .required {
+            cnstr.priority = pin.priority
+        }
+        return cnstr
+    }
+    
 }
 
 

@@ -20,7 +20,6 @@ open class BoxView: UIView {
         self.spacing = spacing
         super.init(frame: .zero)
         self.insets = insets
-        langDir = UIView.userInterfaceLayoutDirection(for: semanticContentAttribute)
         translatesAutoresizingMaskIntoConstraints = false
         setup()
     }
@@ -28,7 +27,6 @@ open class BoxView: UIView {
     public required override init(frame: CGRect) {
         super.init(frame: frame)
         insets = .zero
-        langDir = UIView.userInterfaceLayoutDirection(for: semanticContentAttribute)
         setup()
     }
     
@@ -79,8 +77,14 @@ open class BoxView: UIView {
     
     // Define which attributes used for left/right edges:
     // if true: leading/trailing, if false: left/right
-    @IBInspectable
-    public var isRTLDependent: Bool = true {
+//    @IBInspectable
+//    public var isRTLDependent: Bool = true {
+//        didSet {
+//            setNeedsUpdateConstraints()
+//        }
+//    }
+    
+    override open var semanticContentAttribute: UISemanticContentAttribute {
         didSet {
             setNeedsUpdateConstraints()
         }
@@ -91,13 +95,14 @@ open class BoxView: UIView {
     // array of all automatically created by BoxView constraints
     public private(set) var managedConstraints = [NSLayoutConstraint]()
     
-    // array of automatically created by BoxView constraints groupped in dictionary for each item
-    public private(set) var itemsEdgeConstraints = [BoxEdge.Constraints]()
-    
-    // array of views of all items.
+    // array of views of items.
     // it is a subset of boxView.subviews
     public private(set) var managedViews = [UIView]()
+    
+    // array of guides of items.
     public private(set) var managedGuides = [UILayoutGuide]()
+    
+    
     // MARK: -- setting items and layouts
     
     public var items:[BoxItem] = [] {
@@ -106,6 +111,7 @@ open class BoxView: UIView {
         }
     }
     
+    // to set items from array containing optionals
     public var optItems:[BoxItem?] {
         get {return []}
         set { items = newValue.compactMap{$0} }
@@ -120,7 +126,7 @@ open class BoxView: UIView {
     public func setViews(_ views: [UIView], layout: BoxLayout = .zero) {
         items = [BoxItem]()
         for view in views {
-            items.append(view.boxLayout(layout))
+            items.append(view.boxed(layout: layout))
         }
     }
     
@@ -130,26 +136,84 @@ open class BoxView: UIView {
     }
     
     // inserting item after item with given view, if view is nil, then item inserted at index 0
-    public func insertItem(_ item: BoxItem, after view: UIView?) {
+    public func insertItem(_ item: BoxItem, after view: UIView?, z: BoxLayout.ZPosition? = nil) {
+        isUpdatingItems = true
         if let itemView = item.view {
             if managedViews.contains(itemView) {
+                if let ind = itemIndexForObject(itemView) {
+                    items.remove(at: ind)
+                }
                 itemView.removeFromSuperview()
             }
         }
-        if view == nil {
-            items.insert(item, at: 0)
-        }
-        else if let index = items.firstIndex(where: {$0.view == view}) {
+        if let index = items.firstIndex(where: {$0.view == view}) {
             items.insert(item, at: index + 1)
         }
+        else {
+            items.insert(item, at: 0)
+        }
+        if let itemView = item.view {
+            itemView.translatesAutoresizingMaskIntoConstraints = false
+            if let ind = managedViews.firstIndex(where: {$0 == view}) {
+                managedViews.insert(itemView, at: ind + 1)
+            }
+            else {
+                managedViews.insert(itemView, at: 0)
+            }
+            insertSubview(itemView, z: z ?? .above(view))
+        }
+        isUpdatingItems = false
+        setNeedsUpdateConstraints()
     }
     
-    // changing layout of existing item with specified view
-    public func setLayout(_ layout: BoxLayout, for view: UIView?) {
-        if let index = items.firstIndex(where: { $0.view == view}) {
+    // inserting item before item with given view, if view is nil, then item inserted at the end
+    public func insertItem(_ item: BoxItem, before view: UIView?, z: BoxLayout.ZPosition? = nil) {
+        isUpdatingItems = true
+        if let itemView = item.view {
+            if managedViews.contains(itemView) {
+                if let ind = itemIndexForObject(itemView) {
+                    items.remove(at: ind)
+                }
+                itemView.removeFromSuperview()
+            }
+        }
+        if let index = items.firstIndex(where: {$0.view == view}) {
+            items.insert(item, at: index)
+        }
+        else {
+            items.append(item)
+        }
+        if let itemView = item.view {
+            itemView.translatesAutoresizingMaskIntoConstraints = false
+            if let ind = managedViews.firstIndex(where: {$0 == view}) {
+                managedViews.insert(itemView, at: ind)
+            }
+            else {
+                managedViews.append(itemView)
+            }
+            insertSubview(itemView, z: z ?? .below(view))
+        }
+        isUpdatingItems = false
+        
+        setNeedsUpdateConstraints()
+    }
+    
+    // changing layout of existing item with specified object (view or guide)
+    public func setLayout(_ layout: BoxLayout, for obj: BoxAnchorable?) {
+        if let index = items.firstIndex(where: { $0.alObj === obj}) {
             items[index].layout = layout
             setNeedsUpdateConstraints()
         }
+    }
+    
+    // getting existing item with specified object (view or guide)
+    public func itemForObject(_ obj: BoxAnchorable) -> BoxItem? {
+        return items.first(where: {$0.alObj === obj})
+    }
+    
+    // getting index of existing item with specified object (view or guide)
+    public func itemIndexForObject(_ obj: BoxAnchorable) -> Int? {
+        return items.firstIndex(where: {$0.alObj === obj})
     }
     
     // MARK: -- animation
@@ -169,7 +233,6 @@ open class BoxView: UIView {
     override public func updateConstraints() {
         self.removeConstraints(managedConstraints)
         managedConstraints = []
-        itemsEdgeConstraints = []
         addItemsConstraints()
         super.updateConstraints()
     }
@@ -185,28 +248,17 @@ open class BoxView: UIView {
         }
     }
     
-    override public var semanticContentAttribute: UISemanticContentAttribute {
-        didSet {
-            langDir = UIView.userInterfaceLayoutDirection(for: semanticContentAttribute)
-        }
+    var itemsDescription: String {
+        return (0..<items.count).compactMap { (i) -> String in
+            return "\n[\(i)] \(items[i].description)"
+        }.joined(separator: ",")
     }
     
     
     // MARK: - Private
-
-    func beginAnchor(axis: BoxLayout.Axis) -> BoxAnchorPinnable {
-        return (axis == .y) ? topAnchor : ((isRTLDependent) ? leadingAnchor : leftAnchor)
-    }
-    
-    func endAnchor(axis: BoxLayout.Axis) -> BoxAnchorPinnable {
-        return (axis == .y) ? self.bottomAnchor : ((isRTLDependent) ? trailingAnchor : rightAnchor)
-    }
-    
-    func centerAnchor(axis: BoxLayout.Axis) -> BoxAnchorPinnable {
-        return (axis == .y) ? centerYAnchor : centerXAnchor
-    }
     
     private func updateItems() {
+        if isUpdatingItems { return }
         isUpdatingItems = true
         let itemViews = items.compactMap{ $0.view }
         var viewsToRemove = [Int]()
@@ -247,167 +299,20 @@ open class BoxView: UIView {
             }
         }
         isUpdatingItems = false
-        
         setNeedsUpdateConstraints()
     }
     
-    func addItemsConstraints() {
-        var prevItem: BoxItem? = nil
-        guard items.count > 0 else { return }
-        let beginEdge = axis.edgeForPosition(.begin)
-        let endEdge = axis.edgeForPosition(.end)
-        var edgeConstraints: BoxEdge.Constraints = [:]
-        for item in items {
-            let layout = item.layout
-            if let itemBeginPin = layout.begin(axis),
-               let itemBeginAnchor = item.beginAnchor(axis: axis, isRTLDependent: isRTLDependent) {
-                if let prevItem = prevItem {
-                    if let prevEndAnchor = prevItem.endAnchor(axis: axis, isRTLDependent: isRTLDependent),
-                        let prevEndPin = prevItem.layout.pinForAxis(axis, position: .end) {
-                        guard let sumPin = itemBeginPin + prevEndPin + spacing else {
-                            sumPinWarning(); return
-                        }
-//                        let toPrev = view.alPin(beginAttr, to: endAttr, of: prevItem.view, constant: sumPin.value + spacing, relation: sumPin.relation, activate: false)
-                        
-                        let toPrev = itemBeginAnchor.pin(sumPin, to: prevEndAnchor)
-                        managedConstraints.append(toPrev)
-                        edgeConstraints[endEdge] = toPrev
-                        itemsEdgeConstraints.append(edgeConstraints)
-                        edgeConstraints = [beginEdge: toPrev]
-                    }
-                }
-                else{
-                    let firstPin = itemBeginPin + beginForAxis(axis)
-                    let toBegin = itemBeginAnchor.pin(firstPin, to: beginAnchor(axis: axis))
-                    managedConstraints.append(toBegin)
-                    edgeConstraints = [beginEdge: toBegin]
-                }
-            }
-            if let itemCenterPin = layout.center(axis),
-                let itemCenterAnchor = item.centerAnchor(axis: axis)
-                {
-                let toCenter = itemCenterAnchor.pin(itemCenterPin, to: centerAnchor(axis: axis))
-                managedConstraints.append(toCenter)
-                edgeConstraints = [axis.edgeForPosition(.center): toCenter]
-            }
-            if let view = item.view {
-                pinAccross(view: view, layout: layout, edgeConstraints: &edgeConstraints)
-            }
-//            else {
-//                let otherAxis = axis.other
-////                if let acrCenterAnchor = item.centerAnchor(axis: otherAxis) {
-////                    let acrCenter = acrCenterAnchor.pin(==0.0, to: centerAnchor(axis: otherAxis))
-//                if let acrBeginAnchor = item.beginAnchor(axis: otherAxis, isRTLDependent: isRTLDependent) {
-//                    let acrBegin = acrBeginAnchor.pin(==0.0, to: beginAnchor(axis: otherAxis))
-//                    managedConstraints.append(acrBegin)
-//                }
-//                if let acrEndAnchor = item.endAnchor(axis: otherAxis, isRTLDependent: isRTLDependent) {
-//                    let acrEnd = acrEndAnchor.pin(==0.0, to: endAnchor(axis: otherAxis))
-//                    managedConstraints.append(acrEnd)
-//                }
-//            }
-            prevItem = item
-        }
-        if let itemEndPin = prevItem?.layout.end(axis),
-            let prevEndAnchor = prevItem?.endAnchor(axis: axis, isRTLDependent: isRTLDependent) {
-            let lastPin = itemEndPin + endForAxis(axis)
-            let toEnd = endAnchor(axis: axis).pin(lastPin, to: prevEndAnchor)
-            managedConstraints.append(toEnd)
-            edgeConstraints[endEdge] = toEnd
-        }
-        itemsEdgeConstraints.append(edgeConstraints)
+    private func addItemsConstraints() {
+        self.removeConstraints(managedConstraints)
+        createChainConstraints(boxItems: items, axis: axis, spacing: spacing, constraints: &managedConstraints)
+        createDimentions(boxItems: items, constraints: &managedConstraints)
+        createRelativeDimensions(boxItems: items, constraints: &managedConstraints)
+        createFlexDimentions(boxItems: items, axis: axis, constraints: &managedConstraints)
         NSLayoutConstraint.activate(managedConstraints)
-        
-        createFlexDimentions()
     }
     
-    private func createFlexDimentions() {
-        var firstFlexAnchor: NSLayoutDimension?
-        var firstFlex: CGFloat = 0.0
-        var constraints = [NSLayoutConstraint]()
-        for item in items {
-            if let flex = item.layout.flex, flex > 0.0 {
-                let itemAnchor = (axis == .y) ? item.alObj.heightAnchor : item.alObj.widthAnchor
-                if let firstAnchor = firstFlexAnchor {
-                    constraints.append(itemAnchor.constraint(equalTo: firstAnchor, multiplier: flex / firstFlex))
-                }
-                else {
-                    firstFlexAnchor = itemAnchor
-                    firstFlex = flex
-                }
-            }
-        }
-        NSLayoutConstraint.activate(constraints)
-        managedConstraints += constraints
-    }
-    
-    private var isUpdatingItems: Bool  = false
-    
-    private var langDir: UIUserInterfaceLayoutDirection = .leftToRight
-    
-    private func beginForAxis(_ anAxis: BoxLayout.Axis) -> CGFloat {
-        return (anAxis == .y) ? insets.top : insets.left
-    }
-    
-    private func endForAxis(_ anAxis: BoxLayout.Axis) -> CGFloat {
-        return (anAxis == .y) ? insets.bottom : insets.right
-    }
 
-    private func centerOffsetForAxis(_ anAxis: BoxLayout.Axis) -> CGFloat {
-        return 0.5 * ((anAxis == .y) ? insets.top - insets.bottom : (insets.left - insets.right) * offsetFactorForAxis(anAxis))
-    }
-    
-    private func offsetFactorForAxis(_ anAxis: BoxLayout.Axis) -> CGFloat {
-        return (anAxis == .y || langDir == .leftToRight || !isRTLDependent) ? 1.0 : -1.0
-    }
-    
-    func insetForAxis(_ anAxis: BoxLayout.Axis, position: BoxEdge.Position)  -> CGFloat {
-        switch position {
-            case .begin: return beginForAxis(anAxis)
-            case .center: return centerOffsetForAxis(anAxis)
-            case .end: return endForAxis(anAxis)
-        }
-    }
-    
-    private func sumPinWarning() {
-        assertionFailure("Joining constraints relations must be either same or one of them must be NSLayoutConstraint.Relation.equal")
-    }
-    
-    private func pinAccross(view: UIView, layout: BoxLayout, edgeConstraints: inout BoxEdge.Constraints) {
-        let otherAxis = axis.other
-        for pos: BoxEdge.Position in [.begin, .center, .end] {
-            if let pin = layout.pinForAxis(otherAxis, position: pos) {
-                let edge = otherAxis.edgeForPosition(pos)
-                let attr = attributeForEdge(edge)
-                let constr: NSLayoutConstraint
-                if (pos == .end) {
-                    constr = self.alPin(attr, to: attr, of: view, constant: pin.constant + insetForAxis(otherAxis, position: pos), relation: pin.relation, activate: false)
-                }
-                else {
-                    var factor: CGFloat = 1.0
-                    if pos == .center {
-                        factor = offsetFactorForAxis(otherAxis)
-                    }
-                    constr = view.alPin(attr, to: attr, of: self, constant: factor * pin.constant + insetForAxis(otherAxis, position: pos), relation: pin.relation, activate: false)
-                }
-                
-                
-                managedConstraints.append(constr)
-                edgeConstraints[edge] = constr
-            }
-        }
-    }
-    
-    private func attributeForEdge(_ edge: BoxEdge) -> NSLayoutConstraint.Attribute {
-        switch edge {
-            case .left: return (isRTLDependent) ? .leading : .left
-            case .right: return (isRTLDependent) ? .trailing : .right
-            case .top: return .top
-            case .bottom: return .bottom
-            case .centerX: return .centerX
-            case .centerY: return .centerY
-        }
-    }
+    private var isUpdatingItems: Bool  = false
 }
 
 @available(iOS 11.0, *)
