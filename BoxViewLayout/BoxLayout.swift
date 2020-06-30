@@ -120,6 +120,30 @@ public struct BoxLayout: CustomStringConvertible {
         return newLayout
     }
     
+    public func withLeft(_ leftPin: Pin?) -> BoxLayout {
+        var newLayout = self
+        newLayout.left = leftPin
+        return newLayout
+    }
+    
+    public func withRight(_ rightPin: Pin?) -> BoxLayout {
+        var newLayout = self
+        newLayout.right = rightPin
+        return newLayout
+    }
+    
+    public func withTop(_ topPin: Pin?) -> BoxLayout {
+        var newLayout = self
+        newLayout.top = topPin
+        return newLayout
+    }
+    
+    public func withBottom(_ bottomPin: Pin?) -> BoxLayout {
+        var newLayout = self
+        newLayout.top = bottomPin
+        return newLayout
+    }
+    
     public func withWidth(_ widthPin: Pin?) -> BoxLayout {
         var newLayout = self
         newLayout.width = widthPin

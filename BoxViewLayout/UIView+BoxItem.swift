@@ -49,7 +49,7 @@ extension UIView {
     // all constraints created in this method are returned as result
     // and can be stored somewhere to manage them later.
     @discardableResult
-    public func addBoxItems(_ items: [BoxItem], axis: BoxLayout.Axis = .y, spacing: CGFloat = 0.0) -> [NSLayoutConstraint] {
+    public func addBoxItems(_ items: [BoxItem], axis: BoxLayout.Axis = .y, spacing: CGFloat = 0.0, insets: UIEdgeInsets? = nil) -> [NSLayoutConstraint] {
         var constraints = [NSLayoutConstraint]()
         items.forEach{
             if let view = $0.view {
@@ -57,7 +57,7 @@ extension UIView {
                 view.translatesAutoresizingMaskIntoConstraints = false
             }
         }
-        createChainConstraints(boxItems: items, axis: axis, spacing: spacing, constraints: &constraints)
+        createChainConstraints(boxItems: items, axis: axis, spacing: spacing, insets: insets, constraints: &constraints)
         createDimentions(boxItems: items, constraints: &constraints)
         createRelativeDimensions(boxItems: items, constraints: &constraints)
         createFlexDimentions(boxItems: items, axis: axis, constraints: &constraints)

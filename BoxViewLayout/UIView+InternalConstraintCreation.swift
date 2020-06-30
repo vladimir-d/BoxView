@@ -27,16 +27,16 @@ extension UIView {
         return (axis == .y) ? centerYAnchor : centerXAnchor
     }
     
-    func beginForAxis(_ anAxis: BoxLayout.Axis) -> CGFloat {
-        return (anAxis == .y) ? layoutMargins.top : layoutMargins.left
+    func beginForAxis(_ anAxis: BoxLayout.Axis, insets: UIEdgeInsets) -> CGFloat {
+        return (anAxis == .y) ? insets.top : insets.left
     }
     
-    func endForAxis(_ anAxis: BoxLayout.Axis) -> CGFloat {
-        return (anAxis == .y) ? layoutMargins.bottom : layoutMargins.right
+    func endForAxis(_ anAxis: BoxLayout.Axis, insets: UIEdgeInsets) -> CGFloat {
+        return (anAxis == .y) ? insets.bottom : insets.right
     }
 
-    func centerOffsetForAxis(_ anAxis: BoxLayout.Axis) -> CGFloat {
-        return 0.5 * ((anAxis == .y) ? layoutMargins.top - layoutMargins.bottom : (layoutMargins.left - layoutMargins.right) * offsetFactorForAxis(anAxis))
+    func centerOffsetForAxis(_ anAxis: BoxLayout.Axis, insets: UIEdgeInsets) -> CGFloat {
+        return 0.5 * ((anAxis == .y) ? insets.top - insets.bottom : (insets.left - insets.right) * offsetFactorForAxis(anAxis))
     }
     
     func offsetFactorForAxis(_ anAxis: BoxLayout.Axis) -> CGFloat {
@@ -44,11 +44,11 @@ extension UIView {
         return (anAxis == .y || langDir == .leftToRight || !isRTLDependent) ? 1.0 : -1.0
     }
     
-    func insetForAxis(_ anAxis: BoxLayout.Axis, position: BoxEdge.Position)  -> CGFloat {
+    func insetForAxis(_ anAxis: BoxLayout.Axis, position: BoxEdge.Position, insets: UIEdgeInsets)  -> CGFloat {
         switch position {
-            case .begin: return beginForAxis(anAxis)
-            case .center: return centerOffsetForAxis(anAxis)
-            case .end: return endForAxis(anAxis)
+            case .begin: return beginForAxis(anAxis, insets: insets)
+            case .center: return centerOffsetForAxis(anAxis, insets: insets)
+            case .end: return endForAxis(anAxis, insets: insets)
         }
     }
     
@@ -63,7 +63,8 @@ extension UIView {
         }
     }
     
-    func createChainConstraints(boxItems: [BoxItem], axis: BoxLayout.Axis, spacing: CGFloat, constraints: inout [NSLayoutConstraint]) {
+    func createChainConstraints(boxItems: [BoxItem], axis: BoxLayout.Axis, spacing: CGFloat, insets: UIEdgeInsets?, constraints: inout [NSLayoutConstraint]) {
+        let insets = insets ?? layoutMargins
         var prevItem: BoxItem? = nil
         guard boxItems.count > 0 else { return }
         for item in boxItems {
@@ -81,7 +82,7 @@ extension UIView {
                     }
                 }
                 else{
-                    let firstPin = itemBeginPin + beginForAxis(axis)
+                    let firstPin = itemBeginPin + beginForAxis(axis, insets: insets)
                     let toBegin = itemBeginAnchor.pin(firstPin, to: beginAnchor(axis: axis))
                     constraints.append(toBegin)
                 }
@@ -92,19 +93,19 @@ extension UIView {
                 let toCenter = itemCenterAnchor.pin(itemCenterPin, to: centerAnchor(axis: axis))
                 constraints.append(toCenter)
             }
-            pinAccross(boxItem: item, axis: axis, constraints: &constraints)
+            pinAccross(boxItem: item, axis: axis, insets: insets, constraints: &constraints)
             prevItem = item
         }
         if let itemEndPin = prevItem?.layout.end(axis),
             let prevEndAnchor = prevItem?.endAnchor(axis: axis, isRTLDependent: isRTLDependent) {
-            let lastPin = itemEndPin + endForAxis(axis)
+            let lastPin = itemEndPin + endForAxis(axis, insets: insets)
             let toEnd = endAnchor(axis: axis).pin(lastPin, to: prevEndAnchor)
             constraints.append(toEnd)
         }
 
     }
     
-    func pinAccross(boxItem: BoxItem, axis: BoxLayout.Axis, constraints: inout [NSLayoutConstraint]) {
+    func pinAccross(boxItem: BoxItem, axis: BoxLayout.Axis, insets: UIEdgeInsets, constraints: inout [NSLayoutConstraint]) {
         guard let view = boxItem.view else { return }
         let otherAxis = axis.other
         let layout = boxItem.layout
@@ -114,7 +115,7 @@ extension UIView {
                 let attr = attributeForEdge(edge)
                 let constr: NSLayoutConstraint
                 if (pos == .end) {
-                    let insetPin = pin + insetForAxis(otherAxis, position: pos)
+                    let insetPin = pin + insetForAxis(otherAxis, position: pos, insets: insets)
                     constr = self.bxPin(attr, to: attr, of: view, pin: insetPin, activate: false)
                 }
                 else {
@@ -123,7 +124,7 @@ extension UIView {
                         factor = offsetFactorForAxis(otherAxis)
                     }
                     var insetPin = pin
-                    insetPin.constant = insetPin.constant * factor + insetForAxis(otherAxis, position: pos)
+                    insetPin.constant = insetPin.constant * factor + insetForAxis(otherAxis, position: pos, insets: insets)
                     constr = view.bxPin(attr, to: attr, of: self, pin: insetPin, activate: false)
                 }
                 constraints.append(constr)

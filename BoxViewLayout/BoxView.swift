@@ -18,15 +18,15 @@ open class BoxView: UIView {
     public init(axis: BoxLayout.Axis = .y, spacing: CGFloat = 0.0, insets: UIEdgeInsets = .zero) {
         self.axis = axis
         self.spacing = spacing
+        self._insets = insets
         super.init(frame: .zero)
-        self.insets = insets
         translatesAutoresizingMaskIntoConstraints = false
         setup()
     }
     
     public required override init(frame: CGRect) {
+        _insets = .zero
         super.init(frame: frame)
-        insets = .zero
         setup()
     }
     
@@ -48,20 +48,29 @@ open class BoxView: UIView {
         }
     }
     
-    // sinchronized with layoutMargins
+    // Unfotunately, layoutMargins are not always independent,
+    // and may be changed by superview or viewController.
+    // So better not to to use them, and use instead only own insets property.
+    // Or set this flag to true to make insets synchronized with layoutMargins
+    public var insetsAreMargins: Bool = false
+
     public var insets: UIEdgeInsets {
-        get {
-            return layoutMargins
-        }
-        set (v) {
-            layoutMargins = v
-            if #available(iOS 11.0, *) {
-                directionalLayoutMargins = NSDirectionalEdgeInsets(top: v.top,
-                                                                   leading: v.left,
-                                                                   bottom: v.bottom,
-                                                                   trailing: v.right)
+        get { return _insets }
+        set (newInsets) {
+            if (insetsAreMargins) {
+                layoutMargins = newInsets
             }
-            setNeedsUpdateConstraints()
+            else {
+                _insets = newInsets
+            }
+        }
+    }
+    
+    public override var layoutMargins: UIEdgeInsets {
+        didSet {
+            if (insetsAreMargins) {
+                _insets = layoutMargins
+            }
         }
     }
 
@@ -304,13 +313,14 @@ open class BoxView: UIView {
     
     private func addItemsConstraints() {
         self.removeConstraints(managedConstraints)
-        createChainConstraints(boxItems: items, axis: axis, spacing: spacing, constraints: &managedConstraints)
+        createChainConstraints(boxItems: items, axis: axis, spacing: spacing, insets: insets, constraints: &managedConstraints)
         createDimentions(boxItems: items, constraints: &managedConstraints)
         createRelativeDimensions(boxItems: items, constraints: &managedConstraints)
         createFlexDimentions(boxItems: items, axis: axis, constraints: &managedConstraints)
         NSLayoutConstraint.activate(managedConstraints)
     }
     
+    private var _insets: UIEdgeInsets = .zero
 
     private var isUpdatingItems: Bool  = false
 }
@@ -321,11 +331,12 @@ extension BoxView {
     //  But they used for layouting non-managed subviews.
     public override var directionalLayoutMargins: NSDirectionalEdgeInsets {
         didSet {
-            layoutMargins = UIEdgeInsets(top: directionalLayoutMargins.top,
+            if (insetsAreMargins) {
+                layoutMargins = UIEdgeInsets(top: directionalLayoutMargins.top,
                                          left: directionalLayoutMargins.leading,
                                          bottom: directionalLayoutMargins.bottom,
                                          right: directionalLayoutMargins.trailing)
-            
+            }
         }
 
     }
