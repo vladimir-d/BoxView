@@ -7,6 +7,24 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F509BBDD24ACD46900AACB4F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F509BBDC24ACD46900AACB4F /* AppDelegate.swift */; };
+		F509BBE724ACD46A00AACB4F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F509BBE524ACD46A00AACB4F /* LaunchScreen.storyboard */; };
+		F509BBEC24ACD54900AACB4F /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58BFA67246C1FE30067D262 /* BaseViewController.swift */; };
+		F509BBED24ACD54D00AACB4F /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F52A84A424788BFD0049A83A /* LoginViewController.swift */; };
+		F509BBEE24ACD55000AACB4F /* PuppiesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5534718248DB9EE00883610 /* PuppiesViewController.swift */; };
+		F509BBEF24ACD55D00AACB4F /* BoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58BFA53246C1DF70067D262 /* BoxView.swift */; };
+		F509BBF024ACD55D00AACB4F /* BoxItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58BFA9A247192870067D262 /* BoxItem.swift */; };
+		F509BBF124ACD55D00AACB4F /* BoxItem+Create.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5DDC8E924A351BE003DC79E /* BoxItem+Create.swift */; };
+		F509BBF224ACD55D00AACB4F /* UIView+BoxItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5DDC8E724A3511B003DC79E /* UIView+BoxItem.swift */; };
+		F509BBF324ACD55D00AACB4F /* UIView+InternalConstraintCreation.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5EC033824A5FCD60097F68C /* UIView+InternalConstraintCreation.swift */; };
+		F509BBF424ACD55D00AACB4F /* BoxLayout+Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58BFA54246C1DF70067D262 /* BoxLayout+Enums.swift */; };
+		F509BBF524ACD55D00AACB4F /* BoxLayout+Pin.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58BFA55246C1DF70067D262 /* BoxLayout+Pin.swift */; };
+		F509BBF624ACD55D00AACB4F /* UIView+NSLayoutConstraints.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58BFA56246C1DF70067D262 /* UIView+NSLayoutConstraints.swift */; };
+		F509BBF724ACD55D00AACB4F /* ConstraintSwitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5EC033E24A7C42B0097F68C /* ConstraintSwitch.swift */; };
+		F509BBF824ACD55D00AACB4F /* BoxLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58BFA57246C1DF70067D262 /* BoxLayout.swift */; };
+		F509BBF924ACD55D00AACB4F /* UIView+BoxUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F554EA7224940C0000446623 /* UIView+BoxUtils.swift */; };
+		F509BBFA24ACD56B00AACB4F /* UIView+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58BFA5F246C1E0E0067D262 /* UIView+Utils.swift */; };
+		F509BBFB24ACD5FE00AACB4F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F58BFA47246C1C070067D262 /* Assets.xcassets */; };
 		F52A84A524788BFD0049A83A /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F52A84A424788BFD0049A83A /* LoginViewController.swift */; };
 		F554EA712493E1E200446623 /* PuppiesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5534718248DB9EE00883610 /* PuppiesViewController.swift */; };
 		F554EA7324940C0000446623 /* UIView+BoxUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F554EA7224940C0000446623 /* UIView+BoxUtils.swift */; };
@@ -28,6 +46,10 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		F509BBDA24ACD46900AACB4F /* BoxViewExampleTV.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BoxViewExampleTV.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F509BBDC24ACD46900AACB4F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		F509BBE624ACD46A00AACB4F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		F509BBE824ACD46A00AACB4F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		F52A84A424788BFD0049A83A /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		F5534718248DB9EE00883610 /* PuppiesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PuppiesViewController.swift; sourceTree = "<group>"; };
 		F554EA7224940C0000446623 /* UIView+BoxUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+BoxUtils.swift"; sourceTree = "<group>"; };
@@ -52,6 +74,13 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		F509BBD724ACD46900AACB4F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F58BFA38246C1C050067D262 /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -62,11 +91,22 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F509BBDB24ACD46900AACB4F /* BoxViewExampleTV */ = {
+			isa = PBXGroup;
+			children = (
+				F509BBDC24ACD46900AACB4F /* AppDelegate.swift */,
+				F509BBE524ACD46A00AACB4F /* LaunchScreen.storyboard */,
+				F509BBE824ACD46A00AACB4F /* Info.plist */,
+			);
+			path = BoxViewExampleTV;
+			sourceTree = "<group>";
+		};
 		F58BFA32246C1C050067D262 = {
 			isa = PBXGroup;
 			children = (
 				F58BFA52246C1DF70067D262 /* BoxViewLayout */,
 				F58BFA3D246C1C050067D262 /* BoxViewExample */,
+				F509BBDB24ACD46900AACB4F /* BoxViewExampleTV */,
 				F58BFA3C246C1C050067D262 /* Products */,
 			);
 			sourceTree = "<group>";
@@ -75,6 +115,7 @@
 			isa = PBXGroup;
 			children = (
 				F58BFA3B246C1C050067D262 /* BoxViewExample.app */,
+				F509BBDA24ACD46900AACB4F /* BoxViewExampleTV.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -102,11 +143,11 @@
 				F5DDC8E924A351BE003DC79E /* BoxItem+Create.swift */,
 				F5DDC8E724A3511B003DC79E /* UIView+BoxItem.swift */,
 				F5EC033824A5FCD60097F68C /* UIView+InternalConstraintCreation.swift */,
+				F58BFA57246C1DF70067D262 /* BoxLayout.swift */,
 				F58BFA54246C1DF70067D262 /* BoxLayout+Enums.swift */,
 				F58BFA55246C1DF70067D262 /* BoxLayout+Pin.swift */,
 				F58BFA56246C1DF70067D262 /* UIView+NSLayoutConstraints.swift */,
 				F5EC033E24A7C42B0097F68C /* ConstraintSwitch.swift */,
-				F58BFA57246C1DF70067D262 /* BoxLayout.swift */,
 				F554EA7224940C0000446623 /* UIView+BoxUtils.swift */,
 			);
 			name = BoxViewLayout;
@@ -116,6 +157,23 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
+		F509BBD924ACD46900AACB4F /* BoxViewExampleTV */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = F509BBEB24ACD46A00AACB4F /* Build configuration list for PBXNativeTarget "BoxViewExampleTV" */;
+			buildPhases = (
+				F509BBD624ACD46900AACB4F /* Sources */,
+				F509BBD724ACD46900AACB4F /* Frameworks */,
+				F509BBD824ACD46900AACB4F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = BoxViewExampleTV;
+			productName = BoxViewExampleTV;
+			productReference = F509BBDA24ACD46900AACB4F /* BoxViewExampleTV.app */;
+			productType = "com.apple.product-type.application";
+		};
 		F58BFA3A246C1C050067D262 /* BoxViewExample */ = {
 			isa = PBXNativeTarget;
 			buildConfigurationList = F58BFA4F246C1C070067D262 /* Build configuration list for PBXNativeTarget "BoxViewExample" */;
@@ -143,6 +201,9 @@
 				LastUpgradeCheck = 1130;
 				ORGANIZATIONNAME = Vlad;
 				TargetAttributes = {
+					F509BBD924ACD46900AACB4F = {
+						CreatedOnToolsVersion = 11.3;
+					};
 					F58BFA3A246C1C050067D262 = {
 						CreatedOnToolsVersion = 11.3;
 					};
@@ -163,11 +224,21 @@
 			projectRoot = "";
 			targets = (
 				F58BFA3A246C1C050067D262 /* BoxViewExample */,
+				F509BBD924ACD46900AACB4F /* BoxViewExampleTV */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
+		F509BBD824ACD46900AACB4F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F509BBFB24ACD5FE00AACB4F /* Assets.xcassets in Resources */,
+				F509BBE724ACD46A00AACB4F /* LaunchScreen.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F58BFA39246C1C050067D262 /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -180,6 +251,29 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		F509BBD624ACD46900AACB4F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				F509BBF024ACD55D00AACB4F /* BoxItem.swift in Sources */,
+				F509BBF824ACD55D00AACB4F /* BoxLayout.swift in Sources */,
+				F509BBFA24ACD56B00AACB4F /* UIView+Utils.swift in Sources */,
+				F509BBED24ACD54D00AACB4F /* LoginViewController.swift in Sources */,
+				F509BBF324ACD55D00AACB4F /* UIView+InternalConstraintCreation.swift in Sources */,
+				F509BBDD24ACD46900AACB4F /* AppDelegate.swift in Sources */,
+				F509BBF624ACD55D00AACB4F /* UIView+NSLayoutConstraints.swift in Sources */,
+				F509BBF424ACD55D00AACB4F /* BoxLayout+Enums.swift in Sources */,
+				F509BBF524ACD55D00AACB4F /* BoxLayout+Pin.swift in Sources */,
+				F509BBF224ACD55D00AACB4F /* UIView+BoxItem.swift in Sources */,
+				F509BBEF24ACD55D00AACB4F /* BoxView.swift in Sources */,
+				F509BBF724ACD55D00AACB4F /* ConstraintSwitch.swift in Sources */,
+				F509BBEC24ACD54900AACB4F /* BaseViewController.swift in Sources */,
+				F509BBEE24ACD55000AACB4F /* PuppiesViewController.swift in Sources */,
+				F509BBF124ACD55D00AACB4F /* BoxItem+Create.swift in Sources */,
+				F509BBF924ACD55D00AACB4F /* UIView+BoxUtils.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		F58BFA37246C1C050067D262 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -206,6 +300,14 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
+		F509BBE524ACD46A00AACB4F /* LaunchScreen.storyboard */ = {
+			isa = PBXVariantGroup;
+			children = (
+				F509BBE624ACD46A00AACB4F /* Base */,
+			);
+			name = LaunchScreen.storyboard;
+			sourceTree = "<group>";
+		};
 		F58BFA49246C1C070067D262 /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -218,6 +320,46 @@
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
+		F509BBE924ACD46A00AACB4F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = KLRL3PYX7H;
+				INFOPLIST_FILE = BoxViewExampleTV/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = No.BoxViewExampleTV;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 13.2;
+			};
+			name = Debug;
+		};
+		F509BBEA24ACD46A00AACB4F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = "App Icon & Top Shelf Image";
+				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = KLRL3PYX7H;
+				INFOPLIST_FILE = BoxViewExampleTV/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = No.BoxViewExampleTV;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = appletvos;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 3;
+				TVOS_DEPLOYMENT_TARGET = 13.2;
+			};
+			name = Release;
+		};
 		F58BFA4D246C1C070067D262 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
@@ -373,6 +515,15 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
+		F509BBEB24ACD46A00AACB4F /* Build configuration list for PBXNativeTarget "BoxViewExampleTV" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				F509BBE924ACD46A00AACB4F /* Debug */,
+				F509BBEA24ACD46A00AACB4F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
 		F58BFA36246C1C050067D262 /* Build configuration list for PBXProject "BoxViewExample" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
