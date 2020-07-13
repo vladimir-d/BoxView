@@ -3,11 +3,10 @@
 
 #### Subviews, Items and Managed Constraints
 
-When **items** variable of subview is set, the BoxView adds views from items to self as subviews. All these views are accessible as:
-```swift
+When **items** variable of BoxView is set or changed (actually it is same, because items is Array), all items views are to BoxView as subviews. All these views are accessible as:
+```swift 
 var managedViews: [UIView]
 ```
-It is also possible to add subview to BoxView with regular **addSubview()** method, in this case subview is **not** managed, and its layout is not controlled by BoxView. 
 When managed subview is removed from superview, corresponding item is also removed, and vice verse: when item removed its view is also removed from subviews, so items and managed subviews always sinchronized. 
 Followin methods can be used to add items:
 ```swift
@@ -55,6 +54,18 @@ addBoxItems(_ items: [BoxItem], axis: BoxLayout.Axis = .y, spacing: CGFloat = 0.
 ```
 This method can be used, for example, for adding items to some specific view, like UIViewController view, or UIScrollview, or UITableViewCell contentView. 
 
+#### Not managed views
+It is also possible to add subview to BoxView with regular **addSubview()** method, in this case subview is **not** managed, and its layout is not controlled by BoxView. It is nothing bad in using not managed views, for example, we can use BoxView with stack of some managed views, and then add another view to show it above managed view. But constraints for this view have to be added manually. 
+
+```swift
+boxView.items = [
+    label1.boxed,
+    label2.boxed
+]
+
+boxView.addBoxItems(label3.boxed.centerX().centerY()) 
+```
+
 #### Guide items, dimension constraints and flex items
 BoxItems can be created not only with views, but also with UILayoutGuides:
 ```swift
@@ -83,6 +94,15 @@ boxView.items = [
     .guide.flex(1.0),
     label2.boxed.flex(3.0)
     // height of label1 is same as spacing between labels and height of label2 is 3 times more.
+]
+```
+
+#### Priorities
+It is possible to specify priority for any constraint created by BoxView. Priority should be added to corresponding pin with method **withPriority()**
+```swift
+boxView.items = [
+    label1.boxed,
+    label2.boxed.height((==30.0).withPriority(.defaultLow))
 ]
 ```
 
