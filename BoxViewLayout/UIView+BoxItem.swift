@@ -22,25 +22,8 @@ extension UIView {
 
     // adding item view as subview with layuot specified by item
     @discardableResult
-    public func addBoxItem(_ item: BoxItem, rtlDependent: Bool = true) -> [NSLayoutConstraint] {
-        var constraints = [NSLayoutConstraint]()
-        item.view?.translatesAutoresizingMaskIntoConstraints = false
-        if let view = item.view {
-            addSubview(view)
-        
-            for edge in BoxEdge.allCases {
-                if let pin = item.layout.pinForEdge(edge) {
-                    let attr = edge.attribute(rtlDependent: rtlDependent)
-                    if (edge.position == .end) {
-                        constraints.append(self.alPin(attr, to: attr, of: view, pin: pin))
-                    }
-                    else {
-                        constraints.append(view.alPin(attr, to: attr, of: self, pin: pin))
-                    }
-                }
-            }
-        }
-        return constraints
+    public func addBoxItem(_ item: BoxItem) -> [NSLayoutConstraint] {
+        return addBoxItems([item])
     }
     
     // adding items views as subviews with layuot specified by items

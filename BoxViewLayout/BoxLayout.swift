@@ -132,6 +132,8 @@ public struct BoxLayout: CustomStringConvertible {
         return newLayout
     }
     
+
+    
     public func withTop(_ topPin: Pin?) -> BoxLayout {
         var newLayout = self
         newLayout.top = topPin
@@ -140,7 +142,7 @@ public struct BoxLayout: CustomStringConvertible {
     
     public func withBottom(_ bottomPin: Pin?) -> BoxLayout {
         var newLayout = self
-        newLayout.top = bottomPin
+        newLayout.bottom = bottomPin
         return newLayout
     }
     
