@@ -25,6 +25,10 @@ extension UIView {
     public func addBoxItem(_ item: BoxItem) -> [NSLayoutConstraint] {
         return addBoxItems([item])
     }
+}
+
+
+extension BoxAnchorable {
     
     // adding items views as subviews with layuot specified by items
     // it allows to add BoxItems to any view in same manner as setting boxView.items
@@ -32,16 +36,16 @@ extension UIView {
     // all constraints created in this method are returned as result
     // and can be stored somewhere to manage them later.
     @discardableResult
-    public func addBoxItems(_ items: [BoxItem], axis: BoxLayout.Axis = .y, spacing: CGFloat = 0.0, insets: UIEdgeInsets? = nil) -> [NSLayoutConstraint] {
+    public func addBoxItems(_ items: [BoxItem], axis: BoxLayout.Axis = .y, spacing: CGFloat = 0.0, insets: UIEdgeInsets? = .zero) -> [NSLayoutConstraint] {
         var constraints = [NSLayoutConstraint]()
         items.forEach{
             if let view = $0.view {
-                self.addSubview(view)
+                (self as? UIView)?.addSubview(view)
                 view.translatesAutoresizingMaskIntoConstraints = false
             }
         }
         createChainConstraints(boxItems: items, axis: axis, spacing: spacing, insets: insets, constraints: &constraints)
-        createDimentions(boxItems: items, constraints: &constraints)
+        items.createDimentions(constraints: &constraints)
         createRelativeDimensions(boxItems: items, constraints: &constraints)
         createFlexDimentions(boxItems: items, axis: axis, constraints: &constraints)
         NSLayoutConstraint.activate(constraints)

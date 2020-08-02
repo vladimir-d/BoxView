@@ -18,11 +18,15 @@ class BaseViewController: UIViewController {
         view.backgroundColor = .white
         let boxPadding: CGFloat = 16.0
         scrollView.addBoxItem(boxView.boxed.all(boxPadding))
-        var insets = UIEdgeInsets.zero
+        
         if #available(iOS 11, *) {
-            insets = view.safeAreaInsets
+            view.addSubview(scrollView)
+            let guide = view.safeAreaLayoutGuide
+            guide.addBoxItems([scrollView.boxed])
         }
-        view.addBoxItem(scrollView.boxed.insets(insets))
+        else {
+            view.addBoxItem(scrollView.boxed)
+        }
         boxView.bxPinWidth(-boxPadding * 2.0, to: scrollView)
     }
 

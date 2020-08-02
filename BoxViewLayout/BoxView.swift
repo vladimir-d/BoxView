@@ -84,15 +84,6 @@ open class BoxView: UIView {
         }
     }
     
-    // Define which attributes used for left/right edges:
-    // if true: leading/trailing, if false: left/right
-//    @IBInspectable
-//    public var isRTLDependent: Bool = true {
-//        didSet {
-//            setNeedsUpdateConstraints()
-//        }
-//    }
-    
     override open var semanticContentAttribute: UISemanticContentAttribute {
         didSet {
             setNeedsUpdateConstraints()
@@ -314,7 +305,7 @@ open class BoxView: UIView {
     private func addItemsConstraints() {
         self.removeConstraints(managedConstraints)
         createChainConstraints(boxItems: items, axis: axis, spacing: spacing, insets: insets, constraints: &managedConstraints)
-        createDimentions(boxItems: items, constraints: &managedConstraints)
+        items.createDimentions(constraints: &managedConstraints)
         createRelativeDimensions(boxItems: items, constraints: &managedConstraints)
         createFlexDimentions(boxItems: items, axis: axis, constraints: &managedConstraints)
         NSLayoutConstraint.activate(managedConstraints)

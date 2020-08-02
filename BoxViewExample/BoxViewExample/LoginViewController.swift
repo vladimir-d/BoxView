@@ -69,7 +69,6 @@ class LoginViewController: BaseViewController {
         errorLabel.frame = field.convert(field.bounds, to: boxView)
         let item = errorLabel.boxed.top(-boxView.spacing).left(errorLabel.frame.minX - boxView.insets.left)
         boxView.insertItem(item, after: field.superview, z: .back)
-//        boxView.sendSubviewToBack(errorLabel)
         boxView.animateChangesWithDurations(0.3)
     }
     

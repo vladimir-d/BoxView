@@ -8,10 +8,9 @@
 
 import UIKit
 
+extension BoxAnchorable {
 
-extension UIView {
-
-    var isRTLDependent: Bool {
+    public var isRTLDependent: Bool {
         return semanticContentAttribute == .unspecified
     }
     
@@ -44,27 +43,8 @@ extension UIView {
         return (anAxis == .y || langDir == .leftToRight || !isRTLDependent) ? 1.0 : -1.0
     }
     
-    func insetForAxis(_ anAxis: BoxLayout.Axis, position: BoxEdge.Position, insets: UIEdgeInsets)  -> CGFloat {
-        switch position {
-            case .begin: return beginForAxis(anAxis, insets: insets)
-            case .center: return centerOffsetForAxis(anAxis, insets: insets)
-            case .end: return endForAxis(anAxis, insets: insets)
-        }
-    }
-    
-    func attributeForEdge(_ edge: BoxEdge) -> NSLayoutConstraint.Attribute {
-        switch edge {
-            case .left: return (isRTLDependent) ? .leading : .left
-            case .right: return (isRTLDependent) ? .trailing : .right
-            case .top: return .top
-            case .bottom: return .bottom
-            case .centerX: return .centerX
-            case .centerY: return .centerY
-        }
-    }
-    
     func createChainConstraints(boxItems: [BoxItem], axis: BoxLayout.Axis, spacing: CGFloat, insets: UIEdgeInsets?, constraints: inout [NSLayoutConstraint]) {
-        let insets = insets ?? layoutMargins
+        let insets = insets ?? .zero
         var prevItem: BoxItem? = nil
         guard boxItems.count > 0 else { return }
         for item in boxItems {
@@ -104,19 +84,53 @@ extension UIView {
         }
 
     }
+
+}
+
+extension BoxAnchorable {
+    
+    func anchorForEdge(_ edge: BoxEdge) -> BoxAnchorPinnable {
+        switch edge {
+            case .left: return (isRTLDependent) ? leadingAnchor : leftAnchor
+            case .right: return (isRTLDependent) ? trailingAnchor : rightAnchor
+            case .centerX: return centerXAnchor
+            case .top: return topAnchor
+            case .bottom: return bottomAnchor
+            case .centerY: return centerYAnchor
+        }
+    }
+    
+    public func pinSameEdge(_ edge: BoxEdge, to obj: BoxAnchorable, pin: BoxLayout.Pin) -> NSLayoutConstraint {
+        let constr: NSLayoutConstraint
+        let ownAnchor = anchorForEdge(edge)
+        let objAnchor = obj.anchorForEdge(edge)
+        constr = ownAnchor.pin(pin, to: objAnchor)
+        if pin.priority != .required {
+            constr.priority = pin.priority
+        }
+        return constr
+    }
+    
+    
+    func insetForAxis(_ anAxis: BoxLayout.Axis, position: BoxEdge.Position, insets: UIEdgeInsets)  -> CGFloat {
+        switch position {
+            case .begin: return beginForAxis(anAxis, insets: insets)
+            case .center: return centerOffsetForAxis(anAxis, insets: insets)
+            case .end: return endForAxis(anAxis, insets: insets)
+        }
+    }
     
     func pinAccross(boxItem: BoxItem, axis: BoxLayout.Axis, insets: UIEdgeInsets, constraints: inout [NSLayoutConstraint]) {
-        guard let view = boxItem.view else { return }
+        let alObj = boxItem.alObj
         let otherAxis = axis.other
         let layout = boxItem.layout
         for pos: BoxEdge.Position in [.begin, .center, .end] {
             if let pin = layout.pinForAxis(otherAxis, position: pos) {
                 let edge = otherAxis.edgeForPosition(pos)
-                let attr = attributeForEdge(edge)
                 let constr: NSLayoutConstraint
                 if (pos == .end) {
                     let insetPin = pin + insetForAxis(otherAxis, position: pos, insets: insets)
-                    constr = self.bxPin(attr, to: attr, of: view, pin: insetPin, activate: false)
+                    constr = self.pinSameEdge(edge, to: alObj, pin: insetPin)
                 }
                 else {
                     var factor: CGFloat = 1.0
@@ -125,7 +139,7 @@ extension UIView {
                     }
                     var insetPin = pin
                     insetPin.constant = insetPin.constant * factor + insetForAxis(otherAxis, position: pos, insets: insets)
-                    constr = view.bxPin(attr, to: attr, of: self, pin: insetPin, activate: false)
+                    constr = alObj.pinSameEdge(edge, to: self , pin: insetPin)
                 }
                 constraints.append(constr)
             }
@@ -133,21 +147,21 @@ extension UIView {
     }
     
     func createFlexDimentions(boxItems: [BoxItem], axis: BoxLayout.Axis, constraints: inout [NSLayoutConstraint]) {
-            var firstFlexAnchor: NSLayoutDimension?
-            var firstFlex: CGFloat = 0.0
-            for item in boxItems {
-                if let flex = item.layout.flex, flex > 0.0 {
-                    let itemAnchor = (axis == .y) ? item.alObj.heightAnchor : item.alObj.widthAnchor
-                    if let firstAnchor = firstFlexAnchor {
-                        constraints.append(itemAnchor.constraint(equalTo: firstAnchor, multiplier: flex / firstFlex))
-                    }
-                    else {
-                        firstFlexAnchor = itemAnchor
-                        firstFlex = flex
-                    }
+        var firstFlexAnchor: NSLayoutDimension?
+        var firstFlex: CGFloat = 0.0
+        for item in boxItems {
+            if let flex = item.layout.flex, flex > 0.0 {
+                let itemAnchor = (axis == .y) ? item.alObj.heightAnchor : item.alObj.widthAnchor
+                if let firstAnchor = firstFlexAnchor {
+                    constraints.append(itemAnchor.constraint(equalTo: firstAnchor, multiplier: flex / firstFlex))
+                }
+                else {
+                    firstFlexAnchor = itemAnchor
+                    firstFlex = flex
                 }
             }
         }
+    }
     
     func createRelativeDimensions(boxItems: [BoxItem], constraints: inout [NSLayoutConstraint]) {
         let ownHeightAnchor = self.heightAnchor
@@ -162,9 +176,12 @@ extension UIView {
         }
     }
     
+}
+
+extension Array where Element == BoxItem {
     
-    func createDimentions(boxItems: [BoxItem], constraints: inout [NSLayoutConstraint]) {
-        for item in boxItems {
+    func createDimentions(constraints: inout [NSLayoutConstraint]) {
+        for item in self {
             if let heightPin = item.layout.height {
                 constraints.append(item.alObj.heightAnchor.pin(heightPin))
             }
@@ -172,6 +189,14 @@ extension UIView {
                 constraints.append(item.alObj.widthAnchor.pin(widthPin))
             }
         }
+    }
+    
+}
+
+extension UILayoutGuide {
+    
+    public var semanticContentAttribute: UISemanticContentAttribute {
+        owningView?.semanticContentAttribute ?? .unspecified
     }
     
 }

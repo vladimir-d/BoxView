@@ -22,6 +22,8 @@ public protocol BoxAnchorable: class {
     var centerYAnchor: NSLayoutYAxisAnchor { get }
     var widthAnchor: NSLayoutDimension { get }
     var heightAnchor: NSLayoutDimension { get }
+    
+    var semanticContentAttribute: UISemanticContentAttribute { get }
 }
 
 extension UIView: BoxAnchorable {
