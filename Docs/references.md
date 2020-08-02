@@ -54,8 +54,14 @@ addBoxItems(_ items: [BoxItem], axis: BoxLayout.Axis = .y, spacing: CGFloat = 0.
 ```
 This method can be used, for example, for adding items to some specific view, like UIViewController view, or UIScrollview, or UITableViewCell contentView. 
 
+It is also possible to add items to NSLayoutGuide (views should be manually added to superview in this case). It is useful, for example, to constraint views to UIViewController's view safe area:
+
+```swift
+view.addSubview(someView)
+view.safeAreaLayoutGuide.addBoxItems([someView.boxed]) 
+```
 #### Not managed views
-It is also possible to add subview to BoxView with regular **addSubview()** method, in this case subview is **not** managed, and its layout is not controlled by BoxView. It is nothing bad in using not managed views, for example, we can use BoxView with stack of some managed views, and then add another view to show it above managed view. But constraints for this view have to be added manually. 
+If subview is added to BoxView with regular **addSubview()** method, then no constraints for it are created by BoxView and it is not added to **managedViews**. Sometimes it may be useful, for example, we can use BoxView with stack of some managed views, and then add another view to show it above managed views. But constraints for this view have to be added manually. 
 
 ```swift
 boxView.items = [
