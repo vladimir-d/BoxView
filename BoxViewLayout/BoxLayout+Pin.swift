@@ -139,6 +139,30 @@ extension BoxLayout {
             return newPin
         }
         
+        public func required(_ offset: Float) -> MultiPin {
+            var newPin = self
+            newPin.priority = UILayoutPriority(UILayoutPriority.required.rawValue + offset)
+            return newPin
+        }
+        
+        public func high(_ offset: Float) -> MultiPin {
+            var newPin = self
+            newPin.priority = UILayoutPriority(UILayoutPriority.defaultHigh.rawValue + offset)
+            return newPin
+        }
+        
+        public func low(_ offset: Float) -> MultiPin {
+            var newPin = self
+            newPin.priority = UILayoutPriority(UILayoutPriority.defaultLow.rawValue + offset)
+            return newPin
+        }
+        
+        public func exact(_ value: Float) -> MultiPin {
+            var newPin = self
+            newPin.priority = UILayoutPriority(value)
+            return newPin
+        }
+        
         public init(multiplier: CGFloat = 1.0, pin: Pin = .zero) {
             self.pin = pin
             self.multiplier = multiplier
