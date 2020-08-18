@@ -108,6 +108,11 @@ extension BoxItem {
         return condition ? self : nil
     }
     
+    // returns nil from existing item if view is hidden
+    public var useIfVisible: BoxItem? {
+        return !(view?.isHidden ?? true) ? self : nil
+    }
+    
     // returns new guide item
     public static func guide() -> BoxItem {
         return BoxItem(alObj: UILayoutGuide())
