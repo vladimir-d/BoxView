@@ -15,6 +15,10 @@ extension UIView {
         return BoxItem(view: self, layout: .zero)
     }
     
+    public var bi: BoxItem {
+        return BoxItem(view: self, layout: .zero)
+    }
+    
     // Creates BoxItem from view using specified layout
     public func boxed(layout: BoxLayout) -> BoxItem {
         return BoxItem(view: self, layout: layout)
@@ -24,6 +28,12 @@ extension UIView {
     @discardableResult
     public func addBoxItem(_ item: BoxItem) -> [NSLayoutConstraint] {
         return addBoxItems([item])
+    }
+    
+    // adding view as subview with zero box layout
+    @discardableResult
+    public func addBoxedView(_ view: UIView) -> [NSLayoutConstraint] {
+        return addBoxItems([view.boxed])
     }
 }
 
@@ -64,6 +74,10 @@ extension Array where Element: UIView {
     
     // Creates BoxItems array from array of views using same "zero" layout (zero constant constraints to all four edges) for all views.
     public var boxed: [BoxItem] {
+        return map{BoxItem(view: $0, layout: .zero)}
+    }
+    
+    public var bi: [BoxItem] {
         return map{BoxItem(view: $0, layout: .zero)}
     }
     

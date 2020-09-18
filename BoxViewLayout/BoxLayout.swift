@@ -11,7 +11,8 @@ import UIKit
 // MARK: - Public
 
 // BoxLayout contains information about constraint parameters (constant and relation)
-// for 6 NSLayoutConstraint Attributes: top, left, bottom, right, centerX and centerY
+// for 6 positional NSLayoutConstraint Attributes: top, left, bottom, right, centerX and centerY. Also it contain absolute and relative size constraints.
+
 public struct BoxLayout: CustomStringConvertible {
 
     public typealias EdgePins =  [BoxEdge: Pin?]
