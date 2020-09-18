@@ -129,6 +129,13 @@ extension UIView {
         }
         existing.forEach{ self.removeConstraint($0)}
     }
+    
+    public func bxRemoveConstraintsToView(_ view: UIView) {
+        let existing = constraints.filter { constraint in
+            return constraint.firstItem === view || constraint.secondItem === view
+        }
+        existing.forEach{ self.removeConstraint($0)}
+    }
 }
 
 extension Array where Element: UIView {
