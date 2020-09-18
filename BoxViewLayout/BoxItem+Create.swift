@@ -198,14 +198,29 @@ extension BoxItem {
         BoxItem(alObj: alObj, layout: layout.withRelativeHeight(*value))
     }
     
+    // creates new BoxItem from existing, by setting specified size
+    public func size(_ size: CGSize) -> BoxItem {
+        self.width(size.width).height(size.height)
+    }
+    
+    // creates new BoxItem from existing, by setting left ant top from specified point
+    public func point(_ point: CGPoint) -> BoxItem {
+        return self.left(point.x).top(point.y)
+    }
+    
+    // creates new BoxItem from existing, by setting left ant top from specified rect origin and size from rect size
+    public func rect(_ rect: CGRect) -> BoxItem {
+        return self.point(rect.origin).size(rect.size).right(nil).bottom(nil)
+    }
+    
     // returns new guide flex item
-    public static func flex(_ value: CGFloat) -> BoxItem {
+    public static func flex(_ value: CGFloat = 1.0) -> BoxItem {
         let bl = BoxLayout.zero
         return BoxItem(alObj: UILayoutGuide(), layout: bl.withFlex(value))
     }
     
     // creates new BoxItem from existing, by setting flex value
-    public func flex(_ value: CGFloat) -> BoxItem {
+    public func flex(_ value: CGFloat = 1.0) -> BoxItem {
         BoxItem(alObj: self.alObj, layout: layout.withFlex(value))
     }
  
