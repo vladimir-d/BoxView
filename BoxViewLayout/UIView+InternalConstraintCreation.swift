@@ -180,7 +180,7 @@ extension BoxAnchorable {
 
 extension Array where Element == BoxItem {
     
-    func createDimentions(constraints: inout [NSLayoutConstraint]) {
+    func createDimensions(constraints: inout [NSLayoutConstraint]) {
         for item in self {
             if let heightPin = item.layout.height {
                 constraints.append(item.alObj.heightAnchor.pin(heightPin))

@@ -49,7 +49,7 @@ extension UILayoutGuide {
 
 extension BoxAnchorable {
     
-    // adding items views as subviews with layuot specified by items
+    // adding items views as subviews with layout specified by items
     // it allows to add BoxItems to any view in same manner as setting boxView.items
     // this method is used to layout subviews in some specific view (e.g UIScrollView or view of controller) which can't be BoxView.
     // all constraints created in this method are returned as result
@@ -64,7 +64,7 @@ extension BoxAnchorable {
             }
         }
         createChainConstraints(boxItems: items, axis: axis, spacing: spacing, insets: insets, constraints: &constraints)
-        items.createDimentions(constraints: &constraints)
+        items.createDimensions(constraints: &constraints)
         createRelativeDimensions(boxItems: items, constraints: &constraints)
         createFlexDimentions(boxItems: items, axis: axis, constraints: &constraints)
         NSLayoutConstraint.activate(constraints)
