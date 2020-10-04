@@ -311,7 +311,11 @@ open class BoxView: UIView {
         NSLayoutConstraint.activate(managedConstraints)
     }
     
-    private var _insets: UIEdgeInsets = .zero
+    private var _insets: UIEdgeInsets = .zero {
+        didSet {
+            setNeedsUpdateConstraints()
+        }
+    }
 
     private var isUpdatingItems: Bool  = false
 }
