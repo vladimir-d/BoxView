@@ -48,7 +48,7 @@ public struct BoxItem: CustomStringConvertible {
             }
         }
     }
-    
+        
     public var guide: UILayoutGuide? {
         get {
             return alObj as? UILayoutGuide
@@ -62,6 +62,11 @@ public struct BoxItem: CustomStringConvertible {
     
     public init(view: UIView, layout: BoxLayout = .zero) {
         self.alObj = view
+        self.layout = layout
+    }
+    
+    public init(guide: UILayoutGuide, layout: BoxLayout = .zero) {
+        self.alObj = guide
         self.layout = layout
     }
     

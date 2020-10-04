@@ -37,6 +37,15 @@ extension UIView {
     }
 }
 
+extension UILayoutGuide {
+    
+    // adding boxed view with zero box layout to specified superview or owningView
+    @discardableResult
+    public func addBoxedView(_ view: UIView, to superview: UIView? = nil ) -> [NSLayoutConstraint] {
+        (superview ?? owningView)?.addSubview(view)
+        return addBoxItems([view.boxed])
+    }
+}
 
 extension BoxAnchorable {
     
