@@ -11,7 +11,7 @@ import UIKit
 extension UIView {
 
     @discardableResult
-    public func bxPin(_ attribute: NSLayoutConstraint.Attribute, to toAttribute: NSLayoutConstraint.Attribute, of view: UIView, pin: BoxLayout.Pin, activate: Bool = true) -> NSLayoutConstraint {
+    public func bxPin(_ attribute: NSLayoutConstraint.Attribute, to toAttribute: NSLayoutConstraint.Attribute, of view: UIView, pin: BoxLayout.Pin = .zero, activate: Bool = true) -> NSLayoutConstraint {
         let constraint = NSLayoutConstraint(
             item: self,
             attribute: attribute,
@@ -64,7 +64,7 @@ extension UIView {
     }
     
     @discardableResult
-    public func bxPinHeight(_ height: CGFloat, to view: UIView? = nil) -> NSLayoutConstraint {
+    public func bxPinHeight(_ height: CGFloat = 0.0, to view: UIView? = nil) -> NSLayoutConstraint {
         return bxPinHeight(==height, to: view)
     }
     
@@ -98,12 +98,12 @@ extension UIView {
     }
     
     @discardableResult
-    public func bxPinWidth(_ pin: BoxLayout.Pin, to view: UIView? = nil) -> NSLayoutConstraint {
+    public func bxPinWidth(_ pin: BoxLayout.Pin , to view: UIView? = nil) -> NSLayoutConstraint {
         return bxPinWidth(BoxLayout.MultiPin(pin) , to: view)
     }
     
     @discardableResult
-    public func bxPinWidth(_ width: CGFloat, to view: UIView? = nil) -> NSLayoutConstraint {
+    public func bxPinWidth(_ width: CGFloat = 0.0, to view: UIView? = nil) -> NSLayoutConstraint {
         return bxPinWidth(==width, to: view)
     }
     
@@ -113,14 +113,20 @@ extension UIView {
     }
     
     @discardableResult
-    public func bxSetAspectFromSize(_ size: CGSize) -> NSLayoutConstraint? {
+    public func bxSetAspect(_ aspect: CGFloat = 1.0) -> NSLayoutConstraint? {
         var aspectConstraint: NSLayoutConstraint?
+        aspectConstraint = self.heightAnchor.constraint(equalTo: self.widthAnchor, multiplier: aspect)
+        aspectConstraint?.isActive = true
+        return aspectConstraint
+    }
+    
+    @discardableResult
+    public func bxSetAspectFromSize(_ size: CGSize) -> NSLayoutConstraint? {
         if size.width != 0.0 {
             let aspect = size.height / size.width
-            aspectConstraint = self.heightAnchor.constraint(equalTo: self.widthAnchor, multiplier: aspect)
-            aspectConstraint?.isActive = true
+            return bxSetAspect(aspect)
         }
-        return aspectConstraint
+        return nil
     }
 
     public func bxRemoveConstraintsForAttribute(_ attr: NSLayoutConstraint.Attribute) {
