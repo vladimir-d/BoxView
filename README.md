@@ -94,6 +94,17 @@ boxView.items.append(view3.boxed.centerX())
 //insert view2 between view1 and view3 
 boxView.insertItem(view2.boxed.right(10.0), after: view1)
 ```
+It also possible to update an item, changing only specfied layout elements:
+
+```swift
+// initialize boxView.items with two items 
+boxView.items = [view1.boxed, view2.boxed.left(10.0).right(10.0)]
+...
+// updating code has to be placed in closure which receives item as argument,
+// and returns updated item
+view2.updateBoxItem{ $0.left(20.0).width(100.0) }
+// now view2 still has right padding 10.0, but left padding changed to 20.0 and width constrained to 100.0
+```
 ### Advanced usage and references
  [More details about BoxView usage](https://github.com/vladimir-d/BoxView/blob/master/Docs/references.md) in Docs folder.
 

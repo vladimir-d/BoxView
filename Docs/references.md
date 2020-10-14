@@ -7,8 +7,8 @@ When **items** variable of BoxView is set or changed (actually it is same, becau
 ```swift 
 var managedViews: [UIView]
 ```
-When managed subview is removed from superview, corresponding item is also removed, and vice verse: when item removed its view is also removed from subviews, so items and managed subviews always sinchronized. 
-Followin methods can be used to add items:
+When managed subview is removed from superview, corresponding item is also removed, and vice verse: when item removed its view is also removed from subviews, so items and managed subviews always synchronized. 
+Following methods can be used to add items:
 ```swift
 
 public var items:[BoxItem] = [] {
@@ -29,16 +29,16 @@ public func addItem(_ item: BoxItem)
 // inserting item after item with given view, if view is nil, then item inserted at index 0
 public func insertItem(_ item: BoxItem, after view: UIView?) 
 ```
-When items or managed views added to the BoxView they are added to superview immediately, but constraints are not created at this stage. Constraints creation occurs when **updateConstraints** method of the BoxView is called in standard layouting  cycle. Yet it is possible to call this method explicitly to force BoxView create constraints.\
+When items or managed views added to the BoxView they are added to superview immediately, but constraints are not created at this stage. Constraints creation occurs when **updateConstraints** method of the BoxView is called in standard layouting  cycle. Yet it is possible to call this method explicitly to force BoxView create constraints.
 Created constraints can be accessed as: 
 ```swift
 // array of all automatically created by BoxView constraints
 public private(set) var managedConstraints: [NSLayoutConstraint]
-
 ```
+All constraints created and managed by BoxView live until any of layout affecting properties: **Items, insets, spacing or axix** is changed, after that all managed constraints are recreated in subsequent **updateConstraints** method call.
 
 #### RTL languages
-There are no leading and trailing edges in BoxLayout. RTL behavior is defined by semanticContentAttribute for whole boxView.
+There are no leading and trailing edges in BoxLayout. RTL behavior is defined by semanticContentAttribute for the whole boxView.
 ```swift
 // subviews managed by BoxView are flipped from for RTL languages
 boxView.semanticContentAttribute = .unspecified
@@ -47,7 +47,7 @@ boxView.semanticContentAttribute = .unspecified
 boxView.semanticContentAttribute = .forceLeftToRight
 ```
 
-#### Using BoxItems with regular UIViews
+#### Using BoxItems with regular UIViews or UILayoutGuides
 BoxItems also can be added to any UIView with method:
 ```swift
 addBoxItems(_ items: [BoxItem], axis: BoxLayout.Axis = .y, spacing: CGFloat = 0.0) -> [NSLayoutConstraint] 
@@ -104,10 +104,10 @@ boxView.items = [
 ```
 
 #### Priorities
-It is possible to specify priority for any constraint created by BoxView. Priority should be added to corresponding pin with method **withPriority()**
+It is possible to specify priority for any constraint created by BoxView. Priority should be specified for pin using method **withPriority()** or corresponding method for default priorities, e.g. **high()** for .defaultHigh etc.
 ```swift
 boxView.items = [
-    label1.boxed,
+    label1.boxed.width((==100.0).high(5.0)) // .defaultHigh + 5.0
     label2.boxed.height((==30.0).withPriority(.defaultLow))
 ]
 ```
