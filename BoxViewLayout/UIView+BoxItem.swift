@@ -8,6 +8,8 @@
 
 import UIKit
 
+// MARK: -- Creating and changing BoxItems
+
 extension UIView {
     
     // Creates BoxItem with view and zero constant constraints to all four edges.
@@ -23,6 +25,19 @@ extension UIView {
     public func boxed(layout: BoxLayout) -> BoxItem {
         return BoxItem(view: self, layout: layout)
     }
+    
+    // updating existing BoxItem, provided self is managed view of BoxView
+    // updating code has to be placed in closure which receives item as argument,
+    // and returns updated item
+    public func updateBoxItem(_ update: BoxItemUpdate) {
+        (superview as? BoxView)?.updateItemForObject(self, update: update)
+    }
+    
+}
+    
+// MARK: -- Adding BoxItems to any UIView
+
+extension UIView {
 
     // adding item view as subview with layuot specified by item
     @discardableResult

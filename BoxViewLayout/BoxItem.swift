@@ -32,6 +32,8 @@ extension UIView: BoxAnchorable {
 extension UILayoutGuide: BoxAnchorable {
 }
 
+public typealias BoxItemUpdate = (BoxItem) -> BoxItem
+
 public struct BoxItem: CustomStringConvertible {
     
     // MARK: - Public

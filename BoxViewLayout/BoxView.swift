@@ -216,6 +216,13 @@ open class BoxView: UIView {
         return items.firstIndex(where: {$0.alObj === obj})
     }
     
+    // updating existing box item for corresponding view or guide
+    public func updateItemForObject(_ obj: BoxAnchorable, update: BoxItemUpdate) {
+        if let ind = itemIndexForObject(obj) {
+            items[ind] = update(items[ind])
+        }
+    }
+    
     // MARK: -- animation
     
     public func animateChangesWithDurations(_ duration: TimeInterval) {
