@@ -63,6 +63,30 @@ extension BoxLayout {
             return Pin(constant: constant, relation: relation, priority: pr)
         }
         
+        public func required(_ offset: Float = 0.0) -> Pin {
+            var newPin = self
+            newPin.priority = UILayoutPriority(UILayoutPriority.required.rawValue + offset)
+            return newPin
+        }
+        
+        public func high(_ offset: Float = 0.0) -> Pin {
+            var newPin = self
+            newPin.priority = UILayoutPriority(UILayoutPriority.defaultHigh.rawValue + offset)
+            return newPin
+        }
+        
+        public func low(_ offset: Float = 0.0) -> Pin {
+            var newPin = self
+            newPin.priority = UILayoutPriority(UILayoutPriority.defaultLow.rawValue + offset)
+            return newPin
+        }
+        
+        public func exact(_ value: Float) -> Pin {
+            var newPin = self
+            newPin.priority = UILayoutPriority(value)
+            return newPin
+        }
+        
         public var description: String {
             var str = "\(relationString)\(constant)"
             if priority != .required {
@@ -139,19 +163,19 @@ extension BoxLayout {
             return newPin
         }
         
-        public func required(_ offset: Float) -> MultiPin {
+        public func required(_ offset: Float = 0.0) -> MultiPin {
             var newPin = self
             newPin.priority = UILayoutPriority(UILayoutPriority.required.rawValue + offset)
             return newPin
         }
         
-        public func high(_ offset: Float) -> MultiPin {
+        public func high(_ offset: Float = 0.0) -> MultiPin {
             var newPin = self
             newPin.priority = UILayoutPriority(UILayoutPriority.defaultHigh.rawValue + offset)
             return newPin
         }
         
-        public func low(_ offset: Float) -> MultiPin {
+        public func low(_ offset: Float = 0.0) -> MultiPin {
             var newPin = self
             newPin.priority = UILayoutPriority(UILayoutPriority.defaultLow.rawValue + offset)
             return newPin
