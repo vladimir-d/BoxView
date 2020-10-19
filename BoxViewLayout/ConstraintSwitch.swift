@@ -8,11 +8,13 @@
 
 import UIKit
 
+// MARK: - Public -
+
 open class ConstraintSwitch {
     
-    typealias Handler = () -> Void
+    public typealias Handler = () -> Void
     
-    var state: Bool {
+    public var state: Bool {
         didSet {
             if self.state {
                 NSLayoutConstraint.deactivate(Array(offSet))
@@ -48,13 +50,13 @@ open class ConstraintSwitch {
         }
     }
     
-    var stateChangeHandler: Handler?
+    public var stateChangeHandler: Handler?
 
-    init() {
+    public init() {
         state = false
     }
     
-    init(state:Bool = false, onSet: [NSLayoutConstraint?] = [], offSet: [NSLayoutConstraint?] = []) {
+    public init(state:Bool = false, onSet: [NSLayoutConstraint?] = [], offSet: [NSLayoutConstraint?] = []) {
         self.onSet = Set(onSet.compactMap { $0 })
         self.offSet = Set(offSet.compactMap { $0 })
         self.state = state

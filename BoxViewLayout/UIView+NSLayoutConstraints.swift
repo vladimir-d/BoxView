@@ -147,7 +147,7 @@ extension UIView {
 extension Array where Element: UIView {
     
     @discardableResult
-    func bxSameWidth() -> [NSLayoutConstraint] {
+    public func bxSameWidth() -> [NSLayoutConstraint] {
         let firstEl = first
         let firstAnchor = firstEl?.widthAnchor
         let constraints: [NSLayoutConstraint] = self.compactMap{
@@ -162,7 +162,7 @@ extension Array where Element: UIView {
     }
     
     @discardableResult
-    func bxSameHeight()  -> [NSLayoutConstraint] {
+    public func bxSameHeight() -> [NSLayoutConstraint] {
         let firstEl = first
         let firstAnchor = firstEl?.heightAnchor
         let constraints: [NSLayoutConstraint] = self.compactMap{
