@@ -8,7 +8,7 @@
 
 import UIKit
 
-// MARK: - Public
+// MARK: - Public -
 
 // BoxLayout contains information about constraint parameters (constant and relation)
 // for 6 positional NSLayoutConstraint Attributes: top, left, bottom, right, centerX and centerY. Also it contain absolute and relative size constraints.
@@ -177,6 +177,21 @@ public struct BoxLayout: CustomStringConvertible {
         return newLayout
     }
     
+    public var description: String {
+        let str = BoxEdge.allCases.compactMap { (edge) -> String? in
+            if let pin = pinForEdge(edge) {
+                 return "\(edge.str):\(pin)"
+            }
+            else{
+                return nil
+            }
+        }.joined(separator: ", ")
+        
+        return str
+    }
+    
+// MARK: - Internal -
+    
     func begin(_ axis: Axis) -> Pin? {
         return (axis == .y) ? self.top : self.left
     }
@@ -195,19 +210,6 @@ public struct BoxLayout: CustomStringConvertible {
             case .center: return (axis == .y) ? self.centerY : self.centerX
             case .end: return (axis == .y) ? self.bottom : self.right
         }
-    }
-    
-    public var description: String {
-        let str = BoxEdge.allCases.compactMap { (edge) -> String? in
-            if let pin = pinForEdge(edge) {
-                 return "\(edge.str):\(pin)"
-            }
-            else{
-                return nil
-            }
-        }.joined(separator: ", ")
-        
-        return str
     }
 
 }

@@ -11,7 +11,7 @@ import UIKit
 @IBDesignable
 open class BoxView: UIView {
     
-    // MARK: - Public
+// MARK: - Public -
     
     // MARK: -- Inits
     
@@ -262,7 +262,24 @@ open class BoxView: UIView {
     }
     
     
-    // MARK: - Private
+    // BoxView doesn't use directionalLayoutMargins - insets for RTL languages are automatically handled while layouting managed views.
+    //  But they are used for layouting non-managed subviews.
+    @available(iOS 11.0, *)
+    public override var directionalLayoutMargins: NSDirectionalEdgeInsets {
+        didSet {
+            if (insetsAreMargins) {
+                layoutMargins = UIEdgeInsets(top: directionalLayoutMargins.top,
+                                         left: directionalLayoutMargins.leading,
+                                         bottom: directionalLayoutMargins.bottom,
+                                         right: directionalLayoutMargins.trailing)
+            }
+        }
+
+    }
+
+    
+    
+// MARK: - Private -
     
     private func updateItems() {
         if isUpdatingItems { return }
@@ -326,19 +343,4 @@ open class BoxView: UIView {
     private var isUpdatingItems: Bool  = false
 }
 
-@available(iOS 11.0, *)
-extension BoxView {
-    // BoxView doesn't use directionalLayoutMargins - insets for RTL languages are automatically handled while layouting managed views.
-    //  But they used for layouting non-managed subviews.
-    public override var directionalLayoutMargins: NSDirectionalEdgeInsets {
-        didSet {
-            if (insetsAreMargins) {
-                layoutMargins = UIEdgeInsets(top: directionalLayoutMargins.top,
-                                         left: directionalLayoutMargins.leading,
-                                         bottom: directionalLayoutMargins.bottom,
-                                         right: directionalLayoutMargins.trailing)
-            }
-        }
 
-    }
-}

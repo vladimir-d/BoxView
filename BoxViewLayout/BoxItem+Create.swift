@@ -8,6 +8,8 @@
 
 import UIKit
 
+// MARK: - Public -
+
 extension BoxItem {
     
     // Creates new BoxItem from existing, by setting exact left padding.

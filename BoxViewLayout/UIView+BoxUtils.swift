@@ -8,6 +8,8 @@
 
 import UIKit
 
+// MARK: - Public -
+
 extension UIView {
     
     public func insertionFrameBelow(view: UIView) -> CGRect {

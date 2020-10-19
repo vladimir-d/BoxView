@@ -8,7 +8,7 @@
 
 import UIKit
 
-// MARK: - Public
+// MARK: - Public -
 
 public typealias BoxEdgePins = [BoxEdge: BoxLayout.Pin]
 
@@ -94,36 +94,7 @@ extension BoxLayout {
             }
             return str
         }
-        
-        var relationString: String {
-            switch self.relation {
-                case .greaterThanOrEqual: return ">="
-                case .lessThanOrEqual: return "<="
-                default: return ""
-            }
-        }
-        
-        
-         static func joinRelations(_ rel1: NSLayoutConstraint.Relation, _ rel2: NSLayoutConstraint.Relation) -> NSLayoutConstraint.Relation? {
-            if (rel1 == rel2) || (rel2 == .equal) {
-                return rel1
-            }
-            else if rel1 == .equal {
-                return rel2
-            }
-            else{
-                return nil
-            }
-        }
-        
-        static func sumPinWarning() {
-            assertionFailure("Joining constraints relations must be either same or one of them must be NSLayoutConstraint.Relation.equal")
-        }
-        
     }
-}
-
-extension BoxLayout {
 
     public struct MultiPin {
         public var pin: Pin = .zero
@@ -205,134 +176,46 @@ extension BoxLayout {
     }
 }
 
-func + (pin1: BoxLayout.Pin?, pin2: BoxLayout.Pin?) -> BoxLayout.Pin? {
-    guard let pin1 = pin1, let pin2 = pin2 else { return nil }
-    guard let rel = BoxLayout.Pin.joinRelations(pin1.relation, pin2.relation) else { return nil }
-    return BoxLayout.Pin(constant: pin1.constant + pin2.constant, relation: rel, priority: min(pin1.priority, pin2.priority))
-}
-
-func + (pin: BoxLayout.Pin, value: CGFloat) -> BoxLayout.Pin {
-    return BoxLayout.Pin(constant: pin.constant + value, relation: pin.relation, priority: pin.priority)
-}
-
-func + (pin: BoxLayout.Pin?, value: CGFloat) -> BoxLayout.Pin? {
-    if let pin = pin {
-        return BoxLayout.Pin(constant: pin.constant + value, relation: pin.relation, priority: pin.priority)
-    }
-    return nil
-}
-
-func & (pin: BoxLayout.Pin, priority: UILayoutPriority) -> BoxLayout.Pin {
-    return BoxLayout.Pin(constant: pin.constant, relation: pin.relation, priority: priority)
-}
-
-func & (priority: UILayoutPriority, pin: BoxLayout.Pin) -> BoxLayout.Pin {
-    return BoxLayout.Pin(constant: pin.constant, relation: pin.relation, priority: priority)
-}
-
-
-func * (pin: BoxLayout.Pin?, multiplier: CGFloat) -> BoxLayout.MultiPin? {
-    guard let pin = pin else { return nil }
-    return BoxLayout.MultiPin(multiplier: multiplier, pin: pin)
-}
-
-func * (mPin: BoxLayout.MultiPin?, multiplier: CGFloat) -> BoxLayout.MultiPin? {
-    guard let mPin = mPin else { return nil }
-    return BoxLayout.MultiPin(multiplier: mPin.multiplier * multiplier, pin: mPin.pin)
-}
-
-func & (mPin: BoxLayout.MultiPin, priority: UILayoutPriority) -> BoxLayout.MultiPin {
-    return mPin.withPriority(priority)
-}
-
-func & (priority: UILayoutPriority, mPin: BoxLayout.MultiPin) -> BoxLayout.MultiPin {
-    return mPin.withPriority(priority)
-}
-
-
-prefix operator *
-public prefix func *(m: CGFloat) -> BoxLayout.MultiPin {
-    return BoxLayout.MultiPin(multiplier: m)
-}
-
-public prefix func *(m: Double) -> BoxLayout.MultiPin {
-    return BoxLayout.MultiPin(multiplier: CGFloat(m))
-}
-
-prefix operator >=
-
-public prefix func >=(v: CGFloat) -> BoxLayout.Pin {
-    return .greaterThanOrEqual(v)!
-}
-
-public prefix func >=(v: Double) -> BoxLayout.Pin {
-    return .greaterThanOrEqual(CGFloat(v))!
-}
-public prefix func >=(v: CGFloat?) -> BoxLayout.Pin? {
-    return .greaterThanOrEqual(v)
-}
-
-public prefix func >=(v: Double?) -> BoxLayout.Pin? {
-    if let v = v {
-        return .greaterThanOrEqual(CGFloat(v))
-    }
-    return nil
-}
-
-prefix operator <=
-
-public prefix func <=(v: CGFloat) -> BoxLayout.Pin {
-    return .lessThanOrEqual(v)!
-}
-
-public prefix func <=(v: Double) -> BoxLayout.Pin {
-    return .lessThanOrEqual(CGFloat(v))!
-}
-
-public prefix func <=(v: CGFloat?) -> BoxLayout.Pin? {
-    return .lessThanOrEqual(v)
-}
-
-public prefix func <=(v: Double?) -> BoxLayout.Pin? {
-    if let v = v {
-        return .lessThanOrEqual(CGFloat(v))
-    }
-    return nil
-}
-
-prefix operator ==
-
-public prefix func ==(v: CGFloat) -> BoxLayout.Pin {
-    return .equal(v)!
-}
-
-public prefix func ==(v: Double) -> BoxLayout.Pin {
-    return .equal(CGFloat(v))!
-}
-
-public prefix func ==(v: CGFloat?) -> BoxLayout.Pin? {
-    return .equal(v)
-}
-
-public prefix func ==(v: Double?) -> BoxLayout.Pin? {
-    if let v = v {
-        return .equal(CGFloat(v))
-    }
-    return nil
-}
-
-extension UIView {
+extension BoxLayout.Pin {
     
-    public func alPin(_ attribute: NSLayoutConstraint.Attribute, to toAttribute: NSLayoutConstraint.Attribute, of view: UIView, pin: BoxLayout.Pin) -> NSLayoutConstraint {
-        let constraint = NSLayoutConstraint(
-            item: self,
-            attribute: attribute,
-            relatedBy: pin.relation,
-            toItem: view,
-            attribute: toAttribute,
-            multiplier: 1.0,
-            constant: pin.constant)
-        NSLayoutConstraint.activate([constraint])
-        return constraint
+    var relationString: String {
+        switch self.relation {
+            case .greaterThanOrEqual: return ">="
+            case .lessThanOrEqual: return "<="
+            default: return ""
+        }
+    }
+    
+    static func joinRelations(_ rel1: NSLayoutConstraint.Relation, _ rel2: NSLayoutConstraint.Relation) -> NSLayoutConstraint.Relation? {
+        if (rel1 == rel2) || (rel2 == .equal) {
+            return rel1
+        }
+        else if rel1 == .equal {
+            return rel2
+        }
+        else{
+            return nil
+        }
+    }
+    
+    static func sumPinWarning() {
+        assertionFailure("Joining constraints relations must be either same or one of them must be NSLayoutConstraint.Relation.equal")
     }
 }
+
+//extension UIView {
+//
+//    public func alPin(_ attribute: NSLayoutConstraint.Attribute, to toAttribute: NSLayoutConstraint.Attribute, of view: UIView, pin: BoxLayout.Pin) -> NSLayoutConstraint {
+//        let constraint = NSLayoutConstraint(
+//            item: self,
+//            attribute: attribute,
+//            relatedBy: pin.relation,
+//            toItem: view,
+//            attribute: toAttribute,
+//            multiplier: 1.0,
+//            constant: pin.constant)
+//        NSLayoutConstraint.activate([constraint])
+//        return constraint
+//    }
+//
+//}

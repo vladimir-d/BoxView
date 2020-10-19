@@ -8,6 +8,8 @@
 
 import UIKit
 
+// MARK: - Internal -
+
 extension BoxAnchorable {
 
     public var isRTLDependent: Bool {

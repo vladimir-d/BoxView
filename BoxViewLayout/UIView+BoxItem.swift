@@ -8,6 +8,8 @@
 
 import UIKit
 
+// MARK: - Public -
+
 // MARK: -- Creating and changing BoxItems
 
 extension UIView {
@@ -104,7 +106,6 @@ extension Array where Element: UIView {
     public var bi: [BoxItem] {
         return map{BoxItem(view: $0, layout: .zero)}
     }
-    
     
     public func inBoxView(axis: BoxLayout.Axis = .y, spacing: CGFloat = 0.0, insets: UIEdgeInsets = .zero) -> BoxView {
         let boxView = BoxView(axis: axis, spacing: spacing, insets: insets)

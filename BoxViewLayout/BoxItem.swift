@@ -8,7 +8,7 @@
 
 import UIKit
 
-// MARK: - Public
+// MARK: - Public -
 
 public protocol BoxAnchorable: class {
 
@@ -35,8 +35,6 @@ extension UILayoutGuide: BoxAnchorable {
 public typealias BoxItemUpdate = (BoxItem) -> BoxItem
 
 public struct BoxItem: CustomStringConvertible {
-    
-    // MARK: - Public
     
     public var layout: BoxLayout
     
@@ -84,7 +82,7 @@ public struct BoxItem: CustomStringConvertible {
         return str
     }
     
-    // MARK: - Internal
+// MARK: - Internal -
     
     init(alObj: BoxAnchorable, layout: BoxLayout = .zero) {
         self.alObj = alObj

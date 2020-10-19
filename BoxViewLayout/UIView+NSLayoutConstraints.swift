@@ -8,8 +8,10 @@
 
 import UIKit
 
-extension UIView {
+// MARK: - Public -
 
+extension UIView {
+    
     @discardableResult
     public func bxPin(_ attribute: NSLayoutConstraint.Attribute, to toAttribute: NSLayoutConstraint.Attribute, of view: UIView, pin: BoxLayout.Pin = .zero, activate: Bool = true) -> NSLayoutConstraint {
         let constraint = NSLayoutConstraint(
@@ -27,18 +29,6 @@ extension UIView {
             NSLayoutConstraint.activate([constraint])
         }
         return constraint
-    }
-    
-    @discardableResult
-    func bxSetHeight(_ height: CGFloat, relation: NSLayoutConstraint.Relation = .equal) -> NSLayoutConstraint {
-        let constr: NSLayoutConstraint
-        switch relation {
-            case .greaterThanOrEqual: constr = self.heightAnchor.constraint(greaterThanOrEqualToConstant: height)
-            case .lessThanOrEqual: constr = self.heightAnchor.constraint(lessThanOrEqualToConstant: height)
-            default: constr = self.heightAnchor.constraint(equalToConstant: height)
-        }
-        constr.isActive = true
-        return constr
     }
     
     @discardableResult
@@ -66,18 +56,6 @@ extension UIView {
     @discardableResult
     public func bxPinHeight(_ height: CGFloat = 0.0, to view: UIView? = nil) -> NSLayoutConstraint {
         return bxPinHeight(==height, to: view)
-    }
-    
-    @discardableResult
-    private func bxSetWidth(_ width: CGFloat, relation: NSLayoutConstraint.Relation = .equal) -> NSLayoutConstraint {
-        let constr: NSLayoutConstraint
-        switch relation {
-            case .greaterThanOrEqual: constr = self.widthAnchor.constraint(greaterThanOrEqualToConstant: width)
-            case .lessThanOrEqual: constr = self.widthAnchor.constraint(lessThanOrEqualToConstant: width)
-            default: constr = self.widthAnchor.constraint(equalToConstant: width)
-        }
-        constr.isActive = true
-        return constr
     }
     
     @discardableResult
@@ -174,6 +152,34 @@ extension Array where Element: UIView {
         }
         NSLayoutConstraint.activate(constraints)
         return constraints
+    }
+}
+
+// MARK: - Private -
+
+extension UIView {
+    @discardableResult
+    private func bxSetHeight(_ height: CGFloat, relation: NSLayoutConstraint.Relation = .equal) -> NSLayoutConstraint {
+        let constr: NSLayoutConstraint
+        switch relation {
+            case .greaterThanOrEqual: constr = self.heightAnchor.constraint(greaterThanOrEqualToConstant: height)
+            case .lessThanOrEqual: constr = self.heightAnchor.constraint(lessThanOrEqualToConstant: height)
+            default: constr = self.heightAnchor.constraint(equalToConstant: height)
+        }
+        constr.isActive = true
+        return constr
+    }
+    
+    @discardableResult
+    private func bxSetWidth(_ width: CGFloat, relation: NSLayoutConstraint.Relation = .equal) -> NSLayoutConstraint {
+        let constr: NSLayoutConstraint
+        switch relation {
+            case .greaterThanOrEqual: constr = self.widthAnchor.constraint(greaterThanOrEqualToConstant: width)
+            case .lessThanOrEqual: constr = self.widthAnchor.constraint(lessThanOrEqualToConstant: width)
+            default: constr = self.widthAnchor.constraint(equalToConstant: width)
+        }
+        constr.isActive = true
+        return constr
     }
 }
 
