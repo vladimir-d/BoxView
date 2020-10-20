@@ -66,25 +66,10 @@ open class BoxView: UIView {
         }
     }
     
-    public override var layoutMargins: UIEdgeInsets {
-        didSet {
-            if (insetsAreMargins) {
-                _insets = layoutMargins
-            }
-        }
-    }
-
-    
     // Default spacing between item views. Actual spacing between every two items is:
     // end pin of first view + spacing + begin pin of second view
     @IBInspectable
     public var spacing: CGFloat = 0.0 {
-        didSet {
-            setNeedsUpdateConstraints()
-        }
-    }
-    
-    override open var semanticContentAttribute: UISemanticContentAttribute {
         didSet {
             setNeedsUpdateConstraints()
         }
@@ -223,6 +208,14 @@ open class BoxView: UIView {
         }
     }
     
+    // MARK: -- description
+    
+    var itemsDescription: String {
+        return (0..<items.count).compactMap { (i) -> String in
+            return "\n[\(i)] \(items[i].description)"
+        }.joined(separator: ",")
+    }
+    
     // MARK: -- animation
     
     public func animateChangesWithDurations(_ duration: TimeInterval) {
@@ -255,12 +248,19 @@ open class BoxView: UIView {
         }
     }
     
-    var itemsDescription: String {
-        return (0..<items.count).compactMap { (i) -> String in
-            return "\n[\(i)] \(items[i].description)"
-        }.joined(separator: ",")
+    override open var semanticContentAttribute: UISemanticContentAttribute {
+        didSet {
+            setNeedsUpdateConstraints()
+        }
     }
-    
+
+    public override var layoutMargins: UIEdgeInsets {
+        didSet {
+            if (insetsAreMargins) {
+                _insets = layoutMargins
+            }
+        }
+    }
     
     // BoxView doesn't use directionalLayoutMargins - insets for RTL languages are automatically handled while layouting managed views.
     //  But they are used for layouting non-managed subviews.
