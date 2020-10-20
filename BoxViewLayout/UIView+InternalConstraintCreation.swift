@@ -91,10 +91,10 @@ extension BoxAnchorable {
 
 extension BoxAnchorable {
     
-    func anchorForEdge(_ edge: BoxEdge) -> BoxAnchorPinnable {
+    func anchorForEdge(_ edge: BoxEdge, rtlDependent: Bool) -> BoxAnchorPinnable {
         switch edge {
-            case .left: return (isRTLDependent) ? leadingAnchor : leftAnchor
-            case .right: return (isRTLDependent) ? trailingAnchor : rightAnchor
+            case .left: return (rtlDependent) ? leadingAnchor : leftAnchor
+            case .right: return (rtlDependent) ? trailingAnchor : rightAnchor
             case .centerX: return centerXAnchor
             case .top: return topAnchor
             case .bottom: return bottomAnchor
@@ -102,10 +102,11 @@ extension BoxAnchorable {
         }
     }
     
-    public func pinSameEdge(_ edge: BoxEdge, to obj: BoxAnchorable, pin: BoxLayout.Pin) -> NSLayoutConstraint {
+    public func pinSameEdge(_ edge: BoxEdge, to obj: BoxAnchorable, pin: BoxLayout.Pin, rtlDependent: Bool? = nil) -> NSLayoutConstraint {
         let constr: NSLayoutConstraint
-        let ownAnchor = anchorForEdge(edge)
-        let objAnchor = obj.anchorForEdge(edge)
+        let rtlDependent = rtlDependent ?? self.isRTLDependent
+        let ownAnchor = anchorForEdge(edge, rtlDependent: rtlDependent)
+        let objAnchor = obj.anchorForEdge(edge, rtlDependent: rtlDependent)
         constr = ownAnchor.pin(pin, to: objAnchor)
         if pin.priority != .required {
             constr.priority = pin.priority
@@ -141,7 +142,7 @@ extension BoxAnchorable {
                     }
                     var insetPin = pin
                     insetPin.constant = insetPin.constant * factor + insetForAxis(otherAxis, position: pos, insets: insets)
-                    constr = alObj.pinSameEdge(edge, to: self , pin: insetPin)
+                    constr = alObj.pinSameEdge(edge, to: self , pin: insetPin, rtlDependent: isRTLDependent)
                 }
                 constraints.append(constr)
             }
