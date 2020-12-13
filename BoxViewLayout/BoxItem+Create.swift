@@ -53,13 +53,13 @@ extension BoxItem {
     }
     
     // creates new BoxItem from existing, by setting all paddings to same value
-    public func all(_ value: CGFloat) -> BoxItem {
+    public func all(_ value: CGFloat?) -> BoxItem {
         let pin = ==value
         return BoxItem(alObj: alObj, layout: layout.withPins(top: pin, left: pin, bottom: pin, right: pin))
     }
     
     // creates new BoxItem from existing, by setting left and right paddings to same value
-    public func allX(_ value: CGFloat) -> BoxItem {
+    public func allX(_ value: CGFloat?) -> BoxItem {
         let pin = ==value
         var newLayout = layout
         newLayout.left = pin
@@ -68,7 +68,7 @@ extension BoxItem {
     }
     
     // creates new BoxItem from existing, by setting top and bottom paddings to same value
-    public func allY(_ value: CGFloat) -> BoxItem {
+    public func allY(_ value: CGFloat?) -> BoxItem {
         let pin = ==value
         var newLayout = layout
         newLayout.top = pin
