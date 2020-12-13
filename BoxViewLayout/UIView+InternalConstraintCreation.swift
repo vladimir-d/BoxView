@@ -12,16 +12,28 @@ import UIKit
 
 extension BoxAnchorable {
 
-    public var isRTLDependent: Bool {
-        return semanticContentAttribute == .unspecified
+    func xBeginAnchor(sca: UISemanticContentAttribute) -> BoxAnchorPinnable {
+        switch sca {
+            case .unspecified: return leadingAnchor
+            case .forceRightToLeft: return rightAnchor
+            default: return leftAnchor
+        }
+    }
+    
+    func xEndAnchor(sca: UISemanticContentAttribute) -> BoxAnchorPinnable {
+        switch sca {
+            case .unspecified: return trailingAnchor
+            case .forceRightToLeft: return leftAnchor
+            default: return rightAnchor
+        }
     }
     
     func beginAnchor(axis: BoxLayout.Axis) -> BoxAnchorPinnable {
-        return (axis == .y) ? topAnchor : ((isRTLDependent) ? leadingAnchor : leftAnchor)
+        return (axis == .y) ? topAnchor : xBeginAnchor(sca: semanticContentAttribute)
     }
     
     func endAnchor(axis: BoxLayout.Axis) -> BoxAnchorPinnable {
-        return (axis == .y) ? self.bottomAnchor : ((isRTLDependent) ? trailingAnchor : rightAnchor)
+        return (axis == .y) ? self.bottomAnchor : xEndAnchor(sca: semanticContentAttribute)
     }
     
     func centerAnchor(axis: BoxLayout.Axis) -> BoxAnchorPinnable {
@@ -37,26 +49,36 @@ extension BoxAnchorable {
     }
 
     func centerOffsetForAxis(_ anAxis: BoxLayout.Axis, insets: UIEdgeInsets) -> CGFloat {
-        return 0.5 * ((anAxis == .y) ? insets.top - insets.bottom : (insets.left - insets.right) * offsetFactorForAxis(anAxis))
+        return 0.5 * ((anAxis == .y) ? insets.top - insets.bottom : (insets.left - insets.right))
     }
     
-    func offsetFactorForAxis(_ anAxis: BoxLayout.Axis) -> CGFloat {
+    func languageDirectionFactorForAxis(_ anAxis: BoxLayout.Axis) -> CGFloat {
+        // It is just text direction factor,
+        // so it is always negative for RTL either forced or defined by language
         let langDir = UIView.userInterfaceLayoutDirection(for: semanticContentAttribute)
-        return (anAxis == .y || langDir == .leftToRight || !isRTLDependent) ? 1.0 : -1.0
+        return (anAxis == .y || langDir == .leftToRight) ? 1.0 : -1.0
+    }
+    
+    func layoutDirectionFactorForAxis(_ anAxis: BoxLayout.Axis) -> CGFloat {
+        // It is negative only for .forceRightToLeft case.
+        // For .unspecified it is positive as direction is handled by leading/trailing anchors.
+        return (anAxis == .y || semanticContentAttribute != .forceRightToLeft) ? 1.0 : -1.0
     }
     
     func createChainConstraints(boxItems: [BoxItem], axis: BoxLayout.Axis, spacing: CGFloat, insets: UIEdgeInsets?, constraints: inout [NSLayoutConstraint]) {
         let insets = insets ?? .zero
         var prevItem: BoxItem? = nil
         guard boxItems.count > 0 else { return }
+        let factor = layoutDirectionFactorForAxis(axis)
+        let sca = semanticContentAttribute
         for item in boxItems {
             let layout = item.layout
             if let itemBeginPin = layout.begin(axis),
-               let itemBeginAnchor = item.beginAnchor(axis: axis, isRTLDependent: isRTLDependent) {
+               let itemBeginAnchor = item.beginAnchor(axis: axis, sca: sca) {
                 if let prevItem = prevItem {
-                    if let prevEndAnchor = prevItem.endAnchor(axis: axis, isRTLDependent: isRTLDependent),
+                    if let prevEndAnchor = prevItem.endAnchor(axis: axis, sca: sca),
                         let prevEndPin = prevItem.layout.pinForAxis(axis, position: .end) {
-                        guard let sumPin = itemBeginPin + prevEndPin + spacing else {
+                        guard let sumPin = (itemBeginPin + prevEndPin)?.withInset(spacing, factor: factor) else {
                             BoxLayout.Pin.sumPinWarning(); return
                         }
                         let toPrev = itemBeginAnchor.pin(sumPin, to: prevEndAnchor)
@@ -64,23 +86,24 @@ extension BoxAnchorable {
                     }
                 }
                 else{
-                    let firstPin = itemBeginPin + beginForAxis(axis, insets: insets)
+                    let firstPin = itemBeginPin.withInset(beginForAxis(axis, insets: insets), factor: factor)
                     let toBegin = itemBeginAnchor.pin(firstPin, to: beginAnchor(axis: axis))
                     constraints.append(toBegin)
                 }
             }
-            if let itemCenterPin = layout.center(axis),
-                let itemCenterAnchor = item.centerAnchor(axis: axis)
-                {
-                let toCenter = itemCenterAnchor.pin(itemCenterPin, to: centerAnchor(axis: axis))
-                constraints.append(toCenter)
+            if let itemCenterPin = layout.center(axis) {
+                let factor = languageDirectionFactorForAxis(axis)
+                let insetPin = itemCenterPin.withInset(insetForAxis(axis, position: .center, insets: insets), factor : factor)
+                let edge = axis.edgeForPosition(.center)
+                let constr = item.alObj.pin(edge, of: self, pin: insetPin, sca: sca)
+                constraints.append(constr)
             }
             pinAccross(boxItem: item, axis: axis, insets: insets, constraints: &constraints)
             prevItem = item
         }
         if let itemEndPin = prevItem?.layout.end(axis),
-            let prevEndAnchor = prevItem?.endAnchor(axis: axis, isRTLDependent: isRTLDependent) {
-            let lastPin = itemEndPin + endForAxis(axis, insets: insets)
+           let prevEndAnchor = prevItem?.endAnchor(axis: axis, sca: sca) {
+            let lastPin = itemEndPin.withInset(endForAxis(axis, insets: insets), factor: factor)
             let toEnd = endAnchor(axis: axis).pin(lastPin, to: prevEndAnchor)
             constraints.append(toEnd)
         }
@@ -91,10 +114,10 @@ extension BoxAnchorable {
 
 extension BoxAnchorable {
     
-    func anchorForEdge(_ edge: BoxEdge, rtlDependent: Bool) -> BoxAnchorPinnable {
+    func anchorForEdge(_ edge: BoxEdge, sca: UISemanticContentAttribute) -> BoxAnchorPinnable {
         switch edge {
-            case .left: return (rtlDependent) ? leadingAnchor : leftAnchor
-            case .right: return (rtlDependent) ? trailingAnchor : rightAnchor
+            case .left: return xBeginAnchor(sca: sca)
+            case .right: return xEndAnchor(sca: sca)
             case .centerX: return centerXAnchor
             case .top: return topAnchor
             case .bottom: return bottomAnchor
@@ -102,11 +125,10 @@ extension BoxAnchorable {
         }
     }
     
-    public func pinSameEdge(_ edge: BoxEdge, to obj: BoxAnchorable, pin: BoxLayout.Pin, rtlDependent: Bool? = nil) -> NSLayoutConstraint {
+    public func pinSameEdge(_ edge: BoxEdge, to obj: BoxAnchorable, pin: BoxLayout.Pin, sca: UISemanticContentAttribute) -> NSLayoutConstraint {
         let constr: NSLayoutConstraint
-        let rtlDependent = rtlDependent ?? self.isRTLDependent
-        let ownAnchor = anchorForEdge(edge, rtlDependent: rtlDependent)
-        let objAnchor = obj.anchorForEdge(edge, rtlDependent: rtlDependent)
+        let ownAnchor = anchorForEdge(edge, sca: sca)
+        let objAnchor = obj.anchorForEdge(edge, sca: sca)
         constr = ownAnchor.pin(pin, to: objAnchor)
         if pin.priority != .required {
             constr.priority = pin.priority
@@ -130,20 +152,9 @@ extension BoxAnchorable {
         for pos: BoxEdge.Position in [.begin, .center, .end] {
             if let pin = layout.pinForAxis(otherAxis, position: pos) {
                 let edge = otherAxis.edgeForPosition(pos)
-                let constr: NSLayoutConstraint
-                if (pos == .end) {
-                    let insetPin = pin + insetForAxis(otherAxis, position: pos, insets: insets)
-                    constr = self.pinSameEdge(edge, to: alObj, pin: insetPin)
-                }
-                else {
-                    var factor: CGFloat = 1.0
-                    if pos == .center {
-                        factor = offsetFactorForAxis(otherAxis)
-                    }
-                    var insetPin = pin
-                    insetPin.constant = insetPin.constant * factor + insetForAxis(otherAxis, position: pos, insets: insets)
-                    constr = alObj.pinSameEdge(edge, to: self , pin: insetPin, rtlDependent: isRTLDependent)
-                }
+                let factor = (pos == .center) ? languageDirectionFactorForAxis(otherAxis) : layoutDirectionFactorForAxis(otherAxis)
+                let insetPin = pin.withInset(insetForAxis(otherAxis, position: pos, insets: insets), factor: (pos == .end) ? -factor : factor)
+                let constr = alObj.pinSameEdge(edge, to: self , pin: insetPin, sca: semanticContentAttribute)
                 constraints.append(constr)
             }
         }
@@ -203,3 +214,4 @@ extension UILayoutGuide {
     }
     
 }
+

@@ -94,6 +94,13 @@ extension BoxLayout {
             }
             return str
         }
+        
+        internal func withInset(_ inset: CGFloat, factor: CGFloat) -> Pin {
+            var pin = self
+            pin.constant = (self.constant + inset) * factor
+            pin.relation = NSLayoutConstraint.Relation(rawValue: self.relation.rawValue * Int(factor))!
+            return pin
+        }
     }
 
     public struct MultiPin {
@@ -203,19 +210,3 @@ extension BoxLayout.Pin {
     }
 }
 
-//extension UIView {
-//
-//    public func alPin(_ attribute: NSLayoutConstraint.Attribute, to toAttribute: NSLayoutConstraint.Attribute, of view: UIView, pin: BoxLayout.Pin) -> NSLayoutConstraint {
-//        let constraint = NSLayoutConstraint(
-//            item: self,
-//            attribute: attribute,
-//            relatedBy: pin.relation,
-//            toItem: view,
-//            attribute: toAttribute,
-//            multiplier: 1.0,
-//            constant: pin.constant)
-//        NSLayoutConstraint.activate([constraint])
-//        return constraint
-//    }
-//
-//}

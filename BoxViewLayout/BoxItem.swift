@@ -22,9 +22,9 @@ public protocol BoxAnchorable: class {
     var centerYAnchor: NSLayoutYAxisAnchor { get }
     var widthAnchor: NSLayoutDimension { get }
     var heightAnchor: NSLayoutDimension { get }
-    
     var semanticContentAttribute: UISemanticContentAttribute { get }
 }
+
 
 extension UIView: BoxAnchorable {
 }
@@ -90,38 +90,29 @@ public struct BoxItem: CustomStringConvertible {
     }
     
     internal var alObj: BoxAnchorable
-    
-    var leftAnchor: NSLayoutXAxisAnchor? {
-        return (layout.left != nil) ? alObj.leftAnchor : nil
-    }
-    var leadingAnchor: NSLayoutXAxisAnchor? {
-        return (layout.left != nil) ? alObj.leadingAnchor : nil
-    }
-    var rightAnchor: NSLayoutXAxisAnchor? {
-        return (layout.right != nil) ? alObj.rightAnchor : nil
-    }
-    var trailingAnchor: NSLayoutXAxisAnchor? {
-        return (layout.left != nil) ? alObj.trailingAnchor : nil
-    }
+        
     var centerXAnchor: NSLayoutXAxisAnchor? {
         return (layout.centerX != nil) ? alObj.centerXAnchor : nil
     }
+    
     var topAnchor: NSLayoutYAxisAnchor? {
         return (layout.top != nil) ? alObj.topAnchor : nil
     }
+    
     var bottomAnchor: NSLayoutYAxisAnchor? {
         return (layout.bottom != nil) ? alObj.bottomAnchor : nil
     }
+    
     var centerYAnchor: NSLayoutYAxisAnchor? {
         return (layout.centerY != nil) ? alObj.centerYAnchor : nil
     }
 
-    func beginAnchor(axis: BoxLayout.Axis, isRTLDependent: Bool) -> BoxAnchorPinnable? {
-        return (axis == .y) ? topAnchor : ((isRTLDependent) ? leadingAnchor : leftAnchor)
+    func beginAnchor(axis: BoxLayout.Axis, sca: UISemanticContentAttribute) -> BoxAnchorPinnable? {
+        return (axis == .y) ? topAnchor : alObj.xBeginAnchor(sca: sca)
     }
     
-    func endAnchor(axis: BoxLayout.Axis, isRTLDependent: Bool) -> BoxAnchorPinnable? {
-        return (axis == .y) ? bottomAnchor : ((isRTLDependent) ? trailingAnchor : rightAnchor)
+    func endAnchor(axis: BoxLayout.Axis, sca: UISemanticContentAttribute) -> BoxAnchorPinnable? {
+        return (axis == .y) ? bottomAnchor : alObj.xEndAnchor(sca: sca)
     }
     
     func centerAnchor(axis: BoxLayout.Axis) -> BoxAnchorPinnable? {
