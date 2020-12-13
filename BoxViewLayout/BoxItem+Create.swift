@@ -84,25 +84,21 @@ extension BoxItem {
     // creates new BoxItem from existing, by adding alignment along X-axis
     public func centerX(offset: CGFloat = 0.0, padding: CGFloat? = 0.0) -> BoxItem {
         let alignedItem =  BoxItem(alObj: alObj, layout: layout.with(.centerX, ==offset))
+        var paddingPin: BoxLayout.Pin? = nil
         if let padding = padding {
-            let paddingPin = >=padding
-            return alignedItem.left(paddingPin).right(paddingPin)
+            paddingPin = >=padding
         }
-        else {
-            return alignedItem
-        }
+        return alignedItem.left(paddingPin).right(paddingPin)
     }
     
     // creates new BoxItem from existing, by adding alignment along Y-axis
     public func centerY(offset: CGFloat = 0.0, padding: CGFloat? = 0.0) -> BoxItem {
         let alignedItem =  BoxItem(alObj: alObj, layout: layout.with(.centerY, ==offset))
+        var paddingPin: BoxLayout.Pin? = nil
         if let padding = padding {
-            let paddingPin = >=padding
-            return alignedItem.top(paddingPin).bottom(paddingPin)
+            paddingPin = >=padding
         }
-        else {
-            return alignedItem
-        }
+        return alignedItem.top(paddingPin).bottom(paddingPin)
     }
     
     // returns nil from existing item if condition is false
