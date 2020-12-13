@@ -1,0 +1,31 @@
+{
+  "configurations" : [
+    {
+      "id" : "C62D0848-7D85-4920-BB8D-CE1D7664F3C6",
+      "name" : "Configuration 1",
+      "options" : {
+        "language" : "en"
+      }
+    },
+    {
+      "id" : "7D7E0F90-7206-4537-B942-765552EBA28E",
+      "name" : "Configuration 2",
+      "options" : {
+        "language" : "he"
+      }
+    }
+  ],
+  "defaultOptions" : {
+
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:BoxViewTesting.xcodeproj",
+        "identifier" : "F53DCE69257866C900B5E3F7",
+        "name" : "BoxViewTestingTests"
+      }
+    }
+  ],
+  "version" : 1
+}
