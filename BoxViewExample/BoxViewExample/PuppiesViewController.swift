@@ -63,10 +63,10 @@ class AlbumView: BoxView {
             textLabel.boxed.bottom(4.0),
             imagesScrollView.boxed
         ]
-        expandSwitch.offSet = [imagesBoxView.bxPinHeight(50.0)]
-        imagesScrollView.bxPinHeight(0.0, to: imagesBoxView)
-        expandSwitch.onSet = [imagesBoxView.bxPinWidth(0.0, to: imagesScrollView)]
-        self.bxPinWidth(insets.left + insets.right, to: imagesScrollView)
+        expandSwitch.offSet = [imagesBoxView.pinHeight(50.0)]
+        imagesScrollView.pinHeight(to: imagesBoxView)
+        expandSwitch.onSet = [imagesBoxView.pinWidth(to: imagesScrollView)]
+        self.pinWidth(to: imagesScrollView, offset: insets.left + insets.right)
     }
     
     @objc func onTap(sender: UITapGestureRecognizer) {

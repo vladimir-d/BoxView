@@ -27,7 +27,7 @@ class BaseViewController: UIViewController {
         else {
             view.addBoxItem(scrollView.boxed)
         }
-        boxView.bxPinWidth(-boxPadding * 2.0, to: scrollView)
+        boxView.pinWidth(to: scrollView, offset: -boxPadding * 2.0)
     }
 
 }

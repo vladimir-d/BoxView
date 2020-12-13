@@ -53,7 +53,7 @@ extension UIImageView {
         let img = UIImage(named: imageName)
         let imgSize = size ?? img?.size ?? .zero
         let imgView = UIImageView(image: img)
-        imgView.bxSetSize(imgSize)
+        imgView.pinSize(imgSize)
         return imgView
     }
     
@@ -67,7 +67,7 @@ extension UIImageView {
 //        let img = UIImage(named: imageName)
         image =  UIImage(named: imageName ?? "")
         contentMode = .scaleAspectFit
-        bxSetAspectFromSize(image?.size ?? .zero)
+        pinAspectFromSize(image?.size ?? .zero)
     }
     
 }

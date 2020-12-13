@@ -67,7 +67,7 @@ class LoginViewController: BaseViewController {
     
     func showErrorForField(_ field: UITextField) {
         errorLabel.frame = field.convert(field.bounds, to: boxView)
-        let item = errorLabel.boxed.top(-boxView.spacing).left(errorLabel.frame.minX - boxView.insets.left)
+        let item = errorLabel.boxed.top(-boxView.spacing).left(nameImageView.frame.size.width + nameBoxView.spacing)
         boxView.insertItem(item, after: field.superview, z: .back)
         boxView.animateChangesWithDurations(0.3)
     }
