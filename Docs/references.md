@@ -112,3 +112,15 @@ boxView.items = [
 ]
 ```
 
+### Other constraint creation methods
+
+There are some additional methods to create constarints without using BoxItems. They may be helpful to add additional costraints which doesn't suit BoxView layout. They also use BoxLayout.Pin struct to provide constraint parameters.
+
+
+```swift
+    // to place view2 20pt below view1
+    view2.pin(.top, to: .bottom, of: view1, offset: 20.0)
+    
+    / to make view2 100pt wider than view1
+    view2.pinWidth(to: view1, offset: 100.0)
+```

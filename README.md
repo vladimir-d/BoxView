@@ -70,8 +70,8 @@ Note, that actual view offsets for all paddings are calculated counting boxView.
 
 It may look complicated, but all these values are zero by default, so only explicitly set values are contributing in actual paddings.  
 
-```
 Each padding can be specified with relation using operator ">=" for greaterThanOrEqual relation and operator "<=" for lessThanOrEqual relation. Equal relation is default, so operator "==" is usually not used.
+
 ```swift
 // creates an item with padding greater than or equal 20 pt from left,
 // padding less than or equal  30 pt from top and zero paddings from other 2 sides. 
