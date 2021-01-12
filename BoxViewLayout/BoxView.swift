@@ -231,10 +231,13 @@ open class BoxView: UIView {
     // Then updateConstraints() method is called automatically when boxView laying out own subviews.
     // You can call this method to force create constraints immediatly.
     override open func updateConstraints() {
-        NSLayoutConstraint.deactivate(managedConstraints)
-        managedConstraints = []
-        addItemsConstraints()
         super.updateConstraints()
+        if !isUpdatingItems {
+            NSLayoutConstraint.deactivate(managedConstraints)
+            managedConstraints = []
+            addItemsConstraints()
+            super.updateConstraints()
+        }
     }
     
     override open func willRemoveSubview(_ subview: UIView) {
