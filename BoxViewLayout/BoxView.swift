@@ -216,6 +216,10 @@ open class BoxView: UIView {
         }.joined(separator: ",")
     }
     
+    public override var debugDescription: String {
+        return super.debugDescription + "\nitems:\(itemsDescription)"
+    }
+    
     // MARK: -- animation
     
     public func animateChangesWithDurations(_ duration: TimeInterval) {

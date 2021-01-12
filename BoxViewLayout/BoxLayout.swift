@@ -176,7 +176,7 @@ public struct BoxLayout: CustomStringConvertible {
         newLayout.flex = flexValue
         return newLayout
     }
-    
+
     public var description: String {
         let str = BoxEdge.allCases.compactMap { (edge) -> String? in
             if let pin = pinForEdge(edge) {
@@ -186,7 +186,6 @@ public struct BoxLayout: CustomStringConvertible {
                 return nil
             }
         }.joined(separator: ", ")
-        
         return str
     }
     

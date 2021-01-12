@@ -71,16 +71,17 @@ public struct BoxItem: CustomStringConvertible {
     }
     
     public var description: String {
-        var str = ""
+        var str = "<BoxItem: "
         if let view = view {
-            str = "view: \(view)"
+            str += "view: \(view)"
         }
         else if let guide = guide {
-            str = "guide: \(guide)"
+            str += "guide: \(guide)"
         }
-        str += "\nlayout: \(layout)"
+        str += "; layout: \(layout)>"
         return str
     }
+
     
 // MARK: - Internal -
     
@@ -184,6 +185,7 @@ extension NSLayoutDimension {
     }
     
 }
+
 
 
 
