@@ -35,6 +35,9 @@ extension BoxAnchorable {
             case .lessThanOrEqual: constr = self.heightAnchor.constraint(lessThanOrEqualTo: anchorable.heightAnchor, multiplier: multiPin.multiplier, constant: multiPin.constant)
             default: constr = self.heightAnchor.constraint(equalTo: anchorable.heightAnchor, multiplier: multiPin.multiplier, constant: multiPin.constant)
         }
+        if multiPin.priority != .required {
+            constr.priority = multiPin.priority
+        }
         constr.isActive = true
         return constr
     }
@@ -56,6 +59,9 @@ extension BoxAnchorable {
             case .greaterThanOrEqual: constr = self.widthAnchor.constraint(greaterThanOrEqualTo: anchorable.widthAnchor, multiplier: multiPin.multiplier, constant: multiPin.constant)
             case .lessThanOrEqual: constr = self.widthAnchor.constraint(lessThanOrEqualTo: anchorable.widthAnchor, multiplier: multiPin.multiplier, constant: multiPin.constant)
             default: constr = self.widthAnchor.constraint(equalTo: anchorable.widthAnchor, multiplier: multiPin.multiplier, constant: multiPin.constant)
+        }
+        if multiPin.priority != .required {
+            constr.priority = multiPin.priority
         }
         constr.isActive = true
         return constr
@@ -79,6 +85,9 @@ extension BoxAnchorable {
             case .lessThanOrEqual: constr = self.heightAnchor.constraint(lessThanOrEqualToConstant: pin.constant)
             default: constr = self.heightAnchor.constraint(equalToConstant: pin.constant)
         }
+        if pin.priority != .required {
+            constr.priority = pin.priority
+        }
         constr.isActive = true
         return constr
     }
@@ -95,6 +104,9 @@ extension BoxAnchorable {
             case .greaterThanOrEqual: constr = self.widthAnchor.constraint(greaterThanOrEqualToConstant: pin.constant)
             case .lessThanOrEqual: constr = self.widthAnchor.constraint(lessThanOrEqualToConstant: pin.constant)
             default: constr = self.widthAnchor.constraint(equalToConstant: pin.constant)
+        }
+        if pin.priority != .required {
+            constr.priority = pin.priority
         }
         constr.isActive = true
         return constr
