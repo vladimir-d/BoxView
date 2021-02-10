@@ -75,6 +75,22 @@ open class BoxView: UIView {
         }
     }
     
+    // If true, items with view.isHidden = true are automatically excluded from layout
+    public var excludeHiddenViews = false {
+        didSet {
+            if oldValue != excludeHiddenViews {
+                if excludeHiddenViews {
+                    managedViews.forEach { addObserverForItemView($0) }
+                }
+                else {
+                    observers = [Int: NSKeyValueObservation]()
+                }
+                setNeedsUpdateConstraints()
+            }
+
+        }
+    }
+    
     // MARK: -- readonly vars
     
     // array of all automatically created by BoxView constraints
@@ -109,10 +125,11 @@ open class BoxView: UIView {
     
     // setting items from array of views using same layout
     public func setViews(_ views: [UIView], layout: BoxLayout = .zero) {
-        items = [BoxItem]()
+        var newItems = [BoxItem]()
         for view in views {
-            items.append(view.boxed(layout: layout))
+            newItems.append(view.boxed(layout: layout))
         }
+        items = newItems
     }
     
     // appending item
@@ -248,6 +265,9 @@ open class BoxView: UIView {
         superview?.willRemoveSubview(subview)
         if !isUpdatingItems {
             if managedViews.contains(subview) {
+                if (excludeHiddenViews) {
+                    removeObserverForItemView(subview)
+                }
                 if let index = items.firstIndex(where: { $0.view == subview}) {
                     items.remove(at: index)
                 }
@@ -285,10 +305,9 @@ open class BoxView: UIView {
     }
 
     
+// MARK: - Internal -
     
-// MARK: - Private -
-    
-    private func updateItems() {
+    internal func updateItems() {
         if isUpdatingItems { return }
         isUpdatingItems = true
         let itemViews = items.compactMap{ $0.view }
@@ -296,10 +315,14 @@ open class BoxView: UIView {
         for (index, managedView) in managedViews.enumerated() {
             if !itemViews.contains(managedView) {
                 viewsToRemove.append(index)
+                if (excludeHiddenViews) {
+                    removeObserverForItemView(managedView)
+                }
                 managedView.removeFromSuperview()
             }
         }
         for index in viewsToRemove.reversed() {
+            
             managedViews.remove(at: index)
         }
         for view in itemViews {
@@ -307,6 +330,9 @@ open class BoxView: UIView {
                 view.translatesAutoresizingMaskIntoConstraints = false
                 managedViews.append(view)
                 addSubview(view)
+                if (excludeHiddenViews) {
+                    addObserverForItemView(view)
+                }
             }
             else {
                 bringSubviewToFront(view)
@@ -333,21 +359,38 @@ open class BoxView: UIView {
         setNeedsUpdateConstraints()
     }
     
-    private func addItemsConstraints() {
-        createChainConstraints(boxItems: items, axis: axis, spacing: spacing, insets: insets, constraints: &managedConstraints)
+    internal func addItemsConstraints() {
+        let usedItems = (!excludeHiddenViews) ? items : items.compactMap { ($0.view?.isHidden ?? false) ? nil : $0 }
+        createChainConstraints(boxItems: usedItems, axis: axis, spacing: spacing, insets: insets, constraints: &managedConstraints)
         items.createDimensions(constraints: &managedConstraints)
-        createRelativeDimensions(boxItems: items, constraints: &managedConstraints)
-        createFlexDimentions(boxItems: items, axis: axis, constraints: &managedConstraints)
+        createRelativeDimensions(boxItems: usedItems, constraints: &managedConstraints)
+        createFlexDimentions(boxItems: usedItems, axis: axis, constraints: &managedConstraints)
         NSLayoutConstraint.activate(managedConstraints)
     }
+
     
-    private var _insets: UIEdgeInsets = .zero {
+    internal var _insets: UIEdgeInsets = .zero {
         didSet {
             setNeedsUpdateConstraints()
         }
     }
 
-    private var isUpdatingItems: Bool  = false
+    internal var isUpdatingItems: Bool  = false
+    
+    internal var observers = [Int: NSKeyValueObservation]()
+    
+    internal func addObserverForItemView(_ view: UIView) {
+        let intValue: Int = unsafeBitCast(view, to: Int.self)
+        observers[intValue] = view.observe(\.isHidden) { [unowned self] (_, _) in
+            self.setNeedsUpdateConstraints()
+        }
+        print("observers: \(observers)")
+    }
+    
+    internal func removeObserverForItemView(_ view: UIView) {
+        let intValue: Int = unsafeBitCast(view, to: Int.self)
+        observers[intValue] = nil
+    }
 }
 
 
