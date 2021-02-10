@@ -384,7 +384,6 @@ open class BoxView: UIView {
         observers[intValue] = view.observe(\.isHidden) { [unowned self] (_, _) in
             self.setNeedsUpdateConstraints()
         }
-        print("observers: \(observers)")
     }
     
     internal func removeObserverForItemView(_ view: UIView) {
