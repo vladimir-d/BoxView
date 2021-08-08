@@ -112,7 +112,7 @@ boxView.items = [
 ![login1 image](https://github.com/vladimir-d/BoxView/blob/master/Docs/Images/login6.png?raw=true)
 
 All items in previous examples were stacked along Y-axis. 
-Now lets add nested boxViews with Y-axes to show icons on the left of the name and the password text fields. 
+Now lets add nested boxViews with X-axes to show icons on the left of the name and the password text fields. 
 ```swift
 nameBoxView.items = [nameImageView.boxCenterY(), nameField.boxed]
 passwordBoxView.items = [passwordImageView.boxCenterY(), passwordField.boxed]

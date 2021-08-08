@@ -3,19 +3,21 @@
 
 #### Subviews, Items and Managed Constraints
 
-When **items** variable of BoxView is set or changed (actually it is same, because items is Array), all items views are to BoxView as subviews. All these views are accessible as:
-```swift 
-var managedViews: [UIView]
-```
-When managed subview is removed from superview, corresponding item is also removed, and vice verse: when item removed its view is also removed from subviews, so items and managed subviews always synchronized. 
-Following methods can be used to add items:
+The **items** variable is an Array of BoxItems and it is main part of the BoxView. 
 ```swift
-
 public var items:[BoxItem] = [] {
     didSet {
         updateItems()
     }
 }
+```
+When  it is assigned or changed, all items views are added to the BoxView as subviews. All these views are accessible as:
+```swift 
+var managedViews: [UIView]
+```
+When managed subview is removed from the superview, corresponding item is also removed, and vice verse: when the item is removed, its view is also removed from subviews, so items and managed subviews are always synchronized. 
+Following methods also can be used to add items:
+```swift
 
 // setting items and returning self, it method can be used to add nested boxViews and their items in same code block. 
 public func withItems(_ items:[BoxItem]) -> Self {
@@ -35,7 +37,7 @@ Created constraints can be accessed as:
 // array of all automatically created by BoxView constraints
 public private(set) var managedConstraints: [NSLayoutConstraint]
 ```
-All constraints created and managed by BoxView live until any of layout affecting properties: **Items, insets, spacing or axix** is changed, after that all managed constraints are recreated in subsequent **updateConstraints** method call.
+All constraints created and managed by BoxView remain until any of layout affecting properties: **Items, insets, spacing or axix** is changed, after that all managed constraints are recreated in subsequent **updateConstraints** method call.
 
 #### RTL languages
 There are no leading and trailing edges in BoxLayout. RTL behavior is defined by semanticContentAttribute for the whole boxView.
@@ -54,7 +56,7 @@ addBoxItems(_ items: [BoxItem], axis: BoxLayout.Axis = .y, spacing: CGFloat = 0.
 ```
 This method can be used, for example, for adding items to some specific view, like UIViewController view, or UIScrollview, or UITableViewCell contentView. 
 
-It is also possible to add items to NSLayoutGuide (views should be manually added to superview in this case). It is useful, for example, to constraint views to UIViewController's view safe area:
+It is also possible to add items to NSLayoutGuide (views of items should be manually added to the superview in this case). It is useful, for example, to constraint views to UIViewController's view safe area:
 
 ```swift
 view.addSubview(someView)
@@ -81,9 +83,9 @@ boxView.items = [
     someLabel.boxed.bottom(>=0.0)
 ]
 ```
-in this case label has offset 50% of height from top because of previous invisible item.
+in this case the label has offset 50% of height from the top because invisible UILayoutGuide takes 50% of heeight.
 
-Both view and guide items can have absolute and relative width and height constraints:
+Both views and guide items can have absolute and relative width and height constraints:
 
 ```swift
 boxView.items = [
@@ -114,8 +116,7 @@ boxView.items = [
 
 ### Other constraint creation methods
 
-There are some additional methods to create constarints without using BoxItems. They may be helpful to add additional costraints which doesn't suit BoxView layout. They also use BoxLayout.Pin struct to provide constraint parameters.
-
+There are some additional methods to create constraints without using BoxItems. They may be helpful to add additional costraints which doesn't suit BoxView layout. They also use BoxLayout.Pin struct to provide constraint parameters.
 
 ```swift
     // to place view2 20pt below view1
@@ -124,3 +125,10 @@ There are some additional methods to create constarints without using BoxItems. 
     / to make view2 100pt wider than view1
     view2.pinWidth(to: view1, offset: 100.0)
 ```
+### Content Hugging/Compession resistance priority helpers
+
+Following variables of type `UILayoutPriority` are added to UIView as extension:
+`resistanceX, resistanceY, huggingX, huggingY`.
+These variables just wrap standard prioryty funtions like `contentHuggingPriority(...)` to make they usage easier. For example, this code sets horizontal contentHuggingPriority of view to .defaultLow:
+`view.huggingX = .defaultLow`
+
