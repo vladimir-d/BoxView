@@ -72,7 +72,12 @@ extension BoxAnchorable {
     // all constraints created in this method are returned as result
     // and can be stored somewhere to manage them later.
     @discardableResult
-    public func addBoxItems(_ items: [BoxItem], axis: BoxLayout.Axis = .y, spacing: CGFloat = 0.0, insets: UIEdgeInsets? = .zero) -> [NSLayoutConstraint] {
+    public func addBoxItems(_ items: [BoxItem], axis: BoxLayout.Axis = .y, spacing: CGFloat = 0.0, insets:
+                                UIEdgeInsets? = .zero) -> [NSLayoutConstraint] {
+        if self is BoxView {
+            // Warning about calling addBoxItems by BoxView (probably by mistake, instead of addItems)
+            print("⚠️ Functions 'addBoxItems', 'addBoxItem', 'addBoxedView' are not intended to be called by BoxView, as it can manage BoxItems more effectively using 'items' variable. Use boxView.items = ... instead.")
+        }
         var constraints = [NSLayoutConstraint]()
         items.forEach{
             if let view = $0.view {
