@@ -60,7 +60,7 @@ public enum BoxEdge: CaseIterable {
             case .top: return "top"
             case .bottom: return "bottom"
             case .centerX: return "centerX"
-            case .centerY: return "centerX"
+            case .centerY: return "centerY"
         }
     }
 
