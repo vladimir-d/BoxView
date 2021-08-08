@@ -10,7 +10,7 @@ import UIKit
 
 // MARK: - Public -
 
-public protocol BoxAnchorable: class {
+public protocol BoxAnchorable: AnyObject {
 
     var leftAnchor: NSLayoutXAxisAnchor { get }
     var leadingAnchor: NSLayoutXAxisAnchor { get }
