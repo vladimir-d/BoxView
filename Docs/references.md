@@ -122,7 +122,7 @@ There are some additional methods to create constraints without using BoxItems. 
     // to place view2 20pt below view1
     view2.pin(.top, to: .bottom, of: view1, offset: 20.0)
     
-    / to make view2 100pt wider than view1
+    // to make view2 100pt wider than view1
     view2.pinWidth(to: view1, offset: 100.0)
 ```
 ### Content Hugging/Compession resistance priority helpers
@@ -130,5 +130,7 @@ There are some additional methods to create constraints without using BoxItems. 
 Following variables of type `UILayoutPriority` are added to UIView as extension:
 `resistanceX, resistanceY, huggingX, huggingY`.
 These variables just wrap standard prioryty funtions like `contentHuggingPriority(...)` to make they usage easier. For example, this code sets horizontal contentHuggingPriority of view to .defaultLow:
-`view.huggingX = .defaultLow`
+```swift
+view.huggingX = .defaultLow
+```
 
