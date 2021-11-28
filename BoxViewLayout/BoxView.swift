@@ -91,6 +91,8 @@ open class BoxView: UIView {
         }
     }
     
+    public var allowNotManagedViews = false
+    
     // MARK: -- readonly vars
     
     // array of all automatically created by BoxView constraints

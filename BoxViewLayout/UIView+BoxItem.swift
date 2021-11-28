@@ -74,9 +74,11 @@ extension BoxAnchorable {
     @discardableResult
     public func addBoxItems(_ items: [BoxItem], axis: BoxLayout.Axis = .y, spacing: CGFloat = 0.0, insets:
                                 UIEdgeInsets? = .zero) -> [NSLayoutConstraint] {
-        if self is BoxView {
-            // Warning about calling addBoxItems by BoxView (probably by mistake, instead of addItems)
-            print("⚠️ Functions 'addBoxItems', 'addBoxItem', 'addBoxedView' are not intended to be called by BoxView, as it can manage BoxItems more effectively using 'items' variable. Use boxView.items = ... instead.")
+        if let bv = self as? BoxView {
+            if !bv.allowNotManagedViews {
+                // Warning about calling addBoxItems by BoxView (probably by mistake, instead of addItems)
+                print("⚠️ \(bv)\nFunctions 'addBoxItems', 'addBoxItem', 'addBoxedView' are not intended to be called by BoxView, as it can manage BoxItems more effectively using 'items' variable. Use boxView.items = ... instead.\nOr set 'allowNotManagedViews = true' to silence this warning.")
+            }
         }
         var constraints = [NSLayoutConstraint]()
         items.forEach{
