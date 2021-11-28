@@ -51,7 +51,7 @@ open class BoxView: UIView {
     // Unfotunately, layoutMargins are not always independent,
     // and may be changed by superview or viewController.
     // So better not to to use them, and use instead only own insets property.
-    // Or set this flag to true to make insets synchronized with layoutMargins
+    // Or set this flag to true, to make insets synchronized with layoutMargins.
     public var insetsAreMargins: Bool = false
 
     public var insets: UIEdgeInsets {
@@ -87,7 +87,16 @@ open class BoxView: UIView {
                 }
                 setNeedsUpdateConstraints()
             }
+        }
+    }
 
+    public var forceSubviewsSCA = false {
+        didSet {
+            if oldValue != forceSubviewsSCA {
+                if forceSubviewsSCA {
+                    managedViews.forEach { setSCAIfNeed(for: $0) }
+                }
+            }
         }
     }
     
@@ -279,7 +288,12 @@ open class BoxView: UIView {
     
     override open var semanticContentAttribute: UISemanticContentAttribute {
         didSet {
-            setNeedsUpdateConstraints()
+            if oldValue != semanticContentAttribute {
+                if forceSubviewsSCA {
+                    managedViews.forEach { setSCAIfNeed(for: $0) }
+                }
+                setNeedsUpdateConstraints()
+            }
         }
     }
 
@@ -324,12 +338,14 @@ open class BoxView: UIView {
             }
         }
         for index in viewsToRemove.reversed() {
-            
             managedViews.remove(at: index)
         }
         for view in itemViews {
             if !managedViews.contains(view) {
                 view.translatesAutoresizingMaskIntoConstraints = false
+                if forceSubviewsSCA {
+                    setSCAIfNeed(for: view)
+                }
                 managedViews.append(view)
                 addSubview(view)
                 if (excludeHiddenViews) {
@@ -392,6 +408,20 @@ open class BoxView: UIView {
         let intValue: Int = unsafeBitCast(view, to: Int.self)
         observers[intValue] = nil
     }
+    
+    internal func setSCAIfNeed(for view: UIView) {
+        if view.semanticContentAttribute != semanticContentAttribute {
+            view.semanticContentAttribute = semanticContentAttribute
+            view.setNeedsUpdateConstraints()
+            view.setNeedsLayout()
+            if forceSubviewsSCA {
+                if let bv = view as? BoxView {
+                    bv.forceSubviewsSCA = true
+                }
+            }
+        }
+    }
+
 }
 
 
