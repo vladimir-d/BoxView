@@ -63,6 +63,14 @@ extension BoxLayout {
             return Pin(constant: constant, relation: relation, priority: pr)
         }
         
+        public var almostRequired: Pin {
+            // priority less than required by 1 (i.e. 999)
+            // usefull for workarounds to resolve constraints conficts
+            var newPin = self
+            newPin.priority = UILayoutPriority(UILayoutPriority.required.rawValue - 1)
+            return newPin
+        }
+        
         public func required(_ offset: Float = 0.0) -> Pin {
             var newPin = self
             newPin.priority = UILayoutPriority(UILayoutPriority.required.rawValue + offset)
