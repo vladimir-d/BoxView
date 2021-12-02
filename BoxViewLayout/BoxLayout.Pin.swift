@@ -149,6 +149,14 @@ extension BoxLayout {
             return newPin
         }
         
+        public var almostRequired: MultiPin {
+            // priority less than required by 1 (i.e. 999)
+            // usefull for workarounds to resolve constraints conficts
+            var newPin = self
+            newPin.priority = UILayoutPriority(UILayoutPriority.required.rawValue - 1)
+            return newPin
+        }
+        
         public func required(_ offset: Float = 0.0) -> MultiPin {
             var newPin = self
             newPin.priority = UILayoutPriority(UILayoutPriority.required.rawValue + offset)
