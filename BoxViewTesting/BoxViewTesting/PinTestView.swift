@@ -13,7 +13,7 @@ class PinTestView: TestView {
     let v1 = UIView(color: .orange).al
     let f1 = CGRect.xywh(7.0, 20.0, 10.0, 5.0)
     let edges = UIEdgeInsets.tlbr(1.0, 3.0, 2.0, 9.0)
-    let insets = UIEdgeInsets.tlbr(110.0, 30.0, 520.0, 90.0)
+    let insets = UIEdgeInsets.tlbr(110.0, 30.0, 420.0, 90.0)
     
     override func setup() {
         v.backgroundColor = .red
