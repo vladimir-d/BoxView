@@ -127,12 +127,14 @@ open class BoxView: UIView {
     // array of guides of items.
     public internal(set) var managedGuides = [UILayoutGuide]()
     
+    public internal(set) var needsUpdateItems = true
+    
     
     // MARK: -- setting items and layouts
     
     public var items:[BoxItem] = [] {
         didSet {
-            updateItems()
+            updateItemsViews()
         }
     }
     
@@ -248,6 +250,11 @@ open class BoxView: UIView {
         }
     }
     
+    public func setNeedsUpdateItems() {
+        needsUpdateItems = true
+        setNeedsLayout()
+    }
+    
     // MARK: -- description
     
     var itemsDescription: String {
@@ -341,7 +348,22 @@ open class BoxView: UIView {
         setNeedsUpdateConstraints()
     }
     
-    internal func updateItems() {
+    /// This function does nothing in the base class.
+    /// It is called when items have to be updated.
+    /// So it the place to put items updating code in subclasses.
+    /// In most cases it should not be called directly, use setNeedsUpdateItems() function instead to set needsUpdateItems flag, and this function will be called automatically on next layout cycle.
+    open func updateItems() {
+    }
+    
+    override open func layoutSubviews() {
+        if needsUpdateItems {
+            updateItems()
+            needsUpdateItems = false
+        }
+        super.layoutSubviews()
+    }
+    
+    internal func updateItemsViews() {
         if isUpdatingItems { return }
         isUpdatingItems = true
         let itemViews = items.compactMap{ $0.view }
