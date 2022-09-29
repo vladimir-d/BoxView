@@ -40,15 +40,15 @@ open class BoxView: UIView {
     
     // MARK: -- vars
     
-    // main axis along which item views are stacked.
-    // X is horizontal and Y is vertical.
+    /// Main axis along which item views are stacked.
+    /// X is horizontal and Y is vertical.
     public var axis: BoxLayout.Axis = .y {
         didSet {
             setNeedsUpdateAllConstraints()
         }
     }
     
-    // Unfotunately, layoutMargins are not always independent,
+    // Unfortunately, layoutMargins are not always independent,
     // and may be changed by superview or viewController.
     // So better not to to use them, and use instead only own insets property.
     // Or set this flag to true, to make insets synchronized with layoutMargins.
@@ -66,8 +66,8 @@ open class BoxView: UIView {
         }
     }
     
-    // Default spacing between item views. Actual spacing between every two items is:
-    // end pin of first view + spacing + begin pin of second view
+    /// Default spacing between item views. Actual spacing between every two items is:
+    /// end pin of first view + spacing + begin pin of second view
     @IBInspectable
     public var spacing: CGFloat = 0.0 {
         didSet {
@@ -75,7 +75,6 @@ open class BoxView: UIView {
         }
     }
     
-    //
     public var frontViews: [UIView]? {
         didSet {
             frontViews?.forEach { bringSubviewToFront($0) }
@@ -88,7 +87,7 @@ open class BoxView: UIView {
         }
     }
     
-    // If true, items with view.isHidden = true are automatically excluded from layout
+    /// If true, items with view.isHidden = true are automatically excluded from layout
     public var excludeHiddenViews = false {
         didSet {
             if oldValue != excludeHiddenViews {
@@ -117,30 +116,33 @@ open class BoxView: UIView {
     
     // MARK: -- readonly vars
     
-    // array of all automatically created by BoxView constraints
+    /// Array of all automatically created by BoxView constraints
     public internal(set) var managedConstraints = [NSLayoutConstraint]()
     
-    // array of views of items.
-    // it is a subset of boxView.subviews
+    /// Array of views of all items.
+    /// It is a subset of boxView.subviews
     public internal(set) var managedViews = [UIView]()
     
-    // array of guides of items.
+    /// Array of guides of all items.
     public internal(set) var managedGuides = [UILayoutGuide]()
     
+    /// The flag shows that something c
     public internal(set) var needsUpdateItems = true
     
     
     // MARK: -- setting items and layouts
     
+    /// Array of BoxItem elements.
+    /// Set items to add subvies with layout information to the boxView.
     public var items:[BoxItem] = [] {
         didSet {
             updateItemsViews()
         }
     }
     
-    // to set items from array containing optionals
+    /// To set items from array containing optionals
     public var optItems:[BoxItem?] {
-        get {return []}
+        get { return [] }
         set { items = newValue.compactMap{$0} }
     }
 
@@ -163,7 +165,7 @@ open class BoxView: UIView {
         items.append(item)
     }
     
-    // inserting item after item with given view, if view is nil, then item inserted at index 0
+    /// Inserting item after item with given object, if view is nil, then item inserted at index 0
     public func insertItem(_ item: BoxItem, after object: BoxAnchorable?, z: BoxLayout.ZPosition? = nil) {
         isUpdatingItems = true
 
@@ -193,7 +195,7 @@ open class BoxView: UIView {
         setNeedsUpdateAllConstraints()
     }
     
-    // inserting item before item with given view, if view is nil, then item inserted at the end
+    // inserting item before item with given object, if view is nil, then item inserted at the end
     public func insertItem(_ item: BoxItem, before object: BoxAnchorable, z: BoxLayout.ZPosition? = nil) {
         isUpdatingItems = true
         
@@ -224,7 +226,6 @@ open class BoxView: UIView {
         setNeedsUpdateAllConstraints()
     }
 
-    
     // changing layout of existing item with specified object (view or guide)
     public func setLayout(_ layout: BoxLayout, for obj: BoxAnchorable?) {
         if let index = items.firstIndex(where: { $0.alObj === obj}) {
@@ -277,10 +278,8 @@ open class BoxView: UIView {
 
     // MARK: -- overriden UIView functions and vars
     
-    // When items are assigned or parameters affecting layout are changed,
-    // constraints are not changed immediatly. Only setNeedsUpdateAllConstraints() called.
-    // Then updateConstraints() method is called automatically when boxView laying out own subviews.
-    // You can call this method to force create constraints immediatly.
+    /// When items are assigned or parameters affecting layout are changed, constraints are not changed immediatly. Only setNeedsUpdateAllConstraints() called. Later this function is called automatically when boxView laying out own subviews. So im most cases no need to call anything to update constraints.
+    /// Yet it be can be called directly to force create constraints immediatly.
     override open func updateConstraints() {
         super.updateConstraints()
         if !isUpdatingItems {
