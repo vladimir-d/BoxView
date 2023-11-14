@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 60;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -12,41 +12,16 @@
 		F509BBEC24ACD54900AACB4F /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58BFA67246C1FE30067D262 /* BaseViewController.swift */; };
 		F509BBED24ACD54D00AACB4F /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F52A84A424788BFD0049A83A /* LoginViewController.swift */; };
 		F509BBEE24ACD55000AACB4F /* PuppiesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5534718248DB9EE00883610 /* PuppiesViewController.swift */; };
-		F509BBEF24ACD55D00AACB4F /* BoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58BFA53246C1DF70067D262 /* BoxView.swift */; };
-		F509BBF024ACD55D00AACB4F /* BoxItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58BFA9A247192870067D262 /* BoxItem.swift */; };
-		F509BBF124ACD55D00AACB4F /* BoxItem+Create.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5DDC8E924A351BE003DC79E /* BoxItem+Create.swift */; };
-		F509BBF224ACD55D00AACB4F /* UIView+BoxItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5DDC8E724A3511B003DC79E /* UIView+BoxItem.swift */; };
-		F509BBF324ACD55D00AACB4F /* UIView+InternalConstraintCreation.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5EC033824A5FCD60097F68C /* UIView+InternalConstraintCreation.swift */; };
-		F509BBF424ACD55D00AACB4F /* BoxLayout+Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58BFA54246C1DF70067D262 /* BoxLayout+Enums.swift */; };
-		F509BBF524ACD55D00AACB4F /* BoxLayout.Pin.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58BFA55246C1DF70067D262 /* BoxLayout.Pin.swift */; };
-		F509BBF624ACD55D00AACB4F /* UIView+NSLayoutConstraints.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58BFA56246C1DF70067D262 /* UIView+NSLayoutConstraints.swift */; };
-		F509BBF724ACD55D00AACB4F /* ConstraintSwitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5EC033E24A7C42B0097F68C /* ConstraintSwitch.swift */; };
-		F509BBF824ACD55D00AACB4F /* BoxLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58BFA57246C1DF70067D262 /* BoxLayout.swift */; };
-		F509BBF924ACD55D00AACB4F /* UIView+BoxUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F554EA7224940C0000446623 /* UIView+BoxUtils.swift */; };
 		F509BBFA24ACD56B00AACB4F /* UIView+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58BFA5F246C1E0E0067D262 /* UIView+Utils.swift */; };
 		F509BBFB24ACD5FE00AACB4F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F58BFA47246C1C070067D262 /* Assets.xcassets */; };
-		F517FA8F26BDA942001BDBCB /* UIView+UILayoutPriority.swift in Sources */ = {isa = PBXBuildFile; fileRef = F517FA8E26BDA942001BDBCB /* UIView+UILayoutPriority.swift */; };
-		F517FA9026BDA942001BDBCB /* UIView+UILayoutPriority.swift in Sources */ = {isa = PBXBuildFile; fileRef = F517FA8E26BDA942001BDBCB /* UIView+UILayoutPriority.swift */; };
-		F51F113C253E158F00347F7C /* BoxLayout.Pin+Operators.swift in Sources */ = {isa = PBXBuildFile; fileRef = F51F113B253E158F00347F7C /* BoxLayout.Pin+Operators.swift */; };
-		F51F113D253E158F00347F7C /* BoxLayout.Pin+Operators.swift in Sources */ = {isa = PBXBuildFile; fileRef = F51F113B253E158F00347F7C /* BoxLayout.Pin+Operators.swift */; };
 		F52A84A524788BFD0049A83A /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F52A84A424788BFD0049A83A /* LoginViewController.swift */; };
 		F554EA712493E1E200446623 /* PuppiesViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5534718248DB9EE00883610 /* PuppiesViewController.swift */; };
-		F554EA7324940C0000446623 /* UIView+BoxUtils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F554EA7224940C0000446623 /* UIView+BoxUtils.swift */; };
 		F58BFA3F246C1C050067D262 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58BFA3E246C1C050067D262 /* AppDelegate.swift */; };
 		F58BFA48246C1C070067D262 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = F58BFA47246C1C070067D262 /* Assets.xcassets */; };
 		F58BFA4B246C1C070067D262 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = F58BFA49246C1C070067D262 /* LaunchScreen.storyboard */; };
-		F58BFA59246C1DF70067D262 /* BoxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58BFA53246C1DF70067D262 /* BoxView.swift */; };
-		F58BFA5A246C1DF70067D262 /* BoxLayout+Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58BFA54246C1DF70067D262 /* BoxLayout+Enums.swift */; };
-		F58BFA5B246C1DF70067D262 /* BoxLayout.Pin.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58BFA55246C1DF70067D262 /* BoxLayout.Pin.swift */; };
-		F58BFA5C246C1DF70067D262 /* UIView+NSLayoutConstraints.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58BFA56246C1DF70067D262 /* UIView+NSLayoutConstraints.swift */; };
-		F58BFA5D246C1DF70067D262 /* BoxLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58BFA57246C1DF70067D262 /* BoxLayout.swift */; };
 		F58BFA63246C1E0E0067D262 /* UIView+Utils.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58BFA5F246C1E0E0067D262 /* UIView+Utils.swift */; };
 		F58BFA68246C1FE30067D262 /* BaseViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58BFA67246C1FE30067D262 /* BaseViewController.swift */; };
-		F58BFA9B247192880067D262 /* BoxItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F58BFA9A247192870067D262 /* BoxItem.swift */; };
-		F5DDC8E824A3511C003DC79E /* UIView+BoxItem.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5DDC8E724A3511B003DC79E /* UIView+BoxItem.swift */; };
-		F5DDC8EA24A351BE003DC79E /* BoxItem+Create.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5DDC8E924A351BE003DC79E /* BoxItem+Create.swift */; };
-		F5EC033924A5FCD60097F68C /* UIView+InternalConstraintCreation.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5EC033824A5FCD60097F68C /* UIView+InternalConstraintCreation.swift */; };
-		F5EC033F24A7C42B0097F68C /* ConstraintSwitch.swift in Sources */ = {isa = PBXBuildFile; fileRef = F5EC033E24A7C42B0097F68C /* ConstraintSwitch.swift */; };
+		F5A7A3E02B03A2AF000DE6F2 /* BoxView in Frameworks */ = {isa = PBXBuildFile; productRef = F5A7A3DF2B03A2AF000DE6F2 /* BoxView */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -54,29 +29,16 @@
 		F509BBDC24ACD46900AACB4F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F509BBE624ACD46A00AACB4F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F509BBE824ACD46A00AACB4F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		F517FA8E26BDA942001BDBCB /* UIView+UILayoutPriority.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+UILayoutPriority.swift"; sourceTree = "<group>"; };
-		F51F113B253E158F00347F7C /* BoxLayout.Pin+Operators.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BoxLayout.Pin+Operators.swift"; sourceTree = "<group>"; };
 		F52A84A424788BFD0049A83A /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		F5534718248DB9EE00883610 /* PuppiesViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PuppiesViewController.swift; sourceTree = "<group>"; };
-		F554EA7224940C0000446623 /* UIView+BoxUtils.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+BoxUtils.swift"; sourceTree = "<group>"; };
 		F58BFA3B246C1C050067D262 /* BoxViewExample.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = BoxViewExample.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F58BFA3E246C1C050067D262 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F58BFA47246C1C070067D262 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		F58BFA4A246C1C070067D262 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		F58BFA4C246C1C070067D262 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		F58BFA53246C1DF70067D262 /* BoxView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoxView.swift; sourceTree = "<group>"; };
-		F58BFA54246C1DF70067D262 /* BoxLayout+Enums.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "BoxLayout+Enums.swift"; sourceTree = "<group>"; };
-		F58BFA55246C1DF70067D262 /* BoxLayout.Pin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoxLayout.Pin.swift; sourceTree = "<group>"; };
-		F58BFA56246C1DF70067D262 /* UIView+NSLayoutConstraints.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+NSLayoutConstraints.swift"; sourceTree = "<group>"; };
-		F58BFA57246C1DF70067D262 /* BoxLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BoxLayout.swift; sourceTree = "<group>"; };
 		F58BFA5F246C1E0E0067D262 /* UIView+Utils.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "UIView+Utils.swift"; sourceTree = "<group>"; };
 		F58BFA67246C1FE30067D262 /* BaseViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseViewController.swift; sourceTree = "<group>"; };
-		F58BFA9A247192870067D262 /* BoxItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BoxItem.swift; sourceTree = "<group>"; };
 		F5AF2B11249BD47300ECCFCB /* he */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = he; path = he.lproj/LaunchScreen.strings; sourceTree = "<group>"; };
-		F5DDC8E724A3511B003DC79E /* UIView+BoxItem.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+BoxItem.swift"; sourceTree = "<group>"; };
-		F5DDC8E924A351BE003DC79E /* BoxItem+Create.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "BoxItem+Create.swift"; sourceTree = "<group>"; };
-		F5EC033824A5FCD60097F68C /* UIView+InternalConstraintCreation.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+InternalConstraintCreation.swift"; sourceTree = "<group>"; };
-		F5EC033E24A7C42B0097F68C /* ConstraintSwitch.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConstraintSwitch.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -91,6 +53,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				F5A7A3E02B03A2AF000DE6F2 /* BoxView in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -110,7 +73,6 @@
 		F58BFA32246C1C050067D262 = {
 			isa = PBXGroup;
 			children = (
-				F58BFA52246C1DF70067D262 /* BoxViewLayout */,
 				F58BFA3D246C1C050067D262 /* BoxViewExample */,
 				F509BBDB24ACD46900AACB4F /* BoxViewExampleTV */,
 				F58BFA3C246C1C050067D262 /* Products */,
@@ -139,27 +101,6 @@
 				F58BFA4C246C1C070067D262 /* Info.plist */,
 			);
 			path = BoxViewExample;
-			sourceTree = "<group>";
-		};
-		F58BFA52246C1DF70067D262 /* BoxViewLayout */ = {
-			isa = PBXGroup;
-			children = (
-				F58BFA53246C1DF70067D262 /* BoxView.swift */,
-				F58BFA9A247192870067D262 /* BoxItem.swift */,
-				F5DDC8E924A351BE003DC79E /* BoxItem+Create.swift */,
-				F5DDC8E724A3511B003DC79E /* UIView+BoxItem.swift */,
-				F5EC033824A5FCD60097F68C /* UIView+InternalConstraintCreation.swift */,
-				F58BFA57246C1DF70067D262 /* BoxLayout.swift */,
-				F58BFA54246C1DF70067D262 /* BoxLayout+Enums.swift */,
-				F58BFA55246C1DF70067D262 /* BoxLayout.Pin.swift */,
-				F51F113B253E158F00347F7C /* BoxLayout.Pin+Operators.swift */,
-				F58BFA56246C1DF70067D262 /* UIView+NSLayoutConstraints.swift */,
-				F517FA8E26BDA942001BDBCB /* UIView+UILayoutPriority.swift */,
-				F5EC033E24A7C42B0097F68C /* ConstraintSwitch.swift */,
-				F554EA7224940C0000446623 /* UIView+BoxUtils.swift */,
-			);
-			name = BoxViewLayout;
-			path = ../BoxViewLayout;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -195,6 +136,9 @@
 			dependencies = (
 			);
 			name = BoxViewExample;
+			packageProductDependencies = (
+				F5A7A3DF2B03A2AF000DE6F2 /* BoxView */,
+			);
 			productName = BoxViewExample;
 			productReference = F58BFA3B246C1C050067D262 /* BoxViewExample.app */;
 			productType = "com.apple.product-type.application";
@@ -227,6 +171,9 @@
 				he,
 			);
 			mainGroup = F58BFA32246C1C050067D262;
+			packageReferences = (
+				F5918DF62B03DE36000A9FA8 /* XCLocalSwiftPackageReference ".." */,
+			);
 			productRefGroup = F58BFA3C246C1C050067D262 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -263,24 +210,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F509BBF024ACD55D00AACB4F /* BoxItem.swift in Sources */,
-				F509BBF824ACD55D00AACB4F /* BoxLayout.swift in Sources */,
 				F509BBFA24ACD56B00AACB4F /* UIView+Utils.swift in Sources */,
 				F509BBED24ACD54D00AACB4F /* LoginViewController.swift in Sources */,
-				F517FA9026BDA942001BDBCB /* UIView+UILayoutPriority.swift in Sources */,
-				F509BBF324ACD55D00AACB4F /* UIView+InternalConstraintCreation.swift in Sources */,
 				F509BBDD24ACD46900AACB4F /* AppDelegate.swift in Sources */,
-				F509BBF624ACD55D00AACB4F /* UIView+NSLayoutConstraints.swift in Sources */,
-				F509BBF424ACD55D00AACB4F /* BoxLayout+Enums.swift in Sources */,
-				F51F113D253E158F00347F7C /* BoxLayout.Pin+Operators.swift in Sources */,
-				F509BBF524ACD55D00AACB4F /* BoxLayout.Pin.swift in Sources */,
-				F509BBF224ACD55D00AACB4F /* UIView+BoxItem.swift in Sources */,
-				F509BBEF24ACD55D00AACB4F /* BoxView.swift in Sources */,
-				F509BBF724ACD55D00AACB4F /* ConstraintSwitch.swift in Sources */,
 				F509BBEC24ACD54900AACB4F /* BaseViewController.swift in Sources */,
 				F509BBEE24ACD55000AACB4F /* PuppiesViewController.swift in Sources */,
-				F509BBF124ACD55D00AACB4F /* BoxItem+Create.swift in Sources */,
-				F509BBF924ACD55D00AACB4F /* UIView+BoxUtils.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -288,23 +222,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F554EA7324940C0000446623 /* UIView+BoxUtils.swift in Sources */,
 				F52A84A524788BFD0049A83A /* LoginViewController.swift in Sources */,
-				F5DDC8EA24A351BE003DC79E /* BoxItem+Create.swift in Sources */,
 				F58BFA68246C1FE30067D262 /* BaseViewController.swift in Sources */,
-				F517FA8F26BDA942001BDBCB /* UIView+UILayoutPriority.swift in Sources */,
-				F51F113C253E158F00347F7C /* BoxLayout.Pin+Operators.swift in Sources */,
-				F58BFA5D246C1DF70067D262 /* BoxLayout.swift in Sources */,
-				F5EC033924A5FCD60097F68C /* UIView+InternalConstraintCreation.swift in Sources */,
 				F58BFA3F246C1C050067D262 /* AppDelegate.swift in Sources */,
-				F58BFA9B247192880067D262 /* BoxItem.swift in Sources */,
-				F5EC033F24A7C42B0097F68C /* ConstraintSwitch.swift in Sources */,
-				F5DDC8E824A3511C003DC79E /* UIView+BoxItem.swift in Sources */,
-				F58BFA5A246C1DF70067D262 /* BoxLayout+Enums.swift in Sources */,
-				F58BFA5B246C1DF70067D262 /* BoxLayout.Pin.swift in Sources */,
-				F58BFA5C246C1DF70067D262 /* UIView+NSLayoutConstraints.swift in Sources */,
 				F58BFA63246C1E0E0067D262 /* UIView+Utils.swift in Sources */,
-				F58BFA59246C1DF70067D262 /* BoxView.swift in Sources */,
 				F554EA712493E1E200446623 /* PuppiesViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -495,6 +416,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = KLRL3PYX7H;
 				INFOPLIST_FILE = BoxViewExample/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -513,6 +435,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = KLRL3PYX7H;
 				INFOPLIST_FILE = BoxViewExample/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -555,6 +478,20 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCLocalSwiftPackageReference section */
+		F5918DF62B03DE36000A9FA8 /* XCLocalSwiftPackageReference ".." */ = {
+			isa = XCLocalSwiftPackageReference;
+			relativePath = ..;
+		};
+/* End XCLocalSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		F5A7A3DF2B03A2AF000DE6F2 /* BoxView */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = BoxView;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = F58BFA33246C1C050067D262 /* Project object */;
 }
