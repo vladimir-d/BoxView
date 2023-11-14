@@ -127,7 +127,10 @@ target 'YourTarget' do
 end
 
 ```
-
+### SPM
+BoxView is available through Swift Package Manager. 
+In XCode select File->Add Package Dependency and enter
+"github.com/vladimir-d/BoxView.git" as package repository URL.
 
 ## Author
 
