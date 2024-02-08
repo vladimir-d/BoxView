@@ -265,7 +265,8 @@ open class BoxView: UIView {
     }
     
     public override var debugDescription: String {
-        return super.debugDescription + "\nitems:\(itemsDescription)"
+        return super.debugDescription + " [\(items.count) items]"
+        //"\nitems:\(itemsDescription)"
     }
     
     // MARK: -- animation
