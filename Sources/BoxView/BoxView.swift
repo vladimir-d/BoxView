@@ -426,18 +426,10 @@ open class BoxView: UIView {
         if (excludeHiddenViews) {
             removeObserverForItemView(view)
         }
-        view.removeFromSuperview()
+        if view.superview == self {
+            view.removeFromSuperview()
+        }
         managedViews.remove(at: ind)
-    }
-    
-    internal func removeManagedView(_ view: UIView) {
-        if let ind = managedViews.firstIndex(of: view) {
-            managedViews.remove(at: ind)
-        }
-        if (excludeHiddenViews) {
-            removeObserverForItemView(view)
-        }
-        view.removeFromSuperview()
     }
     
     internal func addManagedGuide(_ guide: UILayoutGuide) {
