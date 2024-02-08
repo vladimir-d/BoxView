@@ -14,7 +14,7 @@ open class BoxView: UIView {
 // MARK: - Public -
 
     // MARK: -- Inits
-    
+
     public init(axis: BoxLayout.Axis = .y, spacing: CGFloat = 0.0, insets: UIEdgeInsets = .zero) {
         self.axis = axis
         self.spacing = spacing
@@ -23,23 +23,23 @@ open class BoxView: UIView {
         translatesAutoresizingMaskIntoConstraints = false
         setup()
     }
-    
+
     public required override init(frame: CGRect) {
         _insets = .zero
         super.init(frame: frame)
         setup()
     }
-    
+
     public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
     }
-    
+
     open func setup() {
         // to override in subclasses
     }
-    
+
     // MARK: -- vars
-    
+
     /// Main axis along which item views are stacked.
     /// X is horizontal and Y is vertical.
     public var axis: BoxLayout.Axis = .y {
@@ -47,7 +47,7 @@ open class BoxView: UIView {
             setNeedsUpdateAllConstraints()
         }
     }
-    
+
     // Unfortunately, layoutMargins are not always independent,
     // and may be changed by superview or viewController.
     // So better not to to use them, and use instead only own insets property.
@@ -65,7 +65,7 @@ open class BoxView: UIView {
             }
         }
     }
-    
+
     /// Default spacing between item views. Actual spacing between every two items is:
     /// end pin of first view + spacing + begin pin of second view
     @IBInspectable
@@ -74,19 +74,19 @@ open class BoxView: UIView {
             setNeedsUpdateAllConstraints()
         }
     }
-    
+
     public var frontViews: [UIView]? {
         didSet {
             frontViews?.forEach { bringSubviewToFront($0) }
         }
     }
-    
+
     public var backViews: [UIView]? {
         didSet {
             backViews?.forEach { sendSubviewToBack($0) }
         }
     }
-    
+
     /// If true, items with view.isHidden = true are automatically excluded from layout
     public var excludeHiddenViews = false {
         didSet {
@@ -111,27 +111,27 @@ open class BoxView: UIView {
             }
         }
     }
-    
+
     public var allowNotManagedViews = false
-    
+
     // MARK: -- readonly vars
-    
+
     /// Array of all automatically created by BoxView constraints
     public internal(set) var managedConstraints = [NSLayoutConstraint]()
-    
+
     /// Array of views of all items.
     /// It is a subset of boxView.subviews
     public internal(set) var managedViews = [UIView]()
-    
+
     /// Array of guides of all items.
     public internal(set) var managedGuides = [UILayoutGuide]()
-    
+
     /// The flag shows that something c
     public internal(set) var needsUpdateItems = true
-    
-    
+
+
     // MARK: -- setting items and layouts
-    
+
     /// Array of BoxItem elements.
     /// Set items to add subvies with layout information to the boxView.
     public var items:[BoxItem] = [] {
@@ -139,7 +139,7 @@ open class BoxView: UIView {
             updateItemsViews()
         }
     }
-    
+
     /// To set items from array containing optionals
     public var optItems:[BoxItem?] {
         get { return [] }
@@ -150,7 +150,7 @@ open class BoxView: UIView {
         self.items = items
         return self
     }
-    
+
     // setting items from array of views using same layout
     public func setViews(_ views: [UIView], layout: BoxLayout = .zero) {
         var newItems = [BoxItem]()
@@ -159,12 +159,12 @@ open class BoxView: UIView {
         }
         items = newItems
     }
-    
+
     // appending item
     public func addItem(_ item: BoxItem) {
         items.append(item)
     }
-    
+
     /// Inserting item after item with given object, if view is nil, then item inserted at index 0
     public func insertItem(_ item: BoxItem, after object: BoxAnchorable?, z: BoxLayout.ZPosition? = nil) {
         isUpdatingItems = true
@@ -177,7 +177,7 @@ open class BoxView: UIView {
             targetIndex = index + 1
         }
         items.insert(item, at: targetIndex)
-        
+
         if let itemView = item.view {
             if !managedViews.contains(itemView) {
                 configureManagedView(itemView)
@@ -194,11 +194,11 @@ open class BoxView: UIView {
         isUpdatingItems = false
         setNeedsUpdateAllConstraints()
     }
-    
+
     // inserting item before item with given object, if view is nil, then item inserted at the end
     public func insertItem(_ item: BoxItem, before object: BoxAnchorable, z: BoxLayout.ZPosition? = nil) {
         isUpdatingItems = true
-        
+
         if let ind = itemIndexForObject(item.alObj) {
             items.remove(at: ind)
         }
@@ -208,7 +208,7 @@ open class BoxView: UIView {
         else {
             items.append(item)
         }
-        
+
         if let itemView = item.view {
             if !managedViews.contains(itemView) {
                 configureManagedView(itemView)
@@ -233,37 +233,37 @@ open class BoxView: UIView {
             setNeedsUpdateAllConstraints()
         }
     }
-    
+
     // getting existing item with specified object (view or guide)
     public func itemForObject(_ obj: BoxAnchorable) -> BoxItem? {
         return items.first(where: {$0.alObj === obj})
     }
-    
+
     // getting index of existing item with specified object (view or guide)
     public func itemIndexForObject(_ obj: BoxAnchorable) -> Int? {
         return items.firstIndex(where: {$0.alObj === obj})
     }
-    
+
     // updating existing box item for corresponding view or guide
     public func updateItemForObject(_ obj: BoxAnchorable, update: BoxItemUpdate) {
         if let ind = itemIndexForObject(obj) {
             items[ind] = update(items[ind])
         }
     }
-    
+
     public func setNeedsUpdateItems() {
         needsUpdateItems = true
         setNeedsLayout()
     }
-    
+
     // MARK: -- description
-    
+
     var itemsDescription: String {
         return (0..<items.count).compactMap { (i) -> String in
             return "\n[\(i)] \(items[i].description)"
         }.joined(separator: ",")
     }
-    
+
     public override var debugDescription: String {
         return super.debugDescription + " [\(items.count) items]"
         //"\nitems:\(itemsDescription)"
